@@ -306,6 +306,56 @@
 				// ########## RENDER CHART END ##########
 			}
 
+			/* 暴露「图表 → 静态图片」渲染函数，供导出 / 预览把空白 canvas 转为自包含
+			   data:image/png，确保 getHtml / 预览不依赖 Chart.js 即可完整呈现，
+			   且与编辑器内绘制的图表视觉一致。依赖本闭包内的 colors / config 与全局 Chart。 */
+			CKEDITOR.tools.xfChartToImage = function( values, chartType, height ) {
+				if ( typeof Chart === 'undefined' || !values ) return null;
+				var h = height || 300, w = 640;
+				var canvas = document.createElement( 'canvas' );
+				canvas.width = w; canvas.height = h;
+				var ctx = canvas.getContext( '2d' );
+				var chart = new Chart( ctx );
+				var i, v = [];
+				for ( i = 0; i < values.length; i++ ) {
+					v.push( { value: values[i].value, label: values[i].label } );
+				}
+				// 饼图 / 环形图 / 极区图需要逐条颜色
+				if ( chartType !== 'bar' ) {
+					for ( i = 0; i < v.length; i++ ) {
+						v[i].color = colors.data[i];
+						v[i].highlight = colors.data[i];
+					}
+				}
+				var data;
+				if ( chartType === 'bar' || chartType === 'line' ) {
+					data = {
+						datasets: [ {
+							label: '', fillColor: colors.fillColor,
+							strokeColor: colors.strokeColor,
+							highlightFill: colors.highlightFill,
+							highlightStroke: colors.highlightStroke, data: []
+						} ],
+						labels: []
+					};
+					for ( i = 0; i < v.length; i++ ) {
+						if ( v[i].value ) {
+							data.labels.push( v[i].label );
+							data.datasets[0].data.push( v[i].value );
+						}
+					}
+					if ( chartType === 'bar' ) chart.Bar( data, config.Bar );
+					else chart.Line( data, config.Line );
+				} else if ( chartType === 'polar' ) {
+					chart.PolarArea( v, config.PolarArea );
+				} else if ( chartType === 'pie' ) {
+					chart.Pie( v, config.Pie );
+				} else {
+					chart.Doughnut( v, config.Doughnut );
+				}
+				try { return chart.toBase64Image(); } catch ( e ) { return null; }
+			};
+
 			// Here we define the widget itself.
 			editor.widgets.add( 'chart', {
 				// The *label* for the button. The button *name* is assigned automatically based on the widget name.

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<!-- xfTextEditor 二维码示例（yaqr 插件） -->
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>xfTextEditor - 二维码示例</title>
+    <script defer src="../ckeditor.js"></script>
+    <script defer src="../config.full.js"></script>
+    <script defer src="js/xf.js"></script>
+    <link rel="stylesheet" href="css/xf.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+<header class="xf-header">
+    <span class="brand">xfTextEditor</span>
+    <nav>
+        <a href="index.html">首页</a>
+        <a href="simple.html">简易编辑器</a>
+        <a href="full.html">完整示例</a>
+        <a href="export.html">导出预览</a>
+        <a href="docs.html">开发文档</a>
+        <a href="php.html">上传接口</a>
+        <a href="api.html">JS API</a>
+    </nav>
+</header>
+<main class="xf-container">
+    <h1>二维码插入示例</h1>
+    <p><code class="xf-inline">yaqr</code> 插件可在编辑器中生成二维码（基于 widget），常用于插入网址名片、跳转链接等。</p>
+    <div class="xf-editor-wrap"><textarea id="editor"></textarea></div>
+    <h2>配置项（config.yaqr）</h2>
+    <table class="xf-params">
+        <tr><th>配置项</th><th>默认值</th><th>说明</th></tr>
+        <tr><td><code>defQrUrl</code></td><td>https://weisifang.com/</td><td>二维码指向的默认网址。</td></tr>
+        <tr><td><code>defTargetBlank</code></td><td>true</td><td>点击二维码是否新窗口打开。</td></tr>
+        <tr><td><code>defQRSize</code></td><td>"100px"</td><td>二维码图片尺寸。</td></tr>
+        <tr><td><code>defCellSize</code></td><td>6</td><td>单个码点像素大小。</td></tr>
+        <tr><td><code>defMargin</code></td><td>10</td><td>二维码边距。</td></tr>
+        <tr><td><code>colorPt / colorBg</code></td><td>#000000 / #ffffff</td><td>码点颜色 / 背景颜色。</td></tr>
+        <tr><td><code>borderWidth / borderColor</code></td><td>2 / #000000</td><td>边框宽度 / 颜色。</td></tr>
+        <tr><td><code>correctionLevel</code></td><td>"Q"</td><td>纠错级别（L/M/Q/H）。</td></tr>
+    </table>
+    <pre class="xf-code">CKEDITOR.replace('editor', {
+    extraPlugins: 'yaqr',
+    yaqr: { defQrUrl: 'https://example.com', defQRSize: '120px' }
+});</pre>
+</main>
+<footer class="xf-footer">xfTextEditor &copy; 2021-2026</footer>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+// 基础能力由 config.full.js 统一提供；此处叠加 yaqr 插件与自定义工具栏。
+    XF.init('editor', {
+        height: 320,
+        extraPlugins: 'yaqr',
+        toolbar: [ { name: 'insert', items: [ 'yaqr' ] }, '/', { name: 'xfstyles', items: [ 'xfTexFx', 'xfBlockFx', 'xfEditEffect' ] } ]
+    });
+});
+</script>
+</body>
+</html>

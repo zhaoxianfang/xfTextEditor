@@ -75,7 +75,11 @@ CKEDITOR.plugins.add('pbckcode', {
       //暗黑主题； ambiance','chaos','clouds_midnight','cobalt','idle_fingers','kr_theme','merbivore','merbivore_soft','mono_industrial','monokai','pastel_on_dark','solarized_dark','terminal','tomorrow_night','tomorrow_night_blue','tomorrow_night_bright','tomorrow_night_eighties','twilight','vibrant_ink'
       theme: 'textmate', 
       tab_size: 4,
-      js: '//cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/'
+      // 关键修复：原先指向 CDN（//cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/），
+      // 断网环境下代码块编辑功能将完全失效，违背「100% 离线可用」要求。
+      // 现已将 Ace 1.2.6 全部资源（ace.js、ext-whitespace.js、mode-*、theme-*）
+      // 下载到插件本地目录 lib/ace/，此处改为相对插件路径，确保离线可用。
+      js: CKEDITOR.plugins.getPath('pbckcode') + 'lib/ace/'
     };
 
     // merge user settings with default settings

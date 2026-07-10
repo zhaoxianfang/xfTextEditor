@@ -1,41 +1,68 @@
 /*
 Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+
+xfTextEditor 内容区样式增强：
+- 中文友好的字体栈与排版
+- 图片自适应、表格美化、代码块、视频响应式等
 */
 
+/* ============ 基础排版 ============ */
 body
 {
-	/* Font */
-	/* Emoji fonts are added to visualise them nicely in Internet Explorer. */
-	font-family: sans-serif, Arial, Verdana, "Trebuchet MS", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-	font-size: 12px;
-
-	/* Text color */
-	color: #333;
-
-	/* Remove the background color to make it transparent. */
+	/* 中英文混排更协调的字体栈 */
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+		"Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, Verdana,
+		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+	font-size: 15px;
+	color: #2b2b2b;
 	background-color: #fff;
-
 	margin: 20px;
+	line-height: 1.8;
+	word-wrap: break-word;
 }
 
 .cke_editable
 {
-	font-size: 13px;
-	line-height: 1.6;
-
+	font-size: 15px;
+	line-height: 1.8;
+	letter-spacing: .2px;
 	/* Fix for missing scrollbars with RTL texts. (#10488) */
 	word-wrap: break-word;
 }
 
+/* 段落间距更舒适 */
+.cke_editable p
+{
+	margin: 0 0 1em;
+}
+
+/* ============ 标题 ============ */
+h1, h2, h3, h4, h5, h6
+{
+	font-weight: 600;
+	line-height: 1.4;
+	margin: 1.4em 0 .6em;
+	color: #1f2937;
+}
+h1 { font-size: 2em; }
+h2 { font-size: 1.6em; }
+h3 { font-size: 1.35em; }
+h4 { font-size: 1.15em; }
+h5 { font-size: 1em; }
+h6 { font-size: .9em; color: #6b7280; }
+
+/* ============ 引用 ============ */
 blockquote
 {
-	font-style: italic;
-	font-family: Georgia, Times, "Times New Roman", serif;
-	padding: 2px 0;
-	border-style: solid;
-	border-color: #ccc;
-	border-width: 0;
+	font-style: normal;
+	font-family: inherit;
+	padding: 10px 16px;
+	border-left: 4px solid #cbd5e1;
+	background: #f8fafc;
+	color: #475569;
+	margin: 1em 0;
+	border-radius: 0 4px 4px 0;
 }
 
 .cke_contents_ltr blockquote
@@ -50,60 +77,129 @@ blockquote
 	padding-left: 8px;
 	padding-right: 20px;
 	border-right-width: 5px;
+	border-left: none;
+	border-right-color: #cbd5e1;
 }
 
+/* ============ 链接 ============ */
 a
 {
-	color: #0782C1;
+	color: #1d6fb8;
+	text-decoration: none;
+}
+a:hover
+{
+	text-decoration: underline;
 }
 
-ol,ul,dl
+/* ============ 列表 ============ */
+ol, ul, dl
 {
 	/* IE7: reset rtl list margin. (#7334) */
 	*margin-right: 0px;
 	/* Preserved spaces for list items with text direction different than the list. (#6249,#8049)*/
 	padding: 0 40px;
+	margin: 1em 0;
 }
-
-h1,h2,h3,h4,h5,h6
+li
 {
-	font-weight: normal;
-	line-height: 1.2;
+	margin: .25em 0;
 }
 
+/* ============ 水平线 ============ */
 hr
 {
-	border: 0px;
-	border-top: 1px solid #ccc;
+	border: 0;
+	border-top: 1px solid #e5e7eb;
+	margin: 1.5em 0;
 }
 
+/* ============ 图片（自适应 + 间距） ============ */
+img
+{
+	max-width: 100%;
+	height: auto;
+	border: 0;
+	vertical-align: middle;
+}
 img.right
 {
-	border: 1px solid #ccc;
+	border: 1px solid #e5e7eb;
 	float: right;
-	margin-left: 15px;
-	padding: 5px;
+	margin: 4px 0 12px 16px;
+	padding: 4px;
+	background: #fff;
+	border-radius: 4px;
 }
-
 img.left
 {
-	border: 1px solid #ccc;
+	border: 1px solid #e5e7eb;
 	float: left;
-	margin-right: 15px;
-	padding: 5px;
+	margin: 4px 16px 12px 0;
+	padding: 4px;
+	background: #fff;
+	border-radius: 4px;
+}
+/* 让编辑器内对齐样式在内容区也生效 */
+img.cke_float_left  { float: left;  margin: 4px 16px 12px 0; }
+img.cke_float_right { float: right; margin: 4px 0 12px 16px; }
+
+/* ============ 表格美化 ============ */
+table
+{
+	border-collapse: collapse;
+	width: 100%;
+	margin: 1em 0;
+	font-size: 14px;
+}
+table td, table th
+{
+	border: 1px solid #d1d5db;
+	padding: 8px 10px;
+	vertical-align: top;
+}
+table th
+{
+	background: #f1f5f9;
+	font-weight: 600;
+	color: #334155;
+	text-align: left;
+}
+table tr:nth-child(even) td
+{
+	background: #fafbfc;
 }
 
+/* ============ 代码 / 预格式化 ============ */
 pre
 {
 	white-space: pre-wrap; /* CSS 2.1 */
 	word-wrap: break-word; /* IE7 */
 	-moz-tab-size: 4;
 	tab-size: 4;
+	background: #0f172a;
+	color: #e2e8f0;
+	padding: 14px 16px;
+	border-radius: 8px;
+	font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+	font-size: 13px;
+	line-height: 1.6;
+	overflow: auto;
+}
+code
+{
+	font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+	background: #eef2f7;
+	color: #b91c1c;
+	padding: 1px 5px;
+	border-radius: 3px;
+	font-size: .9em;
 }
 
+/* ============ 高亮 / 标记 ============ */
 .marker
 {
-	background-color: Yellow;
+	background-color: #fef08a;
 }
 
 span[lang]
@@ -111,20 +207,33 @@ span[lang]
 	font-style: italic;
 }
 
+/* ============ 视频 / 媒体 响应式 ============ */
 figure
 {
 	text-align: center;
-	outline: solid 1px #ccc;
-	background: rgba(0,0,0,0.05);
+	outline: solid 1px #e5e7eb;
+	background: rgba(0,0,0,0.03);
 	padding: 10px;
-	margin: 10px 20px;
+	margin: 12px 20px;
 	display: inline-block;
+	border-radius: 6px;
 }
-
 figure > figcaption
 {
 	text-align: center;
 	display: block; /* For IE8 */
+	font-size: .85em;
+	color: #6b7280;
+	margin-top: 6px;
+}
+
+/* video / iframe 在内容区自适应 */
+.cke_editable video,
+.cke_editable iframe,
+.cke_editable embed
+{
+	max-width: 100%;
+	border: 0;
 }
 
 a > img {
@@ -134,7 +243,7 @@ a > img {
 	outline: 1px solid #0782C1;
 }
 
-/* Widget Styles */
+/* ============ Widget Styles ============ */
 .code-featured
 {
 	border: 5px solid red;
@@ -172,6 +281,7 @@ a > img {
 	filter: grayscale(100%);
 }
 
+/* ============ 视频嵌入占位尺寸 ============ */
 .embed-240p
 {
 	max-width: 426px;
@@ -206,3 +316,454 @@ a > img {
 	max-height: 1080px;
 	margin:0 auto;
 }
+
+/* =========================================================================
+   xfTextEditor 扩展特效样式（xfeffects 插件）
+   这些样式同时作用于编辑器内预览与最终生成的网页，保证展示一致。
+   全部为纯 CSS 实现，无外部依赖，可离线使用。
+   ========================================================================= */
+
+/* ---------- 文字特效 ---------- */
+.xf-tex-gradient {
+	background-image: linear-gradient(92deg, #ff6a00, #ee0979, #2575fc, #6a11cb);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	-webkit-text-fill-color: transparent;
+	font-weight: 700;
+}
+.xf-tex-shadow {
+	text-shadow: 2px 2px 0 rgba(0,0,0,.18), 4px 4px 6px rgba(0,0,0,.12);
+}
+.xf-tex-glow {
+	color: #fff;
+	text-shadow: 0 0 6px #38bdf8, 0 0 12px #2563eb, 0 0 22px #1d4ed8;
+}
+.xf-tex-stroke {
+	color: #fff;
+	-webkit-text-stroke: 1.2px #1f2937;
+	text-stroke: 1.2px #1f2937;
+	paint-order: stroke fill;
+}
+.xf-tex-highlight {
+	background: linear-gradient(transparent 60%, #fde68a 60%);
+	padding: 0 .1em;
+	font-weight: 600;
+}
+.xf-tex-wave {
+	text-decoration: underline wavy #ef4444;
+	text-underline-offset: 4px;
+}
+.xf-tex-blur {
+	color: transparent;
+	text-shadow: 0 0 8px rgba(31,41,55,.65);
+}
+.xf-tex-colorful {
+	background-image: linear-gradient(90deg,#ff0000,#ff7f00,#ffff00,#00ff00,#00ffff,#0000ff,#8b00ff);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	font-weight: 700;
+}
+.xf-tex-vertical {
+	writing-mode: vertical-rl;
+	text-orientation: upright;
+	letter-spacing: .15em;
+	display: inline-block;
+}
+
+/* ---------- 提示框（Callout） ---------- */
+.xf-callout {
+	position: relative;
+	border: 1px solid transparent;
+	border-left-width: 4px;
+	border-radius: 8px;
+	padding: 12px 16px;
+	margin: 1em 0;
+	line-height: 1.7;
+}
+.xf-callout p { margin: 0; }
+.xf-callout-info    { background:#eff6ff; border-color:#3b82f6; color:#1e3a8a; }
+.xf-callout-success { background:#ecfdf5; border-color:#10b981; color:#065f46; }
+.xf-callout-warning { background:#fffbeb; border-color:#f59e0b; color:#92400e; }
+.xf-callout-danger  { background:#fef2f2; border-color:#ef4444; color:#991b1b; }
+
+/* ---------- 卡片 ---------- */
+.xf-card-block {
+	border: 1px solid #e5e7eb;
+	border-radius: 12px;
+	padding: 18px 20px;
+	margin: 1em 0;
+	background: #fff;
+	box-shadow: 0 6px 18px rgba(15,23,42,.06);
+}
+.xf-card-block h4 {
+	margin: 0 0 .4em;
+	color: #111827;
+	font-size: 1.1em;
+}
+.xf-card-block p { margin: 0; color: #374151; }
+
+/* ---------- 分割线 ---------- */
+hr.xf-divider {
+	border: 0;
+	height: 1px;
+	margin: 2em 0;
+	background: linear-gradient(90deg, transparent, #cbd5e1, transparent);
+}
+
+/* ---------- 徽章 ---------- */
+p.xf-badges { line-height: 2.2; }
+.xf-badge {
+	display: inline-block;
+	padding: 2px 12px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 600;
+	background: #e5e7eb;
+	color: #374151;
+	margin: 0 4px 4px 0;
+}
+.xf-badge-success { background:#d1fae5; color:#065f46; }
+.xf-badge-warning { background:#fef3c7; color:#92400e; }
+.xf-badge-danger  { background:#fee2e2; color:#991b1b; }
+
+/* ---------- 首字下沉 ---------- */
+p.xf-dropcap::first-letter {
+	float: left;
+	font-size: 3.4em;
+	line-height: .8;
+	font-weight: 700;
+	color: #2575fc;
+	margin: 4px 8px 0 0;
+}
+
+/* ---------- 居中容器 ---------- */
+.xf-center {
+	text-align: center;
+	margin: 1em 0;
+	padding: 16px;
+	background: #f8fafc;
+	border-radius: 10px;
+}
+
+/* ---------- 优雅引用 ---------- */
+blockquote.xf-quote-fancy {
+	position: relative;
+	margin: 1.2em 0;
+	padding: 18px 22px 18px 56px;
+	background: linear-gradient(135deg, #f8fafc, #eef2ff);
+	border-left: 4px solid #6366f1;
+	border-radius: 0 10px 10px 0;
+	color: #334155;
+	font-size: 1.05em;
+}
+blockquote.xf-quote-fancy::before {
+	content: "\201C";
+	position: absolute;
+	left: 14px; top: -6px;
+	font-size: 3em;
+	color: #c7d2fe;
+	font-family: Georgia, serif;
+}
+blockquote.xf-quote-fancy cite {
+	display: block;
+	margin-top: 8px;
+	font-size: .85em;
+	color: #6b7280;
+	font-style: normal;
+}
+
+/* ---------- 时间轴 ---------- */
+.xf-timeline {
+	margin: 1.2em 0;
+	padding-left: 8px;
+}
+.xf-tl-item {
+	position: relative;
+	padding: 0 0 18px 28px;
+	border-left: 2px solid #e5e7eb;
+}
+.xf-tl-item:last-child { border-left-color: transparent; padding-bottom: 0; }
+.xf-tl-dot {
+	position: absolute;
+	left: -8px; top: 2px;
+	width: 14px; height: 14px;
+	background: #2563eb;
+	border: 3px solid #fff;
+	border-radius: 50%;
+	box-shadow: 0 0 0 2px #2563eb;
+}
+.xf-tl-body strong { display: block; color: #111827; }
+.xf-tl-body p { margin: 2px 0 0; color: #4b5563; }
+
+/* ---------- 步骤条 ---------- */
+.xf-steps {
+	display: flex;
+	align-items: center;
+	gap: 0;
+	margin: 1em 0;
+	flex-wrap: wrap;
+}
+.xf-step {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px; height: 30px;
+	border-radius: 50%;
+	background: #2563eb;
+	color: #fff;
+	font-weight: 700;
+	font-size: 14px;
+}
+.xf-step-line {
+	flex: 0 0 36px;
+	height: 2px;
+	background: #cbd5e1;
+}
+
+/* =========================================================================
+   xfTextEditor 扩展特效样式（续：新增效果，与 xfeffects 插件保持一致）
+   ========================================================================= */
+
+/* ---------- 文字特效（新增） ---------- */
+.xf-tex-neon {
+	color: #fff;
+	text-shadow: 0 0 4px #f0f, 0 0 11px #0ff;
+	animation: xfNeon 1.6s ease-in-out infinite alternate;
+}
+@keyframes xfNeon {
+	from { text-shadow: 0 0 4px #f0f, 0 0 9px #0ff; }
+	to   { text-shadow: 0 0 8px #f0f, 0 0 22px #0ff, 0 0 34px #0ff; }
+}
+.xf-tex-mono {
+	font-family: "SFMono-Regular", Consolas, Menlo, monospace;
+	background: #0f172a;
+	color: #22d3ee;
+	padding: 0 .35em;
+	border-radius: 4px;
+}
+.xf-tex-stamp {
+	display: inline-block;
+	color: #dc2626;
+	border: 2px solid #dc2626;
+	border-radius: 6px;
+	padding: 0 .35em;
+	transform: rotate(-6deg);
+	font-weight: 700;
+}
+.xf-tex-emboss {
+	color: #e5e7eb;
+	text-shadow: 1px 1px 0 #fff, -1px -1px 0 #9ca3af;
+	font-weight: 700;
+}
+.xf-tex-underline2 {
+	text-decoration: underline;
+	text-decoration-color: #2563eb;
+	text-decoration-thickness: 3px;
+	text-underline-offset: 3px;
+}
+
+/* ---------- 分割线（新增变体） ---------- */
+hr.xf-divider-dashed {
+	border: 0;
+	border-top: 2px dashed #cbd5e1;
+	margin: 2em 0;
+}
+hr.xf-divider-double {
+	border: 0;
+	border-top: 3px double #94a3b8;
+	margin: 2em 0;
+}
+hr.xf-divider-dots {
+	height: 0;
+	border: 0;
+	border-top: 3px dotted #cbd5e1;
+	margin: 2em 0;
+}
+
+/* ---------- 标签云 ---------- */
+p.xf-tags { line-height: 2.4; }
+.xf-tag {
+	display: inline-block;
+	padding: 3px 12px;
+	border-radius: 6px;
+	background: #e0e7ff;
+	color: #3730a3;
+	margin: 0 6px 6px 0;
+	font-size: 13px;
+}
+
+/* ---------- 大字引言 ---------- */
+blockquote.xf-pullquote {
+	margin: 1.2em 0;
+	padding: 16px 20px;
+	font-size: 1.4em;
+	font-weight: 600;
+	line-height: 1.5;
+	color: #1f2937;
+	border-left: 4px solid #2563eb;
+	background: #f8fafc;
+	border-radius: 0 10px 10px 0;
+}
+blockquote.xf-pullquote cite {
+	display: block;
+	margin-top: 10px;
+	font-size: .6em;
+	font-weight: 400;
+	color: #6b7280;
+}
+
+/* ---------- 高亮重点 ---------- */
+.xf-hlbox {
+	background: linear-gradient(90deg, #fef9c3, #fff);
+	border-left: 4px solid #eab308;
+	padding: 12px 16px;
+	border-radius: 0 8px 8px 0;
+	margin: 1em 0;
+}
+.xf-hlbox p { margin: 0; }
+
+/* ---------- 注释说明 ---------- */
+.xf-note {
+	display: flex;
+	gap: 10px;
+	align-items: flex-start;
+	background: #f1f5f9;
+	border-radius: 10px;
+	padding: 12px 16px;
+	margin: 1em 0;
+}
+.xf-note-mark {
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px; height: 24px;
+	border-radius: 50%;
+	background: #64748b;
+	color: #fff;
+	font-size: 13px;
+	font-weight: 700;
+}
+.xf-note p { margin: 0; color: #334155; }
+
+/* ---------- 横幅通知 ---------- */
+.xf-banner {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+	background: linear-gradient(90deg, #dbeafe, #eff6ff);
+	border: 1px solid #bfdbfe;
+	border-radius: 10px;
+	padding: 12px 16px;
+	margin: 1em 0;
+}
+.xf-banner-icon { font-size: 22px; }
+.xf-banner p { margin: 0; color: #1e3a8a; }
+
+/* ---------- 双栏布局 ---------- */
+.xf-cols {
+	display: flex;
+	gap: 16px;
+	margin: 1em 0;
+	flex-wrap: wrap;
+}
+.xf-col {
+	flex: 1;
+	min-width: 200px;
+	background: #f8fafc;
+	border: 1px solid #e5e7eb;
+	border-radius: 10px;
+	padding: 14px;
+}
+.xf-col h4 { margin: 0 0 .4em; color: #111827; }
+.xf-col p { margin: 0; color: #374151; }
+
+/* ---------- 图文混排 ---------- */
+.xf-media {
+	display: flex;
+	gap: 14px;
+	align-items: flex-start;
+	background: #fff;
+	border: 1px solid #e5e7eb;
+	border-radius: 10px;
+	padding: 14px;
+	margin: 1em 0;
+}
+.xf-media-img {
+	flex: 0 0 auto;
+	width: 48px; height: 48px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 24px;
+	background: #eef2ff;
+	border-radius: 10px;
+}
+.xf-media-body { flex: 1; }
+.xf-media-body strong { display: block; color: #111827; margin-bottom: 2px; }
+.xf-media-body p { margin: 0; color: #4b5563; }
+
+/* ---------- 进度条 ---------- */
+.xf-progress-row { margin: 1em 0; }
+.xf-progress {
+	height: 20px;
+	background: #e5e7eb;
+	border-radius: 999px;
+	overflow: hidden;
+}
+.xf-progress-bar {
+	height: 100%;
+	background: linear-gradient(90deg, #2563eb, #06b6d4);
+}
+.xf-progress-label { margin: 6px 0 0; font-size: 13px; color: #475569; }
+
+/* ---------- 统计数字 ---------- */
+.xf-stats {
+	display: flex;
+	gap: 14px;
+	flex-wrap: wrap;
+	margin: 1em 0;
+}
+.xf-stat {
+	flex: 1;
+	min-width: 120px;
+	padding: 14px 18px;
+	background: linear-gradient(135deg, #eef2ff, #eff6ff);
+	border: 1px solid #e0e7ff;
+	border-radius: 12px;
+	text-align: center;
+}
+.xf-stat-num { font-size: 28px; font-weight: 800; color: #2563eb; line-height: 1.2; }
+.xf-stat-label { font-size: 13px; color: #475569; margin-top: 4px; }
+
+/* ---------- 折叠内容 ---------- */
+.xf-spoiler {
+	border: 1px solid #e5e7eb;
+	border-radius: 8px;
+	margin: 1em 0;
+	background: #fff;
+	overflow: hidden;
+}
+.xf-spoiler summary {
+	cursor: pointer;
+	padding: 12px 16px;
+	background: #f8fafc;
+	font-weight: 600;
+	color: #1f2937;
+	outline: none;
+}
+.xf-spoiler-body { padding: 12px 16px; }
+
+/* ---------- 按钮 ---------- */
+a.xf-btn {
+	display: inline-block;
+	padding: 8px 18px;
+	background: #2563eb;
+	color: #fff;
+	border-radius: 8px;
+	text-decoration: none;
+	font-weight: 600;
+}
+a.xf-btn:hover { background: #1d4ed8; text-decoration: none; }

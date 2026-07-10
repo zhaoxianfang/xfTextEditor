@@ -1,179 +1,148 @@
 /**
  * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see https://ckeditor.com/legal/ckeditor-oss-license
+ *
+ * xfTextEditor · 完整配置文件（config.full.js）
+ * ----------------------------------------------------------------
+ * 本文件集中定义编辑器「全部能力」：
+ *   - 中文语言、字体 / 字号 / 行高（中文友好命名）
+ *   - 全部第三方扩展插件与 xfTextEditor 自研插件（xfeffects / stickytoolbar / xfpreview）
+ *   - 样式集、文字 / 段落特效工具栏分组、上传地址、字数统计、自动保存等
+ * 示例页只需 <script defer src="config.full.js"> 即可复用本配置，
+ * 再由 examples/js/xf.js 的 XF.init() 叠加页面级覆写，避免重复声明与插件丢失。
  */
 
+// 获取页面 CSRF Token 的辅助函数。
+// 注意：必须优先使用原生 DOM（document.querySelector），禁止使用 jQuery 的 $('meta...')，
+// 因为编辑器初始化作用域中 jQuery 不一定被加载，使用 '$' 会抛出 ReferenceError: $ is not defined。
+function getCsrfToken() {
+    var meta = document.querySelector('meta[name="csrf-token"]');
+    return meta ? meta.getAttribute('content') : null;
+}
+
 CKEDITOR.editorConfig = function( config ) {
-    // Define changes to default configuration here. For example:
+    /* ===================== 基础与语言 ===================== */
     config.language = 'zh-cn';
-    // config.uiColor = '#AADC6E';
-    //工具栏是否可以被收缩
-    config.toolbarCanCollapse = true;
-    // 编辑器的z-index值
-    config.baseFloatZIndex = 10000;
-    //字体编辑时的字符集 可以添加常用的中文字符：宋体、楷体、黑体等 plugins/font/plugin.js
-    config.font_names='宋体/宋体;黑体/黑体;仿宋/仿宋_GB2312;楷体/楷体_GB2312;隶书/隶书;幼圆/幼圆;微软雅黑/微软雅黑;'+ config.font_names;
-
-    //当从word里复制文字进来时，是否进行文字的格式化去除 plugins/pastefromword/plugin.js
-    config.pasteFromWordIgnoreFontFace = true; //默认为忽略格式
-    //从word中粘贴内容时是否移除格式 plugins/pastefromword/plugin.js
-    config.pasteFromWordRemoveStyle = false;
-
-    //页面载入时，编辑框是否立即获得焦点 plugins/editingblock/plugin.js plugins/editingblock/plugin.js.
+    config.width = '100%';
+    config.height = '400';
+    config.startupMode = 'wysiwyg';
     config.startupFocus = false;
-
-    //载入时，以何种方式编辑 源码和所见即所得 "source"和"wysiwyg" plugins/editingblock/plugin.js.
-    config.startupMode ='wysiwyg';
-
-    //起始的索引值
     config.tabIndex = 0;
-    //默认使用的模板 plugins/templates/plugin.js.
     config.templates = 'default';
+    config.toolbarCanCollapse = true;       // 工具栏可收缩
+    config.baseFloatZIndex = 10000;         // 弹窗层级基准
 
+    /* ===================== 字体 / 字号 / 行高 ===================== */
+    // 字体集合：加入常用中文字体
+    config.font_names = '宋体/宋体;黑体/黑体;仿宋/仿宋_GB2312;楷体/楷体_GB2312;隶书/隶书;幼圆/幼圆;微软雅黑/微软雅黑;' + config.font_names;
+    // 行高集合（倍数 → em → 百分比，常用值优先）
+    // 行高候选值（按「倍数 → em → rem → 百分比」分组）：包含大量小于 1、小于 1rem、
+    // 小于 100% 的取值；行高作用于块级元素后，这些小值均可真实生效（见 lineheight 插件）。
+    config.line_height = 'normal;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1;1.2;1.4;1.5;1.6;1.8;2;2.5;3;0.3em;0.5em;0.6em;0.7em;0.8em;0.9em;1em;1.2em;1.5em;1.75em;2em;2.5em;3em;0.3rem;0.5rem;0.6rem;0.7rem;0.8rem;0.9rem;1rem;1.5rem;2rem;50%;60%;70%;80%;90%;100%;120%;150%;200%';
+    // 字号集合（中文命名 + 标准像素字号）
+    config.fontSize_sizes = '初号/56px;小初/48px;一号/34px;二号/28px;三号/24px;小三/20px;四号/18px;小四/16px;五号/14px;小五/12px;六号/10px;8/8px;9/9px;10/10px;11/11px;12/12px;14/14px;16/16px;18/18px;20/20px;22/22px;24/24px;26/26px;28/28px;32/32px;36/36px;40/40px;48/48px;56/56px;64/64px;72/72px';
 
-    //是否强制复制来的内容去除格式 plugins/pastetext/plugin.js
-    config.forcePasteAsPlainText =false //不去除
-
-
-
-    //背景的不透明度 数值应该在：0.0～1.0 之间 plugins/dialog/plugin.js
-    config.dialog_backgroundCoverOpacity = 0.5
-
-    //是否对编辑区域进行渲染 plugins/editingblock/plugin.js
+    /* ===================== 粘贴 / 编辑体验 ===================== */
+    config.forcePasteAsPlainText = false;
+    config.pasteFromWordIgnoreFontFace = true;
+    config.pasteFromWordRemoveStyle = false;
+    config.dialog_backgroundCoverOpacity = 0.5;
     config.editingBlock = true;
-    //使用搜索时的高亮色 plugins/find/plugin.js
-    config.find_highlight = {
-        element : 'span',
-        styles : { 'background-color' : '#ff0', 'color' : '#00f' }
-    };
+    config.find_highlight = { element: 'span', styles: { 'background-color': '#ff0', 'color': '#00f' } };
+    config.tabSpaces = 4;
 
-
-    // 设置语言
-    config.language = 'zh-cn'; // 设置语言
-    // 设置宽高.
-    config.width= '100%'; // 宽度
-    config.height= '400'; // 高度
-
-    // 启用全部菜单时候注释下面的 config.toolbar 部分
-    // config.toolbar = [
-    //     { name: 'document', items: [ 'Source', '-', 'ExportPdf', 'Preview', 'Print'] },
-    //     { name: 'clipboard', items: [  'Undo', 'Redo' ,'-','Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord'] },
-    //     { name: 'editing', items: [ 'Find', 'Replace' ] },
-    //     { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'CopyFormatting', 'RemoveFormat' ] },
-    //     { name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] },
-    //     { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
-    //     { name: 'tools', items: [ 'pbckcode','-','Maximize' ] },
-    //     // { name: 'forms', items: [ 'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField' ] },
-    //     '/',
-    //     { name: 'paragraph', items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl' ] },
-    //     { name: 'insert', items: [ 'Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe' ] },
-    //     { name: 'styles', items: [ 'Format', 'Font', 'FontSize' ] },
-    //     { name: 'other', items: [ 'lineheight'] },
-    // ];
-
-
+    /* ===================== 工具栏分组与按钮 ===================== */
     config.toolbarGroups = [
         { name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
         { name: 'clipboard', groups: [ 'undo', 'clipboard' ] },
         { name: 'editing', groups: [ 'find', 'selection', 'spellchecker', 'editing' ] },
         { name: 'forms', groups: [ 'forms' ] },
         { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-
         { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
         { name: 'tools', groups: [ 'tools' ] },
         '/',
         { name: 'links', groups: [ 'links' ] },
         { name: 'insert', groups: [ 'insert' ] },
-        // '/',
         { name: 'styles', groups: [ 'styles' ] },
         { name: 'colors', groups: [ 'colors' ] },
+        { name: 'xfstyles', groups: [ 'xfstyles' ] },   // 文字 / 段落特效 + 编辑效果
         { name: 'others', groups: [ 'others' ] },
         { name: 'about', groups: [ 'about' ] }
     ];
-
+    // 精简：移除编辑器内极少使用或与自研能力重叠的原生按钮
     config.removeButtons = 'ShowBlocks,Save,NewPage,Templates,SelectAll,Scayt,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,CreateDiv,Language,Flash,Smiley,About';
 
-    // https://ckeditor.com/cke4/addon/image2
-    // 行高 , 代码编辑,uploadfile(拖动文件上传),yaqr(创建二维码)
-    config.extraPlugins = 'lineheight,pbckcode,quicktable,image2,video,fakeobjects,wordcount,uploadfile,tableresizerowandcolumn,html5audio,yaqr,editorplaceholder,chart,imageresizerowandcolumn,divarea';
-    //FMathEditor(数学公式)、nvd_math（数学公式）、autosave(自动保存)
-    config.extraPlugins += ',autosave,filetools';
+    /* ===================== 扩展插件 ===================== */
+    // 第三方扩展（媒体 / 表格 / 代码 / 图表 / 二维码 / 上传 / 字数 / 自动保存等）
+    config.extraPlugins = 'lineheight,pbckcode,quicktable,image2,video,fakeobjects,wordcount,' +
+        'uploadfile,tableresizerowandcolumn,html5audio,yaqr,editorplaceholder,chart,' +
+        'imageresizerowandcolumn,divarea,autosave,filetools';
+    // xfTextEditor 自研增强插件（文字 / 段落特效、工具栏吸附、增强预览，均离线可用）
+    config.extraPlugins += ',xfeffects,stickytoolbar,xfpreview';
 
-    config.allowedContent = true; //加这个是为了不让span标签被ckeditor过滤掉
-
+    /* ===================== 内容过滤与样式 ===================== */
+    config.allowedContent = true;          // 不过滤 span / div 等自定义特效标签
+    // divarea 模式下不会自动注入 contents.css，这里写入 config.contentsCss，
+    // 使「编辑区」与「生成网页」样式一致（特效样式由 xfeffects 通过 editor.addCss 注入，二者互补）。
+    config.contentsCss = [ CKEDITOR.getUrl('contents.css') ];
     config.editorplaceholder = '请在此输入内容,提示：拖动文件到编辑器内可以进行上传';
-    // chart 图表 显示条数
+
+    /* ===================== 自定义样式集（下拉「样式」） ===================== */
+    config.stylesSet = [
+        { name: '正文', element: 'p' },
+        { name: '标题 1（大）', element: 'h1' },
+        { name: '标题 2', element: 'h2' },
+        { name: '标题 3', element: 'h3' },
+        { name: '小标题', element: 'h4' },
+        { name: '引用', element: 'blockquote' },
+        { name: '代码块', element: 'pre' },
+        { name: '信息提示框', element: 'div', attributes: { 'class': 'xf-callout xf-callout-info' } },
+        { name: '成功提示框', element: 'div', attributes: { 'class': 'xf-callout xf-callout-success' } },
+        { name: '警告提示框', element: 'div', attributes: { 'class': 'xf-callout xf-callout-warning' } },
+        { name: '危险提示框', element: 'div', attributes: { 'class': 'xf-callout xf-callout-danger' } },
+        { name: '内容卡片', element: 'div', attributes: { 'class': 'xf-card-block' } },
+        { name: '渐变文字', element: 'span', attributes: { 'class': 'xf-tex-gradient' } },
+        { name: '发光文字', element: 'span', attributes: { 'class': 'xf-tex-glow' } },
+        { name: '荧光高亮', element: 'span', attributes: { 'class': 'xf-tex-highlight' } }
+    ];
+
+    /* ===================== 性能与资源优化 ===================== */
+    config.ignoreEmptyParagraph = true;    // 去除首尾空段落，减小 DOM 体积
+    config.undoStackSize = 50;             // 控制撤销栈深度，降低内存占用
+    config.resize_enabled = true;
+    config.disableNativeSpellChecker = false;
+
+    /* ===================== 上传地址（可按页面覆盖） ===================== */
+    // image2 上传图片；uploadfile 拖拽上传文件。需配合后端（见 php/ 目录）。
+    config.filebrowserImageUploadUrl = '/files/uploads/ckeditor/img/docs?_token=' + getCsrfToken() + '&responseType=json';
+    config.filebrowserUploadUrl = '/files/uploads/ckeditor/file/docs?_token=' + getCsrfToken() + '&responseType=json';
+
+    /* ===================== 图表 ===================== */
     config.chart_maxItems = 10;
 
-    // 设置行高
-    config.line_height="normal;0px;5px;10px;15px;0.5em;1em;1.1em;1.2em;1.3em;1.4em;1.5em;100%;120%;130%;150%;170%;180%;190%;200%;220%;250%;300%;400%;500%" ;
-
-    // image2 插件上传 图片(/files/uploads/ckeditor/img/docs);uploadfile 拖动上传插件 上传 图片(/files/uploads/docs/ckeditor/img&responseType=json);
-    config.filebrowserImageUploadUrl= '/files/uploads/ckeditor/img/docs?_token='+$('meta[name="csrf-token"]').attr('content')+'&responseType=json';
-
-    // uploadfile 拖动上传文件(/files/uploads/ckeditor/file/docs&responseType=json) 地址
-    config.filebrowserUploadUrl= '/files/uploads/ckeditor/file/docs?_token='+$('meta[name="csrf-token"]').attr('content')+'&responseType=json';
-
-    // 字数统计
+    /* ===================== 字数统计 ===================== */
     config.wordcount = {
-        // 是否要显示段落计数
         showParagraphs: true,
-        // 是否要显示字数
         showWordCount: true,
-        // 是否要显示字符计数
         showCharCount: false,
-        // 是否要将空格计为字符
         countSpacesAsChars: false,
-        // 是否在 Char Count 中包含 Html 字符
         countHTML: false,
-        // 最大允许字数，-1 默认为无限制
         maxWordCount: -1,
-        // 最大允许字符数，-1 默认为无限制
         maxCharCount: -1,
-        // 添加过滤器以在计数前添加或删除元素（请参阅 CKEDITOR.htmlParser.filter），默认值：null（无过滤器）
         filter: null
-        // filter: new CKEDITOR.htmlParser.filter({
-        //     elements: {
-        //         div: function( element ) {
-        //             if(element.attributes.class == 'mediaembed') {
-        //                 return false;
-        //             }
-        //         }
-        //     }
-        // })
     };
 
-    // 自动保存配置
+    /* ===================== 自动保存 ===================== */
     config.autosave = {
-        // A自动保存密钥 - 可以从配置中覆盖默认的自动保存密钥...
-        Savekey : 'autosave_' + window.location + "_" + $('#' + editor.name).attr('name'),
-
-        // 忽略比 X 更早的内容
-        //可以从配置中覆盖忽略自动保存内容后的默认分钟数（默认为 1440，即一天） ...
-        NotOlderThen : 1440,
-
-        // Save Content on Destroy - 设置在编辑器销毁时保存内容（默认为 false） ...
-        saveOnDestroy : true,
-
-        // 设置保存按钮在用户保存内容时通知插件，不需要临时保存 ...
-        saveDetectionSelectors : "a[href^='javascript:__doPostBack'][id*='Save'],a[id*='Cancel'],[type=submit]",
-
-        // 通知类型 - 设置是否要显示“自动保存”消息，如果是，您可以在状态栏中显示为通知或消息（默认为“notification”)
-        messageType : "notification",
-
-        // 在状态栏中显示
-        //messageType : "statusbar",
-
-        // 不显示消息
-        //messageType : "no",
-
-        // 延迟 多少秒以后进行自动保存
-        delay : 15,
-
-        // 比较对话框的默认差异类型，您可以在“sideBySide”或“inline”之间进行选择。 默认是 "sideBySide"
-        diffType : "sideBySide",
-
-        // 启用时自动加载它直接加载保存的内容
+        // 注意：CKEDITOR.editorConfig 作用域内并不存在 editor 对象，旧版写法会抛 ReferenceError；
+        // 这里改用 window.location.pathname 作为稳定且唯一的键。
+        Savekey: 'autosave_' + window.location.pathname,
+        NotOlderThen: 1440,
+        saveOnDestroy: true,
+        saveDetectionSelectors: "a[href^='javascript:__doPostBack'][id*='Save'],a[id*='Cancel'],[type=submit]",
+        messageType: 'notification',
+        delay: 15,
+        diffType: 'sideBySide',
         autoLoad: false
     };
 };

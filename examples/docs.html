@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<!--
+    xfTextEditor 完整开发文档
+    说明：本文档为本编辑器「功能最全、内容最全、接口与参数最详细」的中文文档。
+          涵盖：安装、全局配置、工具栏、插件全集、命令、事件、JavaScript API、上传机制、性能优化与常见问题。
+          左侧为固定导航（带滚动高亮），点击可跳转；所有参数与子参数均给出类型、默认值与中文说明。
+    所有注释均为中文。
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>xfTextEditor - 完整开发文档</title>
+    <link rel="stylesheet" href="css/xf.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style>
+        /* ===================== 文档专属美化样式 ===================== */
+        .xf-content h2 { scroll-margin-top: 80px; }
+        .xf-content h3 { scroll-margin-top: 80px; }
+        .xf-content h4 { scroll-margin-top: 80px; color: #1f2937; }
+
+        /* 英雄区 */
+        .xf-hero {
+            background: linear-gradient(135deg, #1f2937 0%, #2563eb 60%, #1d6fb8 100%);
+            color: #fff;
+            border-radius: 14px;
+            padding: 34px 32px;
+            margin: 18px 0 28px;
+            box-shadow: 0 10px 30px rgba(31, 41, 55, .18);
+        }
+        .xf-hero h1 { color: #fff; border: 0; margin: 0 0 8px; font-size: 30px; padding: 0; }
+        .xf-hero p { margin: 0; color: #e5edff; font-size: 15px; }
+        .xf-hero .tags { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px; }
+        .xf-hero .tags span {
+            background: rgba(255, 255, 255, .15);
+            border: 1px solid rgba(255, 255, 255, .25);
+            padding: 4px 10px; border-radius: 999px; font-size: 12.5px;
+        }
+
+        /* 章节卡片 */
+        .xf-section {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 18px 0;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, .04);
+        }
+        .xf-section > h2:first-child, .xf-content > h2:first-child { margin-top: 0; }
+
+        /* 参数徽标 */
+        .xf-badge {
+            display: inline-block;
+            font-size: 12px;
+            padding: 1px 8px;
+            border-radius: 999px;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        .xf-badge-type { background: #eef2ff; color: #4338ca; }
+        .xf-badge-def  { background: #ecfdf5; color: #047857; }
+        .xf-badge-file { background: #fef2f2; color: #b91c1c; }
+
+        /* 代码块复制按钮 */
+        .xf-code-wrap { position: relative; }
+        .xf-code-wrap .xf-copy {
+            position: absolute; top: 8px; right: 8px;
+            background: rgba(255, 255, 255, .12); color: #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, .25); border-radius: 6px;
+            padding: 3px 10px; font-size: 12px; cursor: pointer; opacity: .85;
+        }
+        .xf-code-wrap .xf-copy:hover { opacity: 1; background: rgba(255, 255, 255, .2); }
+
+        /* 提示框变体 */
+        .xf-note {
+            background: #f5f3ff; border-left: 4px solid #8b5cf6;
+            padding: 12px 16px; border-radius: 4px; margin: 16px 0;
+        }
+        .xf-ok {
+            background: #ecfdf5; border-left: 4px solid #10b981;
+            padding: 12px 16px; border-radius: 4px; margin: 16px 0;
+        }
+
+        /* 快捷键 */
+        .xf-kbd {
+            display: inline-block; background: #f1f5f9; border: 1px solid #cbd5e1;
+            border-bottom-width: 2px; border-radius: 5px; padding: 1px 7px;
+            font-size: 12px; font-family: Consolas, Menlo, monospace; color: #334155;
+        }
+
+        /* 折叠 <details> 用于 FAQ / 子参数 */
+        details.xf-detail {
+            border: 1px solid #e5e7eb; border-radius: 8px;
+            padding: 0 14px; margin: 10px 0; background: #fff;
+        }
+        details.xf-detail > summary {
+            cursor: pointer; font-weight: 600; padding: 10px 0; color: #1f2937;
+            list-style: none;
+        }
+        details.xf-detail > summary::-webkit-details-marker { display: none; }
+        details.xf-detail > summary::before { content: "▸ "; color: #1d6fb8; }
+        details.xf-detail[open] > summary::before { content: "▾ "; }
+        details.xf-detail > div { padding: 0 0 12px; }
+
+        /* 网格：特效展示 */
+        .xf-fx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin: 14px 0; }
+        .xf-fx-grid .it { border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 12px; font-size: 14px; background: #fff; }
+        .xf-fx-grid .it b { display: block; font-size: 12px; color: #6b7280; margin-bottom: 4px; font-weight: 600; }
+
+        /* 返回顶部 */
+        #xf-top {
+            position: fixed; right: 22px; bottom: 22px; z-index: 60;
+            background: #1d6fb8; color: #fff; border: 0; border-radius: 999px;
+            width: 44px; height: 44px; font-size: 18px; cursor: pointer;
+            box-shadow: 0 6px 18px rgba(29, 111, 184, .35); opacity: 0;
+            transition: opacity .2s; pointer-events: none;
+        }
+        #xf-top.show { opacity: 1; pointer-events: auto; }
+
+        /* 移动端目录开关 */
+        .xf-menu-btn { display: none; }
+        @media (max-width: 820px) {
+            .xf-menu-btn {
+                display: inline-block; margin: 12px 0;
+                background: #1d6fb8; color: #fff; border: 0; border-radius: 8px;
+                padding: 8px 14px; font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header class="xf-header">
+    <span class="brand">xfTextEditor 开发文档</span>
+    <nav>
+        <a href="index.html">首页</a>
+        <a href="simple.html">简易编辑器</a>
+        <a href="full.html">完整示例</a>
+        <a href="export.html">导出预览</a>
+        <a href="docs.html">开发文档</a>
+        <a href="php.html">上传接口</a>
+        <a href="api.html">JS API</a>
+    </nav>
+</header>
+
+<div class="xf-container xf-layout">
+
+    <!-- ============ 左侧固定导航 ============ -->
+    <aside class="xf-sidebar" id="xf-sidebar">
+        <a href="#intro">一、简介与特性</a>
+        <a href="#install">二、安装与快速开始</a>
+        <a href="#config">三、全局配置项（全集）</a>
+        <a href="#toolbar">四、工具栏配置（全集）</a>
+        <a href="#plugins">五、插件全集</a>
+        <a href="#commands">六、命令（Commands）</a>
+        <a href="#events">七、事件（Events）</a>
+        <a href="#api">八、JavaScript API</a>
+        <a href="#upload">九、上传机制与后端对接</a>
+        <a href="#perf">十、性能与资源优化</a>
+        <a href="#usage">十一、功能逐项用法（全集）</a>
+        <a href="#faq">十二、常见问题（FAQ）</a>
+    </aside>
+
+    <!-- ============ 右侧正文 ============ -->
+    <main class="xf-content">
+
+        <div class="xf-hero">
+            <h1>xfTextEditor 完整开发文档</h1>
+            <p>基于 <strong>CKEditor 4</strong> 深度定制的中文富文本编辑器，整合大量扩展插件，适用于政企后台、内容管理、在线教育等需要丰富编辑能力的场景。</p>
+            <div class="tags">
+                <span>语言 zh-cn</span>
+                <span>100% 离线可用</span>
+                <span>文字 / 段落特效</span>
+                <span>双击再次编辑</span>
+                <span>自包含 HTML 导出</span>
+                <span>工具栏吸附固定</span>
+            </div>
+        </div>
+
+        <h2 id="intro">一、简介与特性</h2>
+        <div class="xf-section">
+            <p>xfTextEditor 在 CKEditor 4 原生能力之上做了大量本地化与增强，核心特性如下：</p>
+            <ul>
+                <li>完整的中文界面（默认 <code class="xf-inline">language: 'zh-cn'</code>），中文字体 / 字号（初号～72px）/ 行高（倍数、em、rem、百分比，且大量支持小于 1 / 小于 1rem / 小于 100% 的候选值，如 0.3~0.9、0.3rem~0.9rem、50%~90%）集合。</li>
+                <li>媒体插入：视频、HTML5 音频、图表（柱状 / 折线 / 饼图 / 环形 / 极区）、二维码（均离线可用）。</li>
+                <li>代码块编辑：基于 Ace 的语法高亮代码插入。</li>
+                <li>增强图片（image2）：拖拽上传、自适应、行内 / 块级切换。</li>
+                <li>拖拽 / 粘贴上传文件（uploadfile + filetools）。</li>
+                <li>表格增强：quicktable 快速建表、行列拖拽缩放。</li>
+                <li><strong>文字 / 段落特效</strong>：渐变、发光、描边、提示框、卡片、时间轴、步骤条、进度条、统计数字、双栏、图文混排、折叠内容、按钮、分割线等 30+ 现代化网页效果，<strong>双击可再次编辑</strong>。</li>
+                <li>字数统计、自动保存（防丢稿）。</li>
+                <li>工具栏滚动吸附固定（stickytoolbar）。</li>
+                <li>增强预览 / 自包含 HTML 导出（xfpreview + XF 导出辅助，内联样式，离线可用）。</li>
+            </ul>
+        </div>
+
+        <h2 id="install">二、安装与快速开始</h2>
+        <div class="xf-section">
+            <h3>2.1 引入脚本</h3>
+            <p>将编辑器目录部署到站点后，在页面中引入核心脚本即可使用。本项目所有示例页统一使用 <code class="xf-inline">defer</code> 延迟加载，避免阻塞渲染。</p>
+            <div class="xf-code-wrap"><pre class="xf-code">&lt;!-- 核心脚本（路径相对于页面，本项目放根目录） --&gt;
+&lt;script src="ckeditor.js"&gt;&lt;/script&gt;
+
+&lt;!-- 如需 jQuery 适配器（可选） --&gt;
+&lt;script src="adapters/jquery.js"&gt;&lt;/script&gt;</pre></div>
+
+            <h3>2.2 创建编辑器（replace 方式）</h3>
+            <div class="xf-code-wrap"><pre class="xf-code">&lt;textarea id="editor1"&gt;&lt;/textarea&gt;
+&lt;script&gt;
+    CKEDITOR.replace('editor1', {
+        language: 'zh-cn',
+        height: 400
+    });
+&lt;/script&gt;</pre></div>
+
+            <h3>2.3 内联（inline）方式</h3>
+            <div class="xf-code-wrap"><pre class="xf-code">&lt;div id="editor2" contenteditable="true"&gt;可编辑内容&lt;/div&gt;
+&lt;script&gt;
+    CKEDITOR.inline('editor2');
+&lt;/script&gt;</pre></div>
+
+            <h3>2.4 使用配置文件（推荐）</h3>
+            <p>编辑器会自动加载根目录下的 <code class="xf-inline">config.js</code>（精简配置）或
+               <code class="xf-inline">config.full.js</code>（完整配置）。二者均定义
+               <code class="xf-inline">CKEDITOR.editorConfig</code> 函数，所有配置项（含自研插件
+               <code class="xf-inline">xfeffects / stickytoolbar / xfpreview</code>、<code class="xf-inline">stylesSet</code>、
+               行高、字号、上传地址、<code class="xf-inline">contentsCss</code> 等）在此函数中<strong>统一设置</strong>。</p>
+            <p>项目内所有示例页（<code class="xf-inline">examples/*.html</code>）均通过
+               <code class="xf-inline">&lt;script defer src="../config.full.js"&gt;</code> 引入完整配置，并在
+               <code class="xf-inline">js/xf.js</code> 中调用 <code class="xf-inline">XF.init(id, cfg)</code> 创建编辑器。
+               页面只需声明本页<strong>独有的插件与工具栏</strong>（如 <code class="xf-inline">extraPlugins: 'chart'</code>），
+               <code class="xf-inline">XF.init</code> 会自动复用全局配置并把页面 <code class="xf-inline">extraPlugins</code>
+               追加到全局之后（自动去重），<strong>避免重复声明导致自研插件丢失</strong>。这是「把配置抽离到配置文件、示例页统一引用」的统一实践。</p>
+            <div class="xf-code-wrap"><pre class="xf-code">&lt;!-- 示例页统一引入配置（defer 避免阻塞渲染） --&gt;
+&lt;script defer src="../ckeditor.js"&gt;&lt;/script&gt;
+&lt;script defer src="../config.full.js"&gt;&lt;/script&gt;
+&lt;script defer src="js/xf.js"&gt;&lt;/script&gt;
+
+&lt;script&gt;
+  // 页面只叠加本页独有插件；其余基础能力全部来自 config.full.js
+  XF.init('editor', {
+    height: 360,
+    extraPlugins: 'chart',
+    toolbar: [ { name: 'insert', items: [ 'Chart' ] }, '/',
+               { name: 'xfstyles', items: [ 'xfTexFx', 'xfBlockFx', 'xfEditEffect' ] } ]
+  });
+&lt;/script&gt;</pre></div>
+            <div class="xf-tip">若宿主页面需要 CSRF Token，请在 <code class="xf-inline">&lt;head&gt;</code> 中放置
+               <code class="xf-inline">&lt;meta name="csrf-token" content="..."&gt;</code>，
+               <code class="xf-inline">config.full.js</code> 与 <code class="xf-inline">xf.js</code> 会自动读取并拼接到上传地址。</div>
+        </div>
+
+        <h2 id="config">三、全局配置项（全集）</h2>
+        <div class="xf-section">
+            <p>下列为项目中可用的全局配置项（在 <code class="xf-inline">editorConfig</code> 函数中设置）。
+               <span class="xf-badge xf-badge-file">文件</span> 标注该项的默认来源；
+               <span class="xf-badge xf-badge-def">默认</span> 为 config.full.js 中的取值。
+               带「子参数」的项在第五节插件章节展开。</p>
+            <table class="xf-params">
+                <tr><th>配置项</th><th>类型</th><th>默认值</th><th>说明</th></tr>
+                <tr><td><code>language</code></td><td>String</td><td>"zh-cn"</td><td>界面语言。其它语言需保证存在对应语言包（见 <code>lang/</code>）。</td></tr>
+                <tr><td><code>width</code></td><td>String/Number</td><td>"100%"</td><td>编辑器整体宽度。</td></tr>
+                <tr><td><code>height</code></td><td>String/Number</td><td>"400"（full）/ "calc(100vh - 300px)"（精简）</td><td>编辑区高度，可为像素或 CSS 表达式。</td></tr>
+                <tr><td><code>startupMode</code></td><td>String</td><td>"wysiwyg"</td><td>初始模式：<code>wysiwyg</code>（所见即所得）或 <code>source</code>（源码）。</td></tr>
+                <tr><td><code>startupFocus</code></td><td>Boolean</td><td>false</td><td>载入时是否自动聚焦编辑区。</td></tr>
+                <tr><td><code>tabIndex</code></td><td>Number</td><td>0</td><td>Tab 键切换顺序索引。</td></tr>
+                <tr><td><code>templates</code></td><td>String</td><td>"default"</td><td>默认内容模板集（<code>templates</code> 插件）。</td></tr>
+                <tr><td><code>toolbarCanCollapse</code></td><td>Boolean</td><td>true</td><td>工具栏是否可折叠收起。</td></tr>
+                <tr><td><code>baseFloatZIndex</code></td><td>Number</td><td>10000</td><td>浮动元素（对话框等）的基础 z-index。</td></tr>
+                <tr><td><code>font_names</code></td><td>String</td><td>中文字体集合</td><td>字体下拉列表，拼接常用中文字体：<code>宋体;黑体;仿宋;楷体;隶书;幼圆;微软雅黑</code> 等。</td></tr>
+                <tr><td><code>fontSize_sizes</code></td><td>String</td><td>初号～72px</td><td>字号下拉（中文命名 + 像素）：<code>初号/56px;小初/48px;…;五号/14px;…;72/72px</code>。</td></tr>
+                <tr><td><code>line_height</code></td><td>String</td><td>see §5.2.6</td><td>行高下拉（分号分隔）：<code>normal;0.3;…;0.9;1;…;3;0.3em;…;3em;0.3rem;…;2rem;50%;…;200%</code>，含大量小于 1 / 1rem / 100% 的值。</td></tr>
+                <tr><td><code>forcePasteAsPlainText</code></td><td>Boolean</td><td>false</td><td>是否强制以纯文本方式粘贴。</td></tr>
+                <tr><td><code>pasteFromWordIgnoreFontFace</code></td><td>Boolean</td><td>true</td><td>从 Word 粘贴时是否忽略字体设置。</td></tr>
+                <tr><td><code>pasteFromWordRemoveStyle</code></td><td>Boolean</td><td>false</td><td>从 Word 粘贴时是否移除样式。</td></tr>
+                <tr><td><code>dialog_backgroundCoverOpacity</code></td><td>Number</td><td>0.5</td><td>对话框遮罩层不透明度（0.0~1.0）。</td></tr>
+                <tr><td><code>editingBlock</code></td><td>Boolean</td><td>true</td><td>是否渲染编辑区域。</td></tr>
+                <tr><td><code>find_highlight</code></td><td>Object</td><td>{element:'span', styles:{...}}</td><td>查找高亮样式。</td></tr>
+                <tr><td><code>tabSpaces</code></td><td>Number</td><td>4</td><td>Tab 键在源码模式插入的空格数。</td></tr>
+                <tr><td><code>allowedContent</code></td><td>Boolean/Rule</td><td>true</td><td>设为 <code>true</code> 关闭内容过滤，避免 span / div 等标签被误删（本项目启用）。</td></tr>
+                <tr><td><code>contentsCss</code></td><td>Array</td><td>[contents.css]</td><td>编辑区注入的内容样式表（divarea 模式必需，确保编辑区与生成网页一致）。</td></tr>
+                <tr><td><code>editorplaceholder</code></td><td>String</td><td>"请在此输入内容…"</td><td>编辑区为空时的占位提示文字。</td></tr>
+                <tr><td><code>resize_enabled</code></td><td>Boolean</td><td>true</td><td>是否允许拖拽改变编辑器高度。</td></tr>
+                <tr><td><code>ignoreEmptyParagraph</code></td><td>Boolean</td><td>true</td><td>去除首尾空段落，减小 DOM 体积。</td></tr>
+                <tr><td><code>undoStackSize</code></td><td>Number</td><td>50</td><td>撤销栈深度，降低内存占用。</td></tr>
+                <tr><td><code>disableNativeSpellChecker</code></td><td>Boolean</td><td>false</td><td>是否禁用浏览器原生拼写检查。</td></tr>
+                <tr><td><code>extraPlugins</code></td><td>String</td><td>见 §5</td><td>额外启用的插件（逗号分隔）。</td></tr>
+                <tr><td><code>removeButtons</code></td><td>String</td><td>见 §4.2</td><td>从工具栏移除的按钮名（逗号分隔）。</td></tr>
+                <tr><td><code>toolbarGroups</code></td><td>Array</td><td>见 §4.1</td><td>声明式工具栏分组。</td></tr>
+                <tr><td><code>toolbar</code></td><td>Array</td><td>—</td><td>手动精确工具栏（与 toolbarGroups 二选一）。</td></tr>
+                <tr><td><code>stylesSet</code></td><td>Array</td><td>见 §3.1</td><td>「样式」下拉的自定义样式集。</td></tr>
+                <tr><td><code>filebrowserImageUploadUrl</code></td><td>String</td><td>/files/uploads/ckeditor/img/docs?...</td><td>图片上传接口地址（image2 与拖拽图片共用）。</td></tr>
+                <tr><td><code>filebrowserUploadUrl</code></td><td>String</td><td>/files/uploads/ckeditor/file/docs?...</td><td>文件上传接口地址（uploadfile 拖拽 / 粘贴、上传按钮）。</td></tr>
+                <tr><td><code>chart_maxItems</code></td><td>Number</td><td>10</td><td>图表数据最大行数（chart 插件）。</td></tr>
+                <tr><td><code>wordcount</code></td><td>Object</td><td>见 §5.2.11</td><td>字数统计配置（子参数详见该节）。</td></tr>
+                <tr><td><code>autosave</code></td><td>Object</td><td>见 §5.2.12</td><td>自动保存配置（子参数详见该节）。</td></tr>
+            </table>
+
+            <h3>3.1 自定义样式集（stylesSet）</h3>
+            <p>「样式」下拉中可直接套用的语义样式，包含正文 / 标题 / 引用 / 各色提示框 / 卡片 / 文字特效等：</p>
+            <div class="xf-code-wrap"><pre class="xf-code">config.stylesSet = [
+  { name: '正文', element: 'p' },
+  { name: '标题 1（大）', element: 'h1' },
+  { name: '标题 2', element: 'h2' },
+  { name: '标题 3', element: 'h3' },
+  { name: '小标题', element: 'h4' },
+  { name: '引用', element: 'blockquote' },
+  { name: '代码块', element: 'pre' },
+  { name: '信息提示框', element: 'div', attributes: { 'class': 'xf-callout xf-callout-info' } },
+  { name: '成功提示框', element: 'div', attributes: { 'class': 'xf-callout xf-callout-success' } },
+  { name: '警告提示框', element: 'div', attributes: { 'class': 'xf-callout xf-callout-warning' } },
+  { name: '危险提示框', element: 'div', attributes: { 'class': 'xf-callout xf-callout-danger' } },
+  { name: '内容卡片', element: 'div', attributes: { 'class': 'xf-card-block' } },
+  { name: '渐变文字', element: 'span', attributes: { 'class': 'xf-tex-gradient' } },
+  { name: '发光文字', element: 'span', attributes: { 'class': 'xf-tex-glow' } },
+  { name: '荧光高亮', element: 'span', attributes: { 'class': 'xf-tex-highlight' } }
+];</pre></div>
+        </div>
+
+        <h2 id="toolbar">四、工具栏配置（全集）</h2>
+        <div class="xf-section">
+            <p>推荐用 <code class="xf-inline">toolbarGroups</code> 声明式分组，比逐条列出按钮更易维护。
+               本项目的分组在 <code class="xf-inline">config.full.js</code> 与 <code class="xf-inline">config.js</code> 中均已包含
+               <code class="xf-inline">xfstyles</code> 分组（承载文字 / 段落特效及「编辑效果」按钮）。</p>
+
+            <h3>4.1 分组结构（本项目默认）</h3>
+            <div class="xf-code-wrap"><pre class="xf-code">config.toolbarGroups = [
+    { name: 'document',  groups: [ 'mode', 'document', 'doctools' ] },
+    { name: 'clipboard', groups: [ 'undo', 'clipboard' ] },
+    { name: 'editing',   groups: [ 'find', 'selection', 'spellchecker', 'editing' ] },
+    { name: 'forms',     groups: [ 'forms' ] },
+    { name: 'basicstyles',groups: [ 'basicstyles', 'cleanup' ] },
+    { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+    { name: 'tools',     groups: [ 'tools' ] },
+    '/',  // 换行
+    { name: 'links',     groups: [ 'links' ] },
+    { name: 'insert',    groups: [ 'insert' ] },
+    { name: 'styles',    groups: [ 'styles' ] },
+    { name: 'colors',    groups: [ 'colors' ] },
+    { name: 'xfstyles',  groups: [ 'xfstyles' ] },   // 文字 / 段落特效 + 编辑效果
+    { name: 'others',    groups: [ 'others' ] },
+    { name: 'about',     groups: [ 'about' ] }
+];</pre></div>
+
+            <h3>4.2 各分组典型按钮</h3>
+            <p>在「移除按钮」（§4.3）后，默认工具栏实际呈现的按钮如下（扩展插件的按钮分布在
+               <code class="xf-inline">insert</code> / <code class="xf-inline">tools</code> / <code class="xf-inline">xfstyles</code> 等分组）：</p>
+            <table class="xf-params">
+                <tr><th>分组 name</th><th>典型按钮</th><th>说明</th></tr>
+                <tr><td><code>document</code></td><td>Source、Preview、Print</td><td>源码切换、预览、打印（Save/NewPage/Templates 已移除）。</td></tr>
+                <tr><td><code>clipboard</code></td><td>Undo、Redo、Cut、Copy、Paste、PasteText、PasteFromWord</td><td>撤销重做与粘贴（SelectAll 已移除）。</td></tr>
+                <tr><td><code>editing</code></td><td>Find、Replace</td><td>查找 / 替换（SpellChecker/SelectAll 已移除）。</td></tr>
+                <tr><td><code>forms</code></td><td>（隐藏）</td><td>表单按钮已被 removeButtons 移除，本分组不显示。</td></tr>
+                <tr><td><code>basicstyles</code></td><td>Bold、Italic、Underline、Strike、Subscript、Superscript、RemoveFormat</td><td>基础文字样式与清除格式。</td></tr>
+                <tr><td><code>paragraph</code></td><td>NumberedList、BulletedList、Outdent、Indent、Blockquote、JustifyLeft/Center/Right/Block</td><td>列表、缩进、引用、对齐。</td></tr>
+                <tr><td><code>tools</code></td><td>Maximize、pbckcode</td><td>最大化与代码块按钮。</td></tr>
+                <tr><td><code>links</code></td><td>Link、Unlink</td><td>超链接与取消链接。</td></tr>
+                <tr><td><code>insert</code></td><td>Image、Table、HorizontalRule、SpecialChar、quicktable、Video、html5audio、yaqr、Chart、uploadfile</td><td>插入类：图片（image2）、表格、分割线、特殊符号、快速建表、视频、音频、二维码、图表、文件上传。</td></tr>
+                <tr><td><code>styles</code></td><td>Styles、Format、Font、FontSize、lineheight</td><td>样式下拉、段落格式、字体、字号、行高。</td></tr>
+                <tr><td><code>colors</code></td><td>TextColor、BGColor</td><td>文字颜色与背景颜色。</td></tr>
+                <tr><td><code>xfstyles</code></td><td>xfTexFx、xfBlockFx、xfEditEffect</td><td><strong>文字特效、段落特效、编辑效果</strong>（xf 定制）。</td></tr>
+                <tr><td><code>others</code> / <code>about</code></td><td>（隐藏）</td><td>About 等已移除，通常不显示。</td></tr>
+            </table>
+
+            <h3>4.3 移除按钮</h3>
+            <p>通过 <code class="xf-inline">removeButtons</code> 隐藏不需要的按钮，减少界面干扰：</p>
+            <div class="xf-code-wrap"><pre class="xf-code">config.removeButtons =
+    'ShowBlocks,Save,NewPage,Templates,SelectAll,Scayt,Form,' +
+    'Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,' +
+    'HiddenField,CreateDiv,Language,Flash,Smiley,About';</pre></div>
+
+            <h3>4.4 手动精确工具栏（可选）</h3>
+            <p>若需完全掌控按钮顺序，可用 <code class="xf-inline">config.toolbar</code> 逐组列出（与 <code class="xf-inline">toolbarGroups</code> 二选一）。注意手动模式需自行包含 <code class="xf-inline">xfstyles</code> 分组，否则特效按钮不显示。</p>
+            <div class="xf-code-wrap"><pre class="xf-code">config.toolbar = [
+    { name: 'document', items: [ 'Source', '-', 'Preview', 'Print' ] },
+    { name: 'clipboard', items: [ 'Undo', 'Redo', '-', 'Cut', 'Copy', 'Paste', 'PasteText' ] },
+    { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strike', '-', 'RemoveFormat' ] },
+    '/',
+    { name: 'paragraph', items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote' ] },
+    { name: 'insert', items: [ 'Image', 'Table', 'HorizontalRule', 'SpecialChar' ] },
+    { name: 'xfstyles', items: [ 'xfTexFx', 'xfBlockFx', 'xfEditEffect' ] }
+];</pre></div>
+        </div>
+
+        <h3>4.5 工具栏工具全表（每个按钮 + 子工具逐一说明）</h3>
+        <div class="xf-section">
+            <div class="xf-note">下表中所有按钮均以 <code class="xf-inline">config.full.js</code>（完整配置，<code class="xf-inline">examples/*.html</code> 示例页实际采用）的 <code class="xf-inline">toolbarGroups</code> + <code class="xf-inline">removeButtons</code> 为准。
+                <code class="xf-inline">config.js</code> 精简版在此基础上进一步移除了 <code class="xf-inline">Source、Print、ExportPdf、Anchor、BidiLtr、BidiRtl、PageBreak、Iframe</code> 等按钮，其余一致。表中「类型」列：<strong>命令</strong>=点击直接执行；<strong>下拉</strong>=弹出菜单后再选子项（子项见 4.5.2）；<strong>颜色</strong>=颜色选择面板。</div>
+
+            <h4>4.5.1 主工具栏按钮总表</h4>
+            <table class="xf-params">
+                <tr><th>所在分组</th><th>按钮名</th><th>类型</th><th>对应命令</th><th>说明</th></tr>
+                <tr><td rowspan="3"><code>document</code></td><td>Source</td><td>命令</td><td><code>source</code></td><td>切换源码 / 所见即所得模式。</td></tr>
+                <tr><td>Preview</td><td>命令</td><td><code>preview</code></td><td>页面内同源模态浮层预览（xfpreview 增强，自包含样式、离线可用）。</td></tr>
+                <tr><td>Print</td><td>命令</td><td><code>print</code></td><td>调用浏览器打印当前内容。</td></tr>
+                <tr><td rowspan="7"><code>clipboard</code></td><td>Undo</td><td>命令</td><td><code>undo</code></td><td>撤销上一步操作。</td></tr>
+                <tr><td>Redo</td><td>命令</td><td><code>redo</code></td><td>重做已撤销的操作。</td></tr>
+                <tr><td>Cut</td><td>命令</td><td><code>cut</code></td><td>剪切选中内容到剪贴板。</td></tr>
+                <tr><td>Copy</td><td>命令</td><td><code>copy</code></td><td>复制选中内容到剪贴板。</td></tr>
+                <tr><td>Paste</td><td>命令</td><td><code>paste</code></td><td>粘贴剪贴板内容。</td></tr>
+                <tr><td>PasteText</td><td>命令</td><td><code>pasteText</code></td><td>以纯文本方式粘贴（去除格式）。</td></tr>
+                <tr><td>PasteFromWord</td><td>命令</td><td><code>pasteFromWord</code></td><td>从 Word 粘贴并自动净化冗余样式。</td></tr>
+                <tr><td rowspan="2"><code>editing</code></td><td>Find</td><td>命令</td><td><code>find</code></td><td>查找文本。</td></tr>
+                <tr><td>Replace</td><td>命令</td><td><code>replace</code></td><td>查找并替换文本。</td></tr>
+                <tr><td rowspan="8"><code>basicstyles</code></td><td>Bold</td><td>命令</td><td><code>bold</code></td><td>加粗。</td></tr>
+                <tr><td>Italic</td><td>命令</td><td><code>italic</code></td><td>斜体。</td></tr>
+                <tr><td>Underline</td><td>命令</td><td><code>underline</code></td><td>下划线。</td></tr>
+                <tr><td>Strike</td><td>命令</td><td><code>strike</code></td><td>删除线。</td></tr>
+                <tr><td>Subscript</td><td>命令</td><td><code>subscript</code></td><td>下标。</td></tr>
+                <tr><td>Superscript</td><td>命令</td><td><code>superscript</code></td><td>上标。</td></tr>
+                <tr><td>CopyFormatting</td><td>命令</td><td><code>copyFormatting</code></td><td>格式刷：复制选中内容的格式并应用到目标。</td></tr>
+                <tr><td>RemoveFormat</td><td>命令</td><td><code>removeFormat</code></td><td>清除所选内容的全部样式与格式。</td></tr>
+                <tr><td rowspan="11"><code>paragraph</code></td><td>NumberedList</td><td>命令</td><td><code>insertOrderedList</code></td><td>有序（数字）列表。</td></tr>
+                <tr><td>BulletedList</td><td>命令</td><td><code>insertUnorderedList</code></td><td>无序（项目符号）列表。</td></tr>
+                <tr><td>Outdent</td><td>命令</td><td><code>outdent</code></td><td>减少段落缩进。</td></tr>
+                <tr><td>Indent</td><td>命令</td><td><code>indent</code></td><td>增加段落缩进。</td></tr>
+                <tr><td>Blockquote</td><td>命令</td><td><code>blockquote</code></td><td>设为引用块。</td></tr>
+                <tr><td>JustifyLeft</td><td>命令</td><td><code>justifyLeft</code></td><td>左对齐。</td></tr>
+                <tr><td>JustifyCenter</td><td>命令</td><td><code>justifyCenter</code></td><td>居中对齐。</td></tr>
+                <tr><td>JustifyRight</td><td>命令</td><td><code>justifyRight</code></td><td>右对齐。</td></tr>
+                <tr><td>JustifyBlock</td><td>命令</td><td><code>justifyBlock</code></td><td>两端（左右）对齐。</td></tr>
+                <tr><td>BidiLtr</td><td>命令</td><td><code>bidiLtr</code></td><td>文字方向设为从左向右。</td></tr>
+                <tr><td>BidiRtl</td><td>命令</td><td><code>bidiRtl</code></td><td>文字方向设为从右向左。</td></tr>
+                <tr><td rowspan="2"><code>tools</code></td><td>Maximize</td><td>命令</td><td><code>maximize</code></td><td>全屏最大化编辑区。</td></tr>
+                <tr><td>pbckcode</td><td>命令</td><td><code>pbckcode</code></td><td>打开基于 Ace 的代码块对话框（语法高亮，离线可用）。</td></tr>
+                <tr><td rowspan="3"><code>links</code></td><td>Link</td><td>命令</td><td><code>link</code></td><td>插入 / 编辑超链接。</td></tr>
+                <tr><td>Unlink</td><td>命令</td><td><code>unlink</code></td><td>取消超链接。</td></tr>
+                <tr><td>Anchor</td><td>命令</td><td><code>anchor</code></td><td>插入 / 编辑锚点（页内跳转定位）。</td></tr>
+                <tr><td rowspan="10"><code>insert</code></td><td>Image</td><td>命令</td><td><code>image</code></td><td>插入增强图片（image2：上传 / 填地址 / 宽高 / 对齐 / caption）。</td></tr>
+                <tr><td>Table</td><td>命令</td><td><code>table</code></td><td>插入表格（设置行列、表头、对齐等）。</td></tr>
+                <tr><td>HorizontalRule</td><td>命令</td><td><code>horizontalrule</code></td><td>插入水平分割线（<code>&lt;hr&gt;</code>）。</td></tr>
+                <tr><td>SpecialChar</td><td>命令</td><td><code>specialchar</code></td><td>插入特殊符号（©、§、★ 等）。</td></tr>
+                <tr><td>quicktable</td><td>命令</td><td><code>quicktable</code></td><td>在网格上拖选行列数快速建表。</td></tr>
+                <tr><td>Video</td><td>命令</td><td><code>video</code></td><td>插入视频（mp4 / webm，支持 controls / autoplay / loop / muted / 宽高，双击可重编）。</td></tr>
+                <tr><td>html5audio</td><td>命令</td><td><code>html5audio</code></td><td>插入 HTML5 音频播放器（支持 controls / autoplay / 对齐）。</td></tr>
+                <tr><td>yaqr</td><td>命令</td><td><code>yaqr</code></td><td>插入二维码（widget，可设指向网址 / 尺寸 / 颜色 / 纠错级别）。</td></tr>
+                <tr><td>Chart</td><td>命令</td><td><code>chart</code></td><td>插入图表（柱状 / 折线 / 饼图 / 环形 / 极区，本地 Chart.js 离线绘制）。</td></tr>
+                <tr><td>uploadfile</td><td>命令</td><td><code>uploadfile</code></td><td>打开文件上传对话框；也支持直接拖拽 / 粘贴文件到编辑区自动上传。</td></tr>
+                <tr><td rowspan="5"><code>styles</code></td><td>Styles</td><td>下拉</td><td><code>applyStyle</code></td><td>应用自定义样式集（15 项，见 4.5.2.3）。</td></tr>
+                <tr><td>Format</td><td>下拉</td><td><code>format</code></td><td>设置段落格式（p / h1~h6 / pre / address，见 4.5.2.4）。</td></tr>
+                <tr><td>Font</td><td>下拉</td><td><code>font</code></td><td>设置字体（中文 + 英文字体，见 4.5.2.5）。</td></tr>
+                <tr><td>FontSize</td><td>下拉</td><td><code>fontSize</code></td><td>设置字号（初号~72px，见 4.5.2.6）。</td></tr>
+                <tr><td>lineheight</td><td>下拉</td><td><code>lineheight</code></td><td>设置行高（倍数 / em / rem / 百分比，含大量 &lt;1 值，见 4.5.2.7）。</td></tr>
+                <tr><td rowspan="2"><code>colors</code></td><td>TextColor</td><td>颜色</td><td><code>textColor</code></td><td>设置文字颜色（拾色面板）。</td></tr>
+                <tr><td>BGColor</td><td>颜色</td><td><code>bgColor</code></td><td>设置文字背景颜色。</td></tr>
+                <tr><td rowspan="3"><code>xfstyles</code></td><td>xfTexFx</td><td>下拉</td><td><code>xfTexFx</code></td><td>文字特效（14 种子工具，见 4.5.2.1）。</td></tr>
+                <tr><td>xfBlockFx</td><td>下拉</td><td><code>xfBlockFx</code></td><td>段落特效（26 种子工具，见 4.5.2.2）。</td></tr>
+                <tr><td>xfEditEffect</td><td>命令</td><td><code>xfEditEffect</code></td><td>再次编辑选中的特效（等同双击特效元素）。</td></tr>
+                <tr><td><code>others</code> / <code>about</code></td><td colspan="4">（已通过 <code class="xf-inline">removeButtons</code> 隐藏，不显示）</td></tr>
+            </table>
+
+            <h4>4.5.2 下拉 / 菜单型工具的「子工具」明细</h4>
+            <p>以下为 4.5.1 中标记为「下拉」的按钮内部每个子项（子工具）的完整枚举。</p>
+
+            <h5>4.5.2.1 xfTexFx（文字特效下拉）— 14 种子工具</h5>
+            <table class="xf-params">
+                <tr><th>序号</th><th>子工具（效果名）</th><th>class</th><th>视觉效果</th></tr>
+                <tr><td>1</td><td>渐变文字</td><td><code>xf-tex-gradient</code></td><td>多色线性渐变填充文字。</td></tr>
+                <tr><td>2</td><td>发光文字</td><td><code>xf-tex-glow</code></td><td>蓝色辉光描边，夜间感。</td></tr>
+                <tr><td>3</td><td>描边文字</td><td><code>xf-tex-stroke</code></td><td>深色描边镂空字。</td></tr>
+                <tr><td>4</td><td>荧光高亮</td><td><code>xf-tex-highlight</code></td><td>底部荧光黄高亮（马克笔）。</td></tr>
+                <tr><td>5</td><td>波浪下划线</td><td><code>xf-tex-wave</code></td><td>红色波浪下划线。</td></tr>
+                <tr><td>6</td><td>彩色文字</td><td><code>xf-tex-colorful</code></td><td>彩虹渐变文字。</td></tr>
+                <tr><td>7</td><td>竖排文字</td><td><code>xf-tex-vertical</code></td><td>纵向排布（古风 / 标题）。</td></tr>
+                <tr><td>8</td><td>立体阴影</td><td><code>xf-tex-shadow</code></td><td>右下投影立体字。</td></tr>
+                <tr><td>9</td><td>霓虹呼吸</td><td><code>xf-tex-neon</code></td><td>品红 / 青色霓虹呼吸动画。</td></tr>
+                <tr><td>10</td><td>等宽代码</td><td><code>xf-tex-mono</code></td><td>深色底等宽字体（行内代码）。</td></tr>
+                <tr><td>11</td><td>印章红章</td><td><code>xf-tex-stamp</code></td><td>红色描边、微旋转，像盖章。</td></tr>
+                <tr><td>12</td><td>浮雕文字</td><td><code>xf-tex-emboss</code></td><td>浅灰浮雕质感。</td></tr>
+                <tr><td>13</td><td>重点下划线</td><td><code>xf-tex-underline2</code></td><td>蓝色加粗下划线。</td></tr>
+                <tr><td>14</td><td>模糊文字</td><td><code>xf-tex-blur</code></td><td>轻微高斯模糊，朦胧美。</td></tr>
+            </table>
+
+            <h5>4.5.2.2 xfBlockFx（段落特效下拉）— 26 种子工具</h5>
+            <p><strong>包裹 / 转换型（13 种，有选区则包裹选区、无选区则插入模板）：</strong></p>
+            <table class="xf-params">
+                <tr><th>序号</th><th>子工具（效果名）</th><th>class</th><th>视觉效果</th></tr>
+                <tr><td>1</td><td>信息提示框</td><td><code>xf-callout xf-callout-info</code></td><td>蓝色左边框信息提示。</td></tr>
+                <tr><td>2</td><td>成功提示框</td><td><code>xf-callout xf-callout-success</code></td><td>绿色成功提示。</td></tr>
+                <tr><td>3</td><td>警告提示框</td><td><code>xf-callout xf-callout-warning</code></td><td>黄色警告提示。</td></tr>
+                <tr><td>4</td><td>危险提示框</td><td><code>xf-callout xf-callout-danger</code></td><td>红色危险提示。</td></tr>
+                <tr><td>5</td><td>内容卡片</td><td><code>xf-card-block</code></td><td>带阴影圆角的图文卡片。</td></tr>
+                <tr><td>6</td><td>居中容器</td><td><code>xf-center</code></td><td>浅灰圆角居中容器。</td></tr>
+                <tr><td>7</td><td>优雅引用</td><td><code>xf-quote-fancy</code></td><td>渐变底 + 引号装饰引用。</td></tr>
+                <tr><td>8</td><td>大字引言</td><td><code>xf-pullquote</code></td><td>放大加粗引言块。</td></tr>
+                <tr><td>9</td><td>首字下沉</td><td><code>xf-dropcap</code></td><td>段落首字放大下沉。</td></tr>
+                <tr><td>10</td><td>高亮重点</td><td><code>xf-hlbox</code></td><td>左侧黄边高亮块。</td></tr>
+                <tr><td>11</td><td>注释说明</td><td><code>xf-note</code></td><td>「注」标记 + 灰底说明。</td></tr>
+                <tr><td>12</td><td>横幅通知</td><td><code>xf-banner</code></td><td>蓝色渐变横幅 + 铃铛图标。</td></tr>
+                <tr><td>13</td><td>双栏布局</td><td><code>xf-cols</code></td><td>左右两栏并列卡片。</td></tr>
+            </table>
+            <p><strong>结构性插入型（13 种，始终在光标处插入预定义组件）：</strong></p>
+            <table class="xf-params">
+                <tr><th>序号</th><th>子工具（效果名）</th><th>class / 标签</th><th>视觉效果</th></tr>
+                <tr><td>14</td><td>渐变分割线</td><td><code>hr.xf-divider</code></td><td>中间渐变、两端透明的分隔线。</td></tr>
+                <tr><td>15</td><td>虚线分割线</td><td><code>hr.xf-divider-dashed</code></td><td>虚线分隔。</td></tr>
+                <tr><td>16</td><td>双线分割线</td><td><code>hr.xf-divider-double</code></td><td>双实线分隔。</td></tr>
+                <tr><td>17</td><td>圆点分割线</td><td><code>hr.xf-divider-dots</code></td><td>圆点分隔。</td></tr>
+                <tr><td>18</td><td>徽章行</td><td><code>p.xf-badges</code></td><td>状态徽章（默认 / 成功 / 警告 / 危险）。</td></tr>
+                <tr><td>19</td><td>标签云</td><td><code>p.xf-tags</code></td><td>圆角标签集合。</td></tr>
+                <tr><td>20</td><td>步骤条</td><td><code>xf-steps</code></td><td>序号 + 连接线步骤指示。</td></tr>
+                <tr><td>21</td><td>时间轴</td><td><code>xf-timeline</code></td><td>纵向时间节点列表。</td></tr>
+                <tr><td>22</td><td>进度条</td><td><code>xf-progress-row</code></td><td>渐变进度条 + 百分比标签。</td></tr>
+                <tr><td>23</td><td>统计数字</td><td><code>xf-stats</code></td><td>大号数字 + 标签卡片组。</td></tr>
+                <tr><td>24</td><td>图文混排</td><td><code>xf-media</code></td><td>左图标右文字的功能项。</td></tr>
+                <tr><td>25</td><td>折叠内容</td><td><code>details.xf-spoiler</code></td><td>点击展开 / 收起的折叠区。</td></tr>
+                <tr><td>26</td><td>按钮</td><td><code>a.xf-btn</code></td><td>蓝色圆角按钮。</td></tr>
+            </table>
+
+            <h5>4.5.2.3 Styles（样式下拉）— 15 种子工具</h5>
+            <table class="xf-params">
+                <tr><th>子工具（样式名）</th><th>作用元素</th><th>说明</th></tr>
+                <tr><td>正文</td><td><code>p</code></td><td>普通段落正文。</td></tr>
+                <tr><td>标题 1（大）</td><td><code>h1</code></td><td>一级大标题。</td></tr>
+                <tr><td>标题 2</td><td><code>h2</code></td><td>二级标题。</td></tr>
+                <tr><td>标题 3</td><td><code>h3</code></td><td>三级标题。</td></tr>
+                <tr><td>小标题</td><td><code>h4</code></td><td>四级小标题。</td></tr>
+                <tr><td>引用</td><td><code>blockquote</code></td><td>引用段落。</td></tr>
+                <tr><td>代码块</td><td><code>pre</code></td><td>预格式化代码块。</td></tr>
+                <tr><td>信息提示框</td><td><code>div.xf-callout-info</code></td><td>蓝色提示框。</td></tr>
+                <tr><td>成功提示框</td><td><code>div.xf-callout-success</code></td><td>绿色提示框。</td></tr>
+                <tr><td>警告提示框</td><td><code>div.xf-callout-warning</code></td><td>黄色提示框。</td></tr>
+                <tr><td>危险提示框</td><td><code>div.xf-callout-danger</code></td><td>红色提示框。</td></tr>
+                <tr><td>内容卡片</td><td><code>div.xf-card-block</code></td><td>卡片容器。</td></tr>
+                <tr><td>渐变文字</td><td><code>span.xf-tex-gradient</code></td><td>渐变文字样式。</td></tr>
+                <tr><td>发光文字</td><td><code>span.xf-tex-glow</code></td><td>发光文字样式。</td></tr>
+                <tr><td>荧光高亮</td><td><code>span.xf-tex-highlight</code></td><td>荧光高亮文字样式。</td></tr>
+            </table>
+
+            <h5>4.5.2.4 Format（段落格式下拉）— 子工具</h5>
+            <table class="xf-params">
+                <tr><th>子工具（格式）</th><th>元素</th><th>说明</th></tr>
+                <tr><td>段落</td><td><code>p</code></td><td>普通段落（默认）。</td></tr>
+                <tr><td>标题 1 ~ 6</td><td><code>h1</code>~<code>h6</code></td><td>六个级别的标题。</td></tr>
+                <tr><td>已编排格式</td><td><code>pre</code></td><td>预格式化（等宽、保留空白）。</td></tr>
+                <tr><td>地址</td><td><code>address</code></td><td>地址 / 联系信息块（斜体）。</td></tr>
+            </table>
+
+            <h5>4.5.2.5 Font（字体下拉）— 子工具</h5>
+            <p>候选字体来自 <code class="xf-inline">config.font_names</code>（以实际配置为准），包含中文字体与外文字体，例如：</p>
+            <table class="xf-params">
+                <tr><th>子工具（字体）</th><th>说明</th></tr>
+                <tr><td>宋体</td><td>中文衬线（Serif）正文字体。</td></tr>
+                <tr><td>黑体</td><td>中文无衬线粗体感字体。</td></tr>
+                <tr><td>仿宋</td><td>中文公文常用字体。</td></tr>
+                <tr><td>楷体</td><td>中文手写楷体风格。</td></tr>
+                <tr><td>隶书</td><td>中文隶书风格。</td></tr>
+                <tr><td>幼圆</td><td>中文圆体风格。</td></tr>
+                <tr><td>微软雅黑</td><td>中文无衬线现代字体。</td></tr>
+                <tr><td>Arial / Tahoma / Verdana 等</td><td>系统英文字体（随 font_names 配置增减）。</td></tr>
+            </table>
+
+            <h5>4.5.2.6 FontSize（字号下拉）— 子工具</h5>
+            <p>候选值来自 <code class="xf-inline">config.fontSize_sizes</code>（中文命名 + 像素），共 31 项：</p>
+            <table class="xf-params">
+                <tr><th>显示名</th><th>像素值</th><th>显示名</th><th>像素值</th></tr>
+                <tr><td>初号</td><td>56px</td><td>小五</td><td>12px</td></tr>
+                <tr><td>小初</td><td>48px</td><td>六号</td><td>10px</td></tr>
+                <tr><td>一号</td><td>34px</td><td>8</td><td>8px</td></tr>
+                <tr><td>二号</td><td>28px</td><td>9</td><td>9px</td></tr>
+                <tr><td>三号</td><td>24px</td><td>10</td><td>10px</td></tr>
+                <tr><td>小三</td><td>20px</td><td>11</td><td>11px</td></tr>
+                <tr><td>四号</td><td>18px</td><td>12</td><td>12px</td></tr>
+                <tr><td>小四</td><td>16px</td><td>14</td><td>14px</td></tr>
+                <tr><td>五号</td><td>14px</td><td>16</td><td>16px</td></tr>
+                <tr><td>—</td><td>—</td><td>18</td><td>18px</td></tr>
+                <tr><td>—</td><td>—</td><td>20</td><td>20px</td></tr>
+                <tr><td>—</td><td>—</td><td>22</td><td>22px</td></tr>
+                <tr><td>—</td><td>—</td><td>24</td><td>24px</td></tr>
+                <tr><td>—</td><td>—</td><td>26</td><td>26px</td></tr>
+                <tr><td>—</td><td>—</td><td>28</td><td>28px</td></tr>
+                <tr><td>—</td><td>—</td><td>32</td><td>32px</td></tr>
+                <tr><td>—</td><td>—</td><td>36</td><td>36px</td></tr>
+                <tr><td>—</td><td>—</td><td>40</td><td>40px</td></tr>
+                <tr><td>—</td><td>—</td><td>48</td><td>48px</td></tr>
+                <tr><td>—</td><td>—</td><td>56</td><td>56px</td></tr>
+                <tr><td>—</td><td>—</td><td>64</td><td>64px</td></tr>
+                <tr><td>—</td><td>—</td><td>72</td><td>72px</td></tr>
+            </table>
+
+            <h5>4.5.2.7 lineheight（行高下拉）— 子工具</h5>
+            <p>候选值来自 <code class="xf-inline">config.line_height</code>，按「倍数 → em → rem → 百分比」分组，共 50 项（行高作用于块级元素，含大量 &lt;1 / &lt;1rem / &lt;100% 的值，均可真实生效）：</p>
+            <table class="xf-params">
+                <tr><th>分组</th><th>候选值（每个即一个子工具）</th></tr>
+                <tr><td>倍数（含 &lt;1）</td><td><code>normal;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1;1.2;1.4;1.5;1.6;1.8;2;2.5;3</code></td></tr>
+                <tr><td>em（含 &lt;1em）</td><td><code>0.3em;0.5em;0.6em;0.7em;0.8em;0.9em;1em;1.2em;1.5em;1.75em;2em;2.5em;3em</code></td></tr>
+                <tr><td>rem（含 &lt;1rem）</td><td><code>0.3rem;0.5rem;0.6rem;0.7rem;0.8rem;0.9rem;1rem;1.5rem;2rem</code></td></tr>
+                <tr><td>百分比（含 &lt;100%）</td><td><code>50%;60%;70%;80%;90%;100%;120%;150%;200%</code></td></tr>
+            </table>
+        </div>
+
+        <h2 id="plugins">五、插件全集</h2>
+        <div class="xf-section">
+            <p>本编辑器插件分为「原生 CKEditor 4 插件」与「xf 定制扩展插件」两类。</p>
+
+            <h3>5.1 原生插件（节选常用）</h3>
+            <table class="xf-params">
+                <tr><th>插件</th><th>按钮/命令</th><th>说明</th></tr>
+                <tr><td>basicstyles</td><td>Bold/Italic/Underline/Strike/Subscript/Superscript</td><td>基础文字样式。</td></tr>
+                <tr><td>justify</td><td>JustifyLeft/Center/Right/Block</td><td>段落对齐。</td></tr>
+                <tr><td>list</td><td>NumberedList/BulletedList</td><td>有序/无序列表。</td></tr>
+                <tr><td>indentlist / indentblock</td><td>Outdent/Indent/Blockquote</td><td>缩进与引用。</td></tr>
+                <tr><td>link</td><td>Link/Unlink/Anchor</td><td>超链接与锚点。</td></tr>
+                <tr><td>font</td><td>Font/FontSize</td><td>字体与字号。</td></tr>
+                <tr><td>colorbutton</td><td>TextColor/BGColor</td><td>文字与背景颜色。</td></tr>
+                <tr><td>table + tabletools</td><td>Table/Rowspan/Columns</td><td>表格与单元格属性。</td></tr>
+                <tr><td>image2</td><td>Image</td><td>增强图片（替代原生 image）。</td></tr>
+                <tr><td>find</td><td>Find/Replace</td><td>查找替换。</td></tr>
+                <tr><td>pastefromword</td><td>（粘贴时自动净化）</td><td>Word 内容粘贴净化。</td></tr>
+                <tr><td>sourcearea</td><td>Source</td><td>源码模式切换。</td></tr>
+                <tr><td>maximize</td><td>Maximize</td><td>最大化。</td></tr>
+                <tr><td>undo</td><td>Undo/Redo</td><td>撤销重做。</td></tr>
+                <tr><td>specialchar</td><td>SpecialChar</td><td>特殊符号。</td></tr>
+                <tr><td>templates</td><td>Templates</td><td>内容模板。</td></tr>
+                <tr><td>preview / print</td><td>Preview/Print</td><td>预览与打印（preview 已被 xfpreview 增强）。</td></tr>
+                <tr><td>exportpdf</td><td>ExportPdf</td><td>导出 PDF（需后端服务）。</td></tr>
+            </table>
+
+            <h3>5.2 xf 定制扩展插件</h3>
+
+            <h4>5.2.1 video（视频）</h4>
+            <ul>
+                <li>按钮：<code class="xf-inline">Video</code>；命令：<code class="xf-inline">video</code>。</li>
+                <li>依赖：dialog、fakeobjects；语言：zh-cn。</li>
+                <li>支持的视频属性：<code>autoplay</code>、<code>controls</code>、<code>height</code>、<code>loop</code>、<code>muted</code>、<code>preload</code>、<code>src</code>、<code>width</code>。</li>
+                <li>双击占位符可重新编辑；右键菜单提供「视频」操作。</li>
+            </ul>
+
+            <h4>5.2.2 html5audio（音频）</h4>
+            <ul>
+                <li>基于 widget，按钮：<code class="xf-inline">html5audio</code>；命令：<code class="xf-inline">html5audio</code>。</li>
+                <li>支持属性：<code>src</code>、<code>controls</code>、<code>controlslist</code>（为空则允许下载）、<code>autoplay</code>、对齐方式。</li>
+            </ul>
+
+            <h4>5.2.3 chart（图表）</h4>
+            <ul>
+                <li>按钮：<code class="xf-inline">Chart</code>；基于本地 Chart.js（离线可用）。</li>
+                <li>子参数：</li>
+            </ul>
+            <table class="xf-params">
+                <tr><th>子参数</th><th>类型</th><th>默认</th><th>说明</th></tr>
+                <tr><td><code>chart_maxItems</code></td><td>Number</td><td>10</td><td>图表数据最大行数。</td></tr>
+                <tr><td><code>chart_height</code></td><td>Number</td><td>300</td><td>图表高度（像素）。</td></tr>
+                <tr><td><code>chart_colors</code></td><td>Array</td><td>内置</td><td>调色板（十六进制颜色数组）。</td></tr>
+                <tr><td><code>chart_configBar</code></td><td>Object</td><td>{animation:false}</td><td>柱状图 Chart.js 配置。</td></tr>
+                <tr><td><code>chart_configLine</code></td><td>Object</td><td>{animation:false}</td><td>折线图配置。</td></tr>
+                <tr><td><code>chart_configPie</code></td><td>Object</td><td>{animateRotate:false}</td><td>饼图配置。</td></tr>
+                <tr><td><code>chart_configDoughnut</code></td><td>Object</td><td>{animateRotate:false}</td><td>环形图配置。</td></tr>
+                <tr><td><code>chart_configPolarArea</code></td><td>Object</td><td>{animateRotate:false}</td><td>极区图配置。</td></tr>
+            </table>
+
+            <h4>5.2.4 yaqr（二维码）</h4>
+            <ul>
+                <li>基于 widget，按钮：<code class="xf-inline">yaqr</code>。</li>
+                <li>子参数（<code class="xf-inline">config.yaqr</code>）：</li>
+            </ul>
+            <table class="xf-params">
+                <tr><th>子参数</th><th>默认</th><th>说明</th></tr>
+                <tr><td><code>defQrUrl</code></td><td>https://weisifang.com/</td><td>二维码指向网址。</td></tr>
+                <tr><td><code>defTargetBlank</code></td><td>true</td><td>新窗口打开。</td></tr>
+                <tr><td><code>defQRSize</code></td><td>"100px"</td><td>图片尺寸。</td></tr>
+                <tr><td><code>defCellSize</code></td><td>6</td><td>码点像素。</td></tr>
+                <tr><td><code>defMargin</code></td><td>10</td><td>边距。</td></tr>
+                <tr><td><code>colorPt / colorBg</code></td><td>#000000 / #ffffff</td><td>码点/背景色。</td></tr>
+                <tr><td><code>borderWidth / borderColor</code></td><td>2 / #000000</td><td>边框。</td></tr>
+                <tr><td><code>correctionLevel</code></td><td>"Q"</td><td>纠错级别 L/M/Q/H。</td></tr>
+            </table>
+
+            <h4>5.2.5 pbckcode（代码块）</h4>
+            <ul>
+                <li>按钮：<code class="xf-inline">pbckcode</code>；基于 Ace 编辑器。</li>
+                <li>子参数（<code class="xf-inline">config.pbckcode</code>）：<code>theme</code>（默认 textmate）、<code>modes</code>（语言列表）、<code>js</code>（Ace 路径）、<code>tabSize</code>（默认 4）、<code>highlightActiveLine</code>（默认 true）等。</li>
+                <li>注意：依赖 Ace 资源，内网需改为本地路径。</li>
+            </ul>
+
+            <h4>5.2.6 lineheight（行高）</h4>
+            <ul>
+                <li>在「样式」分组提供行高下拉；命令：<code class="xf-inline">lineheight</code>。</li>
+                <li>子参数：<code class="xf-inline">line_height</code>（分号分隔的行高值列表，按「倍数 → em → rem → 百分比」分组）：<code>normal;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1;1.2;1.4;1.5;1.6;1.8;2;2.5;3;0.3em;0.5em;0.6em;0.7em;0.8em;0.9em;1em;1.2em;1.5em;1.75em;2em;2.5em;3em;0.3rem;0.5rem;0.6rem;0.7rem;0.8rem;0.9rem;1rem;1.5rem;2rem;50%;60%;70%;80%;90%;100%;120%;150%;200%</code>。</li>
+                <li><strong>小于 1 / 小于 1rem / 小于 100% 的行高为何现在能生效？</strong> 行高样式已改为作用于<strong>块级元素</strong>（<code class="xf-inline">p</code>/<code class="xf-inline">div</code>/<code class="xf-inline">h1~6</code>/<code class="xf-inline">li</code>/<code class="xf-inline">td</code> 等）而非内联 <code class="xf-inline">&lt;span&gt;</code>。因为一行的行盒高度取该行所有内联盒 <code class="xf-inline">line-height</code> 的最大值、且块级元素自身的 strut 也参与计算，套在 <code class="xf-inline">span</code> 上的小值会被块的默认行高「吃掉」而看不出效果；写在块级元素上则任何取值都能真实改变行间距。</li>
+            </ul>
+
+            <h4>5.2.7 image2（增强图片）</h4>
+            <ul>
+                <li>替代原生 image，按钮：<code class="xf-inline">Image</code>（启用 image2 时覆盖原图按钮）。</li>
+                <li>支持：拖拽上传、响应式、caption 标题、行内/块级切换。</li>
+                <li>上传地址来自 <code class="xf-inline">filebrowserImageUploadUrl</code>。</li>
+            </ul>
+
+            <h4>5.2.8 uploadfile + filetools（拖拽 / 粘贴上传）</h4>
+            <ul>
+                <li>拖拽或粘贴文件到编辑区时自动上传，按钮：<code class="xf-inline">uploadfile</code>。</li>
+                <li>上传地址来自 <code class="xf-inline">filebrowserUploadUrl</code>。</li>
+                <li>依赖 uploadwidget、link、filetools。</li>
+            </ul>
+
+            <h4>5.2.9 quicktable（快速建表）</h4>
+            <ul>
+                <li>按钮：<code class="xf-inline">quicktable</code>；点击后弹出网格可视化选择行列数。</li>
+            </ul>
+
+            <h4>5.2.10 tableresizerowandcolumn / imageresizerowandcolumn</h4>
+            <ul>
+                <li>提供表格行列拖拽缩放、图片随表格缩放能力（无独立按钮，启用即生效）。</li>
+            </ul>
+
+            <h4>5.2.11 wordcount（字数统计）</h4>
+            <ul>
+                <li>状态栏实时显示字数 / 段落 / 字符数。</li>
+                <li>子参数（<code class="xf-inline">config.wordcount</code>）：</li>
+            </ul>
+            <table class="xf-params">
+                <tr><th>子参数</th><th>类型</th><th>默认</th><th>说明</th></tr>
+                <tr><td><code>showParagraphs</code></td><td>Boolean</td><td>true</td><td>是否显示段落数。</td></tr>
+                <tr><td><code>showWordCount</code></td><td>Boolean</td><td>true</td><td>是否显示词数。</td></tr>
+                <tr><td><code>showCharCount</code></td><td>Boolean</td><td>false</td><td>是否显示字符数。</td></tr>
+                <tr><td><code>countSpacesAsChars</code></td><td>Boolean</td><td>false</td><td>空格是否计入字符数。</td></tr>
+                <tr><td><code>countHTML</code></td><td>Boolean</td><td>false</td><td>是否把 HTML 标签计入字符数。</td></tr>
+                <tr><td><code>maxWordCount</code></td><td>Number</td><td>-1</td><td>最大词数限制（-1 表示不限制）。</td></tr>
+                <tr><td><code>maxCharCount</code></td><td>Number</td><td>-1</td><td>最大字符数限制（-1 表示不限制）。</td></tr>
+                <tr><td><code>filter</code></td><td>Function/Null</td><td>null</td><td>自定义计数过滤函数。</td></tr>
+            </table>
+
+            <h4>5.2.12 autosave（自动保存）</h4>
+            <ul>
+                <li>基于 localStorage 定时缓存，刷新 / 误关页面后可恢复。</li>
+                <li>子参数（<code class="xf-inline">config.autosave</code>）：</li>
+            </ul>
+            <table class="xf-params">
+                <tr><th>子参数</th><th>类型</th><th>默认</th><th>说明</th></tr>
+                <tr><td><code>Savekey</code></td><td>String</td><td>'autosave_' + pathname</td><td>存储键，必须页面唯一；本项目改用 <code>window.location.pathname</code> 生成，避免旧版 editor 未定义报错。</td></tr>
+                <tr><td><code>NotOlderThen</code></td><td>Number</td><td>1440</td><td>缓存有效期（分钟），超过则不再提示恢复。</td></tr>
+                <tr><td><code>saveOnDestroy</code></td><td>Boolean</td><td>true</td><td>销毁编辑器时是否保存。</td></tr>
+                <tr><td><code>saveDetectionSelectors</code></td><td>String</td><td>见源码</td><td>触发保存的按钮选择器。</td></tr>
+                <tr><td><code>messageType</code></td><td>String</td><td>'notification'</td><td>提示方式：notification / console。</td></tr>
+                <tr><td><code>delay</code></td><td>Number</td><td>15</td><td>自动保存间隔（秒）。</td></tr>
+                <tr><td><code>diffType</code></td><td>String</td><td>'sideBySide'</td><td>差异展示方式。</td></tr>
+                <tr><td><code>autoLoad</code></td><td>Boolean</td><td>false</td><td>是否自动加载缓存（false 时需用户确认）。</td></tr>
+            </table>
+
+            <h4>5.2.13 editorplaceholder（占位提示）</h4>
+            <ul>
+                <li>编辑区为空时显示 <code class="xf-inline">editorplaceholder</code> 配置的提示文字。</li>
+            </ul>
+
+            <h4>5.2.14 divarea（div 渲染模式）</h4>
+            <ul>
+                <li>用 <code class="xf-inline">&lt;div&gt;</code> 而非 <code class="xf-inline">&lt;iframe&gt;</code> 渲染编辑区，便于与父页面共享 CSS，推荐启用。</li>
+                <li>注意：divarea 模式不会自动注入 <code class="xf-inline">contents.css</code>，因此本项目通过 <code class="xf-inline">config.contentsCss</code> 与 <code class="xf-inline">xfeffects</code> 的 <code class="xf-inline">editor.addCss()</code> 双层注入特效样式，确保编辑区与生成网页一致。</li>
+            </ul>
+
+            <h4>5.2.15 xfeffects（文字 / 段落 / 布局特效）</h4>
+            <ul>
+                <li>按钮：<code class="xf-inline">xfTexFx</code>（文字特效）、<code class="xf-inline">xfBlockFx</code>（段落特效），位于工具栏「xfstyles」分组；<code class="xf-inline">xfEditEffect</code>（编辑效果）按钮用于再次编辑已有特效。</li>
+                <li>实现：所有特效均为「语义化 class + 纯 CSS」，通过 <code class="xf-inline">editor.addCss()</code> 注入编辑器文档，无任何外部依赖，100% 离线可用；样式字符串同时挂到 <code class="xf-inline">CKEDITOR.tools.xfEffectsCss</code> 供预览 / 导出复用。</li>
+                <li><strong>再次编辑（双击）</strong>：在编辑区内<strong>双击</strong>任意已插入的文字特效或段落特效，会像双击图片一样弹出对应编辑窗口——文字特效弹出 <code class="xf-inline">xfTexEdit</code> 对话框可重新选择 / 清除特效；段落特效弹出 <code class="xf-inline">xfBlockEdit</code> 对话框可修改内容与提示框变体。也可选中效果后点击工具栏「编辑效果」按钮（命令 <code class="xf-inline">xfEditEffect</code>）触发。</li>
+            </ul>
+            <p><strong>文字特效（共 14 种，选中文字后点击应用，再次点击取消）：</strong></p>
+            <div class="xf-fx-grid">
+                <div class="it"><b>xf-tex-gradient</b>渐变文字</div>
+                <div class="it"><b>xf-tex-glow</b>发光文字</div>
+                <div class="it"><b>xf-tex-stroke</b>描边文字</div>
+                <div class="it"><b>xf-tex-highlight</b>荧光高亮</div>
+                <div class="it"><b>xf-tex-wave</b>波浪下划线</div>
+                <div class="it"><b>xf-tex-colorful</b>彩色文字</div>
+                <div class="it"><b>xf-tex-vertical</b>竖排文字</div>
+                <div class="it"><b>xf-tex-shadow</b>立体阴影</div>
+                <div class="it"><b>xf-tex-neon</b>霓虹呼吸</div>
+                <div class="it"><b>xf-tex-mono</b>等宽代码</div>
+                <div class="it"><b>xf-tex-stamp</b>印章红章</div>
+                <div class="it"><b>xf-tex-emboss</b>浮雕文字</div>
+                <div class="it"><b>xf-tex-underline2</b>重点下划线</div>
+                <div class="it"><b>xf-tex-blur</b>模糊文字</div>
+            </div>
+            <p><strong>段落特效：</strong></p>
+            <ul>
+                <li><strong>包裹 / 转换型（有选区则包裹选区，无选区则插入模板，共 13 种）</strong>：信息提示框、成功提示框、警告提示框、危险提示框、内容卡片、居中容器、优雅引用、大字引言、首字下沉、高亮重点、注释说明、横幅通知、双栏布局。</li>
+                <li><strong>结构性插入型（始终插入模板，共 13 种）</strong>：渐变 / 虚线 / 双线 / 圆点分割线、徽章行、标签云、步骤条、时间轴、进度条、统计数字、图文混排、折叠内容、按钮。</li>
+            </ul>
+
+            <h4>5.2.16 stickytoolbar（工具栏吸附固定）</h4>
+            <ul>
+                <li>无独立按钮，启用即生效。页面滚动时，若编辑器工具栏被屏幕顶部遮挡，则自动以 <code class="xf-inline">position: sticky</code> 固定在顶部并加阴影；回滚后恢复。</li>
+                <li>自动读取页面固定头（<code class="xf-inline">.xf-header</code>）高度以避免遮挡，销毁时解绑监听，避免内存泄漏。</li>
+            </ul>
+
+            <h4>5.2.17 xfpreview（增强预览 / 自包含导出）</h4>
+            <ul>
+                <li>拦截原生 <code class="xf-inline">preview</code> 命令，<strong>默认以页面内同源模态浮层</strong>（iframe srcdoc）渲染当前内容，<strong>绝不新开浏览器标签页 / 跳转到其它窗口</strong>；浮层内提供「新窗口打开」按钮，可在显式用户操作下再开独立窗口，符合浏览器弹出策略。</li>
+                <li>预览页样式<strong>全部内联</strong>，不依赖任何外部 js / css 文件；统一复用 <code class="xf-inline">examples/js/xf.js</code> 中维护的 <code class="xf-inline">XF.getStandaloneCss()</code>（与导出、<code class="xf-inline">getHtml</code> 同一来源），确保预览、导出、编辑器三者展示完全一致。</li>
+                <li><strong>资源完整 / 不丢失</strong>：导出与预览会把图标、图片、音视频等<strong>相对地址自动改写为绝对地址</strong>（CKEditor 自带资源一律基于「当前编辑器运行的域名前缀」计算绝对地址，禁用任何第三方 CDN），因此预览 / 导出的网页中：编辑器支持的图标、表情、排版样式与展示效果（含 xfeffects 特效、图表实时绘制 / 静态化、视频、音频、二维码等）均可<strong>完整、一致</strong>地呈现，不再出现「编辑器里有、预览 / getHtml 里丢」的不对称。</li>
+                <li><strong>跨域 / 弹窗安全</strong>：预览浮层使用同源 srcdoc，相对资源可正常加载，且与编辑器内展示完全一致，彻底避免 <code class="xf-inline">Blocked a frame ... cross-origin</code> 的 SecurityError 与「跳出当前网页 / 跳转到其它窗口」的异常。</li>
+                <li>预览模态浮层顶部工具条提供「打印」「新窗口打开」「下载 HTML」（保存为自包含 .html 文件）「复制 HTML」（生成自包含 HTML，可直接粘贴到任意页面独立呈现）与「关闭」操作。</li>
+            </ul>
+        </div>
+
+        <h2 id="commands">六、命令（Commands）</h2>
+        <div class="xf-section">
+            <p>可通过 <code class="xf-inline">editor.execCommand('命令名')</code> 触发。常用命令：</p>
+            <table class="xf-params">
+                <tr><th>命令</th><th>作用</th></tr>
+                <tr><td><code>bold</code> / <code>italic</code> / <code>underline</code> / <code>strike</code></td><td>基础样式切换。</td></tr>
+                <tr><td><code>link</code> / <code>unlink</code> / <code>anchor</code></td><td>链接操作。</td></tr>
+                <tr><td><code>justifyLeft/Center/Right/Block</code></td><td>对齐。</td></tr>
+                <tr><td><code>insertOrderedList</code> / <code>insertUnorderedList</code></td><td>列表。</td></tr>
+                <tr><td><code>indent</code> / <code>outdent</code></td><td>缩进。</td></tr>
+                <tr><td><code>blockquote</code></td><td>引用块。</td></tr>
+                <tr><td><code>removeFormat</code></td><td>清除格式。</td></tr>
+                <tr><td><code>copyFormatting</code></td><td>格式刷。</td></tr>
+                <tr><td><code>find</code> / <code>replace</code></td><td>查找/替换。</td></tr>
+                <tr><td><code>selectAll</code></td><td>全选。</td></tr>
+                <tr><td><code>maximize</code></td><td>最大化。</td></tr>
+                <tr><td><code>source</code></td><td>切换源码模式。</td></tr>
+                <tr><td><code>table</code> / <code>quicktable</code></td><td>插入表格。</td></tr>
+                <tr><td><code>image</code>（image2）</td><td>打开图片对话框。</td></tr>
+                <tr><td><code>video</code> / <code>html5audio</code> / <code>yaqr</code> / <code>chart</code> / <code>pbckcode</code></td><td>各扩展插件对话框。</td></tr>
+                <tr><td><code>uploadfile</code></td><td>打开文件上传。</td></tr>
+                <tr><td><code>xfTexFx</code> / <code>xfBlockFx</code></td><td>应用文字特效 / 段落特效（下拉选择）。</td></tr>
+                <tr><td><code>xfEditEffect</code></td><td>再次编辑选中的特效（等同双击特效元素）。</td></tr>
+                <tr><td><code>xfBlockEdit</code> / <code>xfTexEdit</code></td><td>段落特效 / 文字特效的「再次编辑」对话框命令。</td></tr>
+                <tr><td><code>print</code> / <code>preview</code>（xfpreview）</td><td>打印 / 自包含预览（内联全部样式，离线可用）。</td></tr>
+            </table>
+        </div>
+
+        <h2 id="events">七、事件（Events）</h2>
+        <div class="xf-section">
+            <p>通过 <code class="xf-inline">editor.on('事件名', fn)</code> 监听。常用事件：</p>
+            <table class="xf-params">
+                <tr><th>事件</th><th>触发时机</th></tr>
+                <tr><td><code>instanceReady</code></td><td>编辑器实例创建完成。</td></tr>
+                <tr><td><code>change</code></td><td>内容发生变化（输入、撤销、粘贴等）。</td></tr>
+                <tr><td><code>mode</code></td><td>切换 源码/所见即所得 模式。</td></tr>
+                <tr><td><code>focus</code> / <code>blur</code></td><td>聚焦 / 失焦。</td></tr>
+                <tr><td><code>selectionChange</code></td><td>选区变化。</td></tr>
+                <tr><td><code>save</code> / <code>dataReady</code></td><td>保存 / 数据就绪。</td></tr>
+                <tr><td><code>fileUploadRequest</code></td><td>上传请求发出前（可干预 FormData）。</td></tr>
+                <tr><td><code>fileUploadResponse</code></td><td>上传响应返回后（可解析自定义结构）。</td></tr>
+                <tr><td><code>contentPreview</code></td><td>预览/打印拼接 HTML 时（chart 等插件用于注入样式）。</td></tr>
+                <tr><td><code>paste</code> / <code>beforePaste</code></td><td>粘贴相关。</td></tr>
+                <tr><td><code>dialogShow</code> / <code>dialogHide</code></td><td>对话框显示/隐藏。</td></tr>
+                <tr><td><code>doubleclick</code></td><td>编辑区双击（xfeffects 用于弹出特效再次编辑窗口）。</td></tr>
+            </table>
+        </div>
+
+        <h2 id="api">八、JavaScript API</h2>
+        <div class="xf-section">
+            <h3>8.1 全局 CKEDITOR</h3>
+            <div class="xf-code-wrap"><pre class="xf-code">CKEDITOR.replace( elementOrId, config );   // 替换元素创建编辑器
+CKEDITOR.inline( elementOrId, config );     // 内联编辑
+CKEDITOR.appendTo( container, config );     // 追加到容器
+CKEDITOR.instances;                          // 所有编辑器实例集合
+CKEDITOR.on('instanceCreated', fn);          // 实例创建事件
+CKEDITOR.getCsrfToken();                     // 获取 CSRF Token
+CKEDITOR.tools.*;                            // 工具方法集（含 xfEffectsCss）</pre></div>
+
+            <h3>8.2 编辑器实例（editor）</h3>
+            <div class="xf-code-wrap"><pre class="xf-code">editor.getData();                  // 获取 HTML 内容
+editor.setData( html, callback ); // 设置 HTML 内容
+editor.insertHtml( html );         // 在光标处插入 HTML
+editor.insertText( text );         // 在光标处插入纯文本
+editor.focus();                    // 聚焦
+editor.destroy();                  // 销毁实例
+editor.on( 'change', fn );         // 监听事件
+editor.execCommand( 'bold' );      // 执行命令
+editor.config;                     // 当前配置
+editor.name;                       // 实例名（即元素 id）</pre></div>
+
+            <h3>8.3 内容导出辅助（XF 全局对象，examples/js/xf.js）</h3>
+            <p><code class="xf-inline">XF</code> 为示例页统一初始化与内容导出辅助对象，核心方法如下。
+               导出的 HTML 均为<strong>自包含</strong>（内联「基础排版 + 特效」样式），不依赖任何外部
+               js / css 文件即可独立呈现，且展示效果与编辑器内完全一致。</p>
+            <div class="xf-tip"><strong>资源路径与按需引入：</strong>片段 / 文档中若需引用插件资源（如图表
+               <code class="xf-inline">chart.min.js</code>、<code class="xf-inline">chart.css</code>），其地址一律通过
+               <code class="xf-inline">getAssetBaseUrl()</code> 基于「当前编辑器运行的域名前缀」计算为绝对地址，
+               <strong>绝不指向任何第三方 CDN</strong>；并且<strong>严格按需引入</strong>——仅当内容真正用到图表时才注入
+               对应 JS/CSS，否则不包含任何外部资源。</div>
+            <table class="xf-params">
+                <tr><th>方法</th><th>参数</th><th>返回值</th><th>说明</th></tr>
+                <tr><td><code>XF.init(id, cfg)</code></td><td>id: 元素 id；cfg: 覆写配置</td><td>editor</td><td>创建编辑器，自动复用 config.full.js 并合并页面配置（extraPlugins 去重）。</td></tr>
+                <tr><td><code>XF.getHtml(id, opts)</code></td><td>opts.standalone / opts.full / opts.title</td><td>String</td><td>读取内容；standalone 返回内联样式片段（资源地址按当前域名计算、按需引入），full 返回完整文档（同 exportDocument）。</td></tr>
+                <tr><td><code>XF.exportDocument(id, title)</code></td><td>id；title 可选</td><td>String</td><td>导出完整自包含 HTML 文档字符串（含 <code>&lt;!DOCTYPE html&gt;</code>）。</td></tr>
+                <tr><td><code>XF.downloadHtml(id, filename)</code></td><td>id；filename 可选</td><td>—</td><td>触发浏览器下载为 .html 文件（自包含，离线可用）。</td></tr>
+                <tr><td><code>XF.getStandaloneCss()</code></td><td>—</td><td>String</td><td>仅获取内联样式字符串（基础 + 特效）。</td></tr>
+                <tr><td><code>XF.merge(cfg)</code></td><td>cfg</td><td>Object</td><td>合并全局配置与页面配置，返回最终配置（高级用法）。</td></tr>
+                <tr><td><code>XF.getCsrfToken()</code></td><td>—</td><td>String/Null</td><td>读取页面 csrf-token meta。</td></tr>
+            </table>
+            <div class="xf-code-wrap"><pre class="xf-code">// 初始化编辑器（复用 config.full.js 配置，页面只叠加本页独有项）
+XF.init('editor', { height: 360, extraPlugins: 'chart' });
+
+// 获取内容（普通 HTML 字符串，即 editor.getData()）
+XF.getHtml('editor');
+
+// 获取「自包含片段」：内联样式 + &lt;div class="xf-standalone"&gt;…&lt;/div&gt;
+// 可直接粘贴到任意页面独立呈现
+XF.getHtml('editor', { standalone: true });
+
+// 获取「完整 HTML 文档字符串」（含 &lt;!DOCTYPE html&gt;，可保存为 .html 打开）
+XF.getHtml('editor', { full: true, title: '我的文章' });
+
+// 导出完整自包含文档字符串
+XF.exportDocument('editor', '我的文章');
+
+// 触发浏览器下载为 .html 文件（自包含，离线可用）
+XF.downloadHtml('editor', 'my-article.html');
+
+// 仅获取内联样式字符串（基础 + 特效）
+XF.getStandaloneCss();</pre></div>
+            <div class="xf-tip">「自包含」实现要点：基础排版样式集中维护在
+                <code class="xf-inline">XF_BASE_CSS</code>（作用域限定于 <code class="xf-inline">.xf-standalone</code>），
+                特效样式复用 <code class="xf-inline">CKEDITOR.tools.xfEffectsCss</code>（由 xfeffects 注入），
+                两者拼接后内联。详见 <code class="xf-inline">examples/export.html</code> 演示页。</div>
+
+            <h3>8.4 文件上传（fileTools）</h3>
+            <div class="xf-code-wrap"><pre class="xf-code">// 创建上传加载器并上传
+var loader = editor.uploadRepository.create( file );
+loader.loadAndUpload( uploadUrl );
+loader.on( 'uploaded', function () {
+    console.log( '文件地址：', loader.url );
+} );
+
+// 自定义响应解析（当后端返回非标准结构时）
+editor.on( 'fileUploadResponse', function( evt ) {
+    var data = evt.data;
+    var response = JSON.parse( evt.data.fileLoader.xhr.responseText );
+    if ( response.success ) {
+        data.url = response.fileUrl;     // 必须字段
+        data.fileName = response.name;
+    } else {
+        data.message = response.msg;
+        evt.cancel();
+    }
+} );</pre></div>
+        </div>
+
+        <h2 id="upload">九、上传机制与后端对接</h2>
+        <div class="xf-section">
+            <p>编辑器三类上传入口共用统一的 JSON 响应结构，后端需返回如下格式（HTTP 200 + JSON）：</p>
+
+            <h3>9.1 成功响应</h3>
+            <div class="xf-code-wrap"><pre class="xf-code">{
+  "uploaded": 1,
+  "fileName": "2026/07/example.jpg",
+  "url": "https://cdn.example.com/uploads/2026/07/example.jpg"
+}</pre></div>
+            <table class="xf-params">
+                <tr><th>字段</th><th>类型</th><th>必填</th><th>说明</th></tr>
+                <tr><td><code>uploaded</code></td><td>Number</td><td>是</td><td>固定为 <code>1</code> 表示成功；为 <code>0</code> 或缺失表示失败。</td></tr>
+                <tr><td><code>url</code></td><td>String</td><td>是</td><td>上传后文件的「可访问完整 URL」。</td></tr>
+                <tr><td><code>fileName</code></td><td>String</td><td>否</td><td>服务器侧文件名（用于展示）。</td></tr>
+            </table>
+
+            <h3>9.2 失败响应</h3>
+            <div class="xf-code-wrap"><pre class="xf-code">{
+  "uploaded": 0,
+  "error": { "message": "文件类型不被允许" }
+}</pre></div>
+            <table class="xf-params">
+                <tr><th>字段</th><th>类型</th><th>说明</th></tr>
+                <tr><td><code>uploaded</code></td><td>Number</td><td>固定为 <code>0</code>。</td></tr>
+                <tr><td><code>error.message</code></td><td>String</td><td>失败原因，将展示给用户。</td></tr>
+            </table>
+
+            <h3>9.3 请求参数</h3>
+            <table class="xf-params">
+                <tr><th>参数</th><th>说明</th></tr>
+                <tr><td><code>upload</code>（FormData）</td><td>文件字段，结构为 <code>{ file: Blob, name: 文件名 }</code>。</td></tr>
+                <tr><td><code>ckCsrfToken</code></td><td>CSRF 防护令牌，由 filetools 自动附加。</td></tr>
+                <tr><td><code>_token</code>（URL 参数）</td><td>本项目 config 中拼接的 CSRF Token（来自页面 meta）。</td></tr>
+                <tr><td><code>responseType=json</code>（URL 参数）</td><td>告知后端返回 JSON（本项目约定）。</td></tr>
+            </table>
+
+            <h3>9.4 接口地址</h3>
+            <div class="xf-code-wrap"><pre class="xf-code">// 图片（含 image2 与拖拽图片）
+config.filebrowserImageUploadUrl =
+    '/files/uploads/ckeditor/img/docs?responseType=json';
+
+// 文件（uploadfile 拖拽/粘贴、上传按钮）
+config.filebrowserUploadUrl =
+    '/files/uploads/ckeditor/file/docs?responseType=json';</pre></div>
+            <div class="xf-tip">完整的 PHP 服务端示例（含参数校验、目录创建、响应组装）见项目根目录
+                <code class="xf-inline">php/</code> 文件夹中的 <code class="xf-inline">README.md</code> 与示例脚本。</div>
+        </div>
+
+        <h2 id="perf">十、性能与资源优化</h2>
+        <div class="xf-section">
+            <ul>
+                <li><strong>配置文件统一</strong>：所有基础能力集中在 <code class="xf-inline">config.full.js / config.js</code>，示例页只叠加本页独有项，避免重复声明与插件丢失。</li>
+                <li><strong>脚本延迟加载</strong>：所有示例页的 <code class="xf-inline">ckeditor.js / config / xf.js</code> 均使用 <code class="xf-inline">defer</code>，不阻塞页面渲染。</li>
+                <li><strong>内容样式注入</strong>：divarea 模式不会自动注入 <code class="xf-inline">contents.css</code>，本项目通过 <code class="xf-inline">config.contentsCss</code> 与 <code class="xf-inline">xfeffects</code> 的 <code class="xf-inline">editor.addCss</code> 双层注入，保证编辑区与生成网页样式一致且零额外请求。</li>
+                <li><strong>限制撤销栈</strong>：<code class="xf-inline">undoStackSize = 50</code>、<code class="xf-inline">ignoreEmptyParagraph = true</code> 降低内存占用与 DOM 体积。</li>
+                <li><strong>按需启用插件</strong>：<code class="xf-inline">extraPlugins</code> 仅保留业务需要的插件，每多一个插件都会增加请求数。</li>
+                <li><strong>合并构建</strong>：使用 CKEditor Builder 或 <code class="xf-inline">build-config.js</code> 生成「单一压缩包」，将核心与插件合并，大幅减少 HTTP 请求。</li>
+                <li><strong>移除未用按钮</strong>：通过 <code class="xf-inline">removeButtons</code> 精简工具栏，减小 UI 渲染开销。</li>
+                <li><strong>启用 divarea</strong>：避免 iframe 带来的额外文档上下文与样式隔离开销。</li>
+                <li><strong>语言包裁剪</strong>：<code class="xf-inline">build-config.js</code> 的 <code class="xf-inline">languages</code> 仅保留 <code>zh-cn</code> 可显著减小体积（当前约 70 种语言）。</li>
+                <li><strong>外部资源本地化 / 禁用 CDN</strong>：pbckcode 的 Ace、chart 的 Chart.js 等均已下载到本地（<code class="xf-inline">plugins/pbckcode/lib/ace/</code>、<code class="xf-inline">plugins/chart/lib/chart.min.js</code>），不依赖任何外网；<code class="xf-inline">getHtml</code> / 导出的内容中若引用这些资源，其地址也统一基于当前域名计算，绝不指向 CDN。</li>
+                <li><strong>延迟加载</strong>：非首屏必需的编辑器可监听用户交互后再 <code class="xf-inline">CKEDITOR.replace</code>。</li>
+                <li><strong>大文档优化</strong>：超长文档建议配合 <code class="xf-inline">config.allowedContent</code> 与 ACF 限制，减少 DOM 节点。</li>
+            </ul>
+        </div>
+
+        <h2 id="usage">十一、功能逐项用法（全集）</h2>
+        <div class="xf-section">
+            <p>本节<strong>逐项枚举</strong>编辑器全部能力，并给出<strong>具体操作步骤</strong>与<strong>对应 class / 命令</strong>。
+               所有特效均为「语义化 class + 纯 CSS」，<strong>双击即可再次编辑</strong>，导出 / 预览 / getHtml 三者展示完全一致且零外部依赖。</p>
+
+            <h3>11.1 文字特效（共 14 种）</h3>
+            <p><strong>统一触发方式</strong>：在编辑区<strong>选中一段文字</strong> → 点击工具栏「xfstyles」分组的
+               <code class="xf-inline">xfTexFx</code>（文字特效）下拉 → 选择某项；<strong>再次点击同一项可取消</strong>。
+               也可在代码中用 <code class="xf-inline">&lt;span class="xf-tex-xxx"&gt;文字&lt;/span&gt;</code> 直接书写。</p>
+            <table class="xf-params">
+                <tr><th>特效名称</th><th>class</th><th>视觉效果</th></tr>
+                <tr><td>渐变文字</td><td><code>xf-tex-gradient</code></td><td>多色线性渐变填充文字。</td></tr>
+                <tr><td>发光文字</td><td><code>xf-tex-glow</code></td><td>蓝色辉光描边，夜间感。</td></tr>
+                <tr><td>描边文字</td><td><code>xf-tex-stroke</code></td><td>深色描边镂空字。</td></tr>
+                <tr><td>荧光高亮</td><td><code>xf-tex-highlight</code></td><td>底部荧光黄高亮（马克笔）。</td></tr>
+                <tr><td>波浪下划线</td><td><code>xf-tex-wave</code></td><td>红色波浪下划线。</td></tr>
+                <tr><td>彩色文字</td><td><code>xf-tex-colorful</code></td><td>彩虹渐变文字。</td></tr>
+                <tr><td>竖排文字</td><td><code>xf-tex-vertical</code></td><td>纵向排布（古风 / 标题）。</td></tr>
+                <tr><td>立体阴影</td><td><code>xf-tex-shadow</code></td><td>右下投影立体字。</td></tr>
+                <tr><td>霓虹呼吸</td><td><code>xf-tex-neon</code></td><td>品红 / 青色霓虹呼吸动画。</td></tr>
+                <tr><td>等宽代码</td><td><code>xf-tex-mono</code></td><td>深色底等宽字体（行内代码）。</td></tr>
+                <tr><td>印章红章</td><td><code>xf-tex-stamp</code></td><td>红色描边、微旋转，像盖章。</td></tr>
+                <tr><td>浮雕文字</td><td><code>xf-tex-emboss</code></td><td>浅灰浮雕质感。</td></tr>
+                <tr><td>重点下划线</td><td><code>xf-tex-underline2</code></td><td>蓝色加粗下划线。</td></tr>
+                <tr><td>模糊文字</td><td><code>xf-tex-blur</code></td><td>轻微高斯模糊，朦胧美。</td></tr>
+            </table>
+
+            <h3>11.2 段落特效（共 26 种）</h3>
+            <p><strong>统一触发方式</strong>：点击工具栏 <code class="xf-inline">xfBlockFx</code>（段落特效）下拉选择。
+               <strong>包裹 / 转换型</strong>：若已选中内容则<strong>包裹选区</strong>，未选中则插入可编辑模板；
+               <strong>结构性插入型</strong>：始终在光标处插入预定义组件。双击任意段落特效可再次编辑。</p>
+
+            <h4>11.2.1 包裹 / 转换型（13 种，作用于选区或插入模板）</h4>
+            <table class="xf-params">
+                <tr><th>效果名称</th><th>class</th><th>视觉效果</th></tr>
+                <tr><td>信息提示框</td><td><code>xf-callout xf-callout-info</code></td><td>蓝色左边框信息提示。</td></tr>
+                <tr><td>成功提示框</td><td><code>xf-callout xf-callout-success</code></td><td>绿色成功提示。</td></tr>
+                <tr><td>警告提示框</td><td><code>xf-callout xf-callout-warning</code></td><td>黄色警告提示。</td></tr>
+                <tr><td>危险提示框</td><td><code>xf-callout xf-callout-danger</code></td><td>红色危险提示。</td></tr>
+                <tr><td>内容卡片</td><td><code>xf-card-block</code></td><td>带阴影圆角的图文卡片。</td></tr>
+                <tr><td>居中容器</td><td><code>xf-center</code></td><td>浅灰圆角居中容器。</td></tr>
+                <tr><td>优雅引用</td><td><code>xf-quote-fancy</code></td><td>渐变底 + 引号装饰引用。</td></tr>
+                <tr><td>大字引言</td><td><code>xf-pullquote</code></td><td>放大加粗引言块。</td></tr>
+                <tr><td>首字下沉</td><td><code>xf-dropcap</code></td><td>段落首字放大下沉。</td></tr>
+                <tr><td>高亮重点</td><td><code>xf-hlbox</code></td><td>左侧黄边高亮块。</td></tr>
+                <tr><td>注释说明</td><td><code>xf-note</code></td><td>「注」标记 + 灰底说明。</td></tr>
+                <tr><td>横幅通知</td><td><code>xf-banner</code></td><td>蓝色渐变横幅 + 铃铛图标。</td></tr>
+                <tr><td>双栏布局</td><td><code>xf-cols</code></td><td>左右两栏并列卡片。</td></tr>
+            </table>
+
+            <h4>11.2.2 结构性插入型（13 种，始终插入模板）</h4>
+            <table class="xf-params">
+                <tr><th>效果名称</th><th>class / 标签</th><th>视觉效果</th></tr>
+                <tr><td>渐变分割线</td><td><code>hr.xf-divider</code></td><td>中间渐变、两端透明的分隔线。</td></tr>
+                <tr><td>虚线分割线</td><td><code>hr.xf-divider-dashed</code></td><td>虚线分隔。</td></tr>
+                <tr><td>双线分割线</td><td><code>hr.xf-divider-double</code></td><td>双实线分隔。</td></tr>
+                <tr><td>圆点分割线</td><td><code>hr.xf-divider-dots</code></td><td>圆点分隔。</td></tr>
+                <tr><td>徽章行</td><td><code>p.xf-badges</code></td><td>状态徽章（默认/成功/警告/危险）。</td></tr>
+                <tr><td>标签云</td><td><code>p.xf-tags</code></td><td>圆角标签集合。</td></tr>
+                <tr><td>步骤条</td><td><code>xf-steps</code></td><td>序号 + 连接线步骤指示。</td></tr>
+                <tr><td>时间轴</td><td><code>xf-timeline</code></td><td>纵向时间节点列表。</td></tr>
+                <tr><td>进度条</td><td><code>xf-progress-row</code></td><td>渐变进度条 + 百分比标签。</td></tr>
+                <tr><td>统计数字</td><td><code>xf-stats</code></td><td>大号数字 + 标签卡片组。</td></tr>
+                <tr><td>图文混排</td><td><code>xf-media</code></td><td>左图标右文字的功能项。</td></tr>
+                <tr><td>折叠内容</td><td><code>details.xf-spoiler</code></td><td>点击展开 / 收起的折叠区。</td></tr>
+                <tr><td>按钮</td><td><code>a.xf-btn</code></td><td>蓝色圆角按钮。</td></tr>
+            </table>
+
+            <h3>11.3 各插件功能使用步骤</h3>
+
+            <h4>11.3.1 视频（video）</h4>
+            <ul>
+                <li>步骤 1：点击工具栏「插入」分组的 <code class="xf-inline">Video</code> 按钮，弹出视频对话框。</li>
+                <li>步骤 2：填入视频地址（<code>src</code>，支持 mp4 / webm 等本地或远程地址），按需勾选 <code>controls</code> / <code>autoplay</code> / <code>loop</code> / <code>muted</code> 并设置宽高。</li>
+                <li>步骤 3：确认后插入视频占位符；<strong>双击占位符</strong>可重新编辑，右键菜单也可操作。</li>
+            </ul>
+
+            <h4>11.3.2 音频（html5audio）</h4>
+            <ul>
+                <li>步骤 1：点击 <code class="xf-inline">html5audio</code> 按钮，填入音频 <code>src</code>。</li>
+                <li>步骤 2：设置 <code>controls</code>（留空则额外允许下载）、<code>autoplay</code>、对齐方式。</li>
+                <li>步骤 3：插入为标准 HTML5 <code>&lt;audio&gt;</code> 播放器，双击可再次编辑。</li>
+            </ul>
+
+            <h4>11.3.3 图表（chart）</h4>
+            <ul>
+                <li>步骤 1：点击 <code class="xf-inline">Chart</code> 按钮打开图表对话框。</li>
+                <li>步骤 2：选择类型（柱状 / 折线 / 饼图 / 环形 / 极区），逐行填写「数值 / 标签」，可增删行（最多 <code>chart_maxItems</code> 行）。</li>
+                <li>步骤 3：设置高度，确认后插入<strong>实时绘制</strong>的图表（本地 Chart.js，离线可用）。</li>
+                <li>步骤 4：<strong>导出 / 预览 / getHtml</strong> 时图表会<strong>自动转为内联图片</strong>（data:image/png），<strong>不依赖任何外部资源</strong>且与编辑器内显示一致。也可在 HTML 中预置：
+                    <div class="xf-code-wrap"><pre class="xf-code">&lt;div class="chartjs" data-chart="bar"
+     data-chart-height="280"
+     data-chart-value='[{"value":35,"label":"一月"},{"value":52,"label":"二月"}]'&gt;&lt;/div&gt;</pre></div>
+                </li>
+            </ul>
+
+            <h4>11.3.4 二维码（yaqr）</h4>
+            <ul>
+                <li>步骤 1：点击 <code class="xf-inline">yaqr</code> 按钮，填入指向网址（<code>defQrUrl</code>）与尺寸、码点色 / 背景色、纠错级别等。</li>
+                <li>步骤 2：确认后插入二维码 widget，双击可重新生成。相关子参数见 §5.2.4。</li>
+            </ul>
+
+            <h4>11.3.5 代码块（pbckcode）</h4>
+            <ul>
+                <li>步骤 1：点击「工具」分组的 <code class="xf-inline">pbckcode</code> 按钮，弹出 Ace 编辑器对话框。</li>
+                <li>步骤 2：选择语言（mode）、主题、缩进，输入代码；基于本地 Ace，语法高亮离线可用。</li>
+                <li>步骤 3：确认后插入 <code>&lt;pre data-pbcklang="..."&gt;</code> 代码块，导出为自包含暗色代码块（不依赖 Ace 运行时）。</li>
+            </ul>
+
+            <h4>11.3.6 行高（lineheight）</h4>
+            <ul>
+                <li>选中段落或在光标处，点击「样式」分组的行高下拉（<code class="xf-inline">lineheight</code> 命令），选择倍数 / em / rem / 百分比值，<strong>完整支持小于 1 / 小于 1rem / 小于 100% 的候选值</strong>（如 0.3~0.9、0.3rem~0.9rem、50%~90%，见 §5.2.6）。行高作用于块级元素，选中即刻生效。</li>
+            </ul>
+
+            <h4>11.3.7 增强图片（image2）</h4>
+            <ul>
+                <li>步骤 1：点击 <code class="xf-inline">Image</code> 按钮（启用 image2 后覆盖原生图片按钮），可上传 / 填写地址 / 设置宽高与对齐。</li>
+                <li>步骤 2：支持拖拽上传、响应式、caption 标题、行内 / 块级切换；上传地址来自 <code>filebrowserImageUploadUrl</code>。</li>
+            </ul>
+
+            <h4>11.3.8 表格与快速建表（table + quicktable）</h4>
+            <ul>
+                <li>点击 <code class="xf-inline">Table</code> 打开表格对话框设置行列；或点击 <code class="xf-inline">quicktable</code> 在网格上拖选行列数快速建表。</li>
+                <li>启用 <code>tableresizerowandcolumn</code> 后可拖拽行列边界缩放。</li>
+            </ul>
+
+            <h4>11.3.9 拖拽 / 粘贴上传（uploadfile + filetools）</h4>
+            <ul>
+                <li>直接把文件拖入或粘贴到编辑区即自动上传；或点击 <code class="xf-inline">uploadfile</code> 按钮选择文件。需配合后端（见第九节）。</li>
+            </ul>
+
+            <h4>11.3.10 字数统计（wordcount）</h4>
+            <ul>
+                <li>状态栏实时显示段落数 / 词数（字符数可按 §5.2.11 开启）；到达 <code>maxWordCount</code> / <code>maxCharCount</code> 上限时自动阻止继续输入。</li>
+            </ul>
+
+            <h4>11.3.11 自动保存（autosave）</h4>
+            <ul>
+                <li>编辑过程中按 <code>delay</code>（秒）间隔写入 localStorage；刷新 / 误关页面后重新进入会提示恢复草稿，<code>NotOlderThen</code> 分钟内有效。</li>
+            </ul>
+
+            <h4>11.3.12 再次编辑效果（双击）</h4>
+            <ul>
+                <li>在编辑区<strong>双击</strong>任意文字特效或段落特效（提示框 / 卡片 / 时间轴 / 按钮等），会像双击图片一样弹出编辑窗口：文字特效弹出重新选择 / 清除下拉，段落特效弹出可修改内部 HTML 与提示框变体的对话框。</li>
+                <li>也可选中效果后点击工具栏 <code class="xf-inline">xfEditEffect</code>（编辑效果）按钮触发，对应命令 <code>xfEditEffect</code> / <code>xfBlockEdit</code> / <code>xfTexEdit</code>。</li>
+            </ul>
+
+            <h4>11.3.13 工具栏吸附固定（stickytoolbar）</h4>
+            <ul>
+                <li>无按钮，启用即生效。页面滚动时工具栏被顶部遮挡则自动 sticky 固定并加阴影，回滚后恢复；自动避让固定头（<code>.xf-header</code>），销毁解绑监听。</li>
+            </ul>
+
+            <h4>11.3.14 增强预览 / 自包含导出（xfpreview + XF）</h4>
+            <ul>
+                <li>点击工具栏 <code class="xf-inline">Preview</code>（预览）按钮：<strong>默认以页面内同源模态浮层</strong>渲染当前内容（绝不新开标签页 / 跳转到其它窗口）；浮层内可点击「新窗口打开」在显式操作下开独立窗口，并提供打印 / 下载 HTML / 复制自包含 HTML / 关闭；样式与编辑器、导出同源，且相对图标 / 图片等会自动改写为绝对地址，不再出现不对称或跨域 SecurityError。</li>
+                <li>通过 <code>XF.getHtml(id,{standalone:true})</code> 获取内联样式片段、<code>XF.exportDocument(id)</code> 获取完整自包含文档、<code>XF.downloadHtml(id)</code> 下载 .html 文件——三者均内联全部 CSS；图表在导出文档中静态化为内联图片（真正离线可用），在预览 / 片段中按当前域名实时绘制，<strong>资源地址一律基于当前域名计算、禁用 CDN、按需引入</strong>。</li>
+            </ul>
+        </div>
+
+        <h2 id="faq">十二、常见问题（FAQ）</h2>
+        <div class="xf-section">
+            <details class="xf-detail"><summary>Q1：编辑器不显示 / 空白？</summary><div>
+                检查 <code class="xf-inline">ckeditor.js</code> 路径是否正确；确认未因 JS 报错中断初始化（打开浏览器控制台查看）。
+            </div></details>
+            <details class="xf-detail"><summary>Q2：span 等标签被过滤掉？</summary><div>
+                设置 <code class="xf-inline">config.allowedContent = true</code> 关闭内容过滤（本项目已默认开启）。
+            </div></details>
+            <details class="xf-detail"><summary>Q3：autosave 抛出 editor 未定义错误？</summary><div>
+                旧版 <code class="xf-inline">config.full.js</code> 在 <code class="xf-inline">editorConfig</code> 中引用了作用域外的 <code class="xf-inline">editor</code> 变量，会导致整个配置执行失败。已修复为基于 <code class="xf-inline">window.location.pathname</code> 生成 Savekey。请勿在该作用域内引用 <code class="xf-inline">editor</code>。
+            </div></details>
+            <details class="xf-detail"><summary>Q4：上传失败，控制台报 responseError？</summary><div>
+                后端未返回合法 JSON 或字段缺失。请确保返回 <code class="xf-inline">{ "uploaded":1, "url":"..." }</code> 结构（详见第九节）。
+            </div></details>
+            <details class="xf-detail"><summary>Q5：图片上传后地址不可访问？</summary><div>
+                <code class="xf-inline">url</code> 必须是「完整可访问 URL」或相对于站点根的路径，不能仅是服务器本地路径。
+            </div></details>
+            <details class="xf-detail"><summary>Q6：粘贴 Word 内容样式混乱？</summary><div>
+                保持 <code class="xf-inline">pasteFromWordIgnoreFontFace=true</code> 与适当的 <code class="xf-inline">pasteFromWordRemoveStyle</code>；必要时启用 <code class="xf-inline">forcePasteAsPlainText</code>。
+            </div></details>
+            <details class="xf-detail"><summary>Q7：特效样式 / 图表在导出 / 预览页不显示？</summary><div>
+                导出与预览均通过 <code class="xf-inline">XF.getStandaloneCss()</code> 内联「基础 + 特效」样式，且图表会自动转为<strong>内联 data:image/png 静态图片</strong>，因此不依赖任何外部 js / css 即可完整呈现，且与编辑器内一致。请确保页面已加载 <code class="xf-inline">plugins/xfeffects/plugin.js</code>（使 <code class="xf-inline">CKEDITOR.tools.xfEffectsCss</code> 生效）、<code class="xf-inline">plugins/chart/plugin.js</code>（图表静态化依赖 <code class="xf-inline">CKEDITOR.tools.xfChartToImage</code>）与 <code class="xf-inline">js/xf.js</code>。
+            </div></details>
+            <details class="xf-detail"><summary>Q8：多语言包体积过大？</summary><div>
+                编辑 <code class="xf-inline">build-config.js</code> 的 <code class="xf-inline">languages</code>，仅保留所需语言后重新构建。
+            </div></details>
+
+            <div class="xf-warn">如需更完整的服务端对接代码，请查看项目根目录 <code class="xf-inline">php/</code> 文件夹。</div>
+        </div>
+    </main>
+</div>
+
+<footer class="xf-footer">
+    xfTextEditor &mdash; 基于 CKEditor 4 的富文本编辑器 &copy; 2021-2026 · 本文档为中文完整开发文档
+</footer>
+
+<button id="xf-top" title="返回顶部">↑</button>
+
+<script>
+/* 文档交互增强：滚动高亮目录、代码复制、返回顶部、移动端目录 */
+(function () {
+    'use strict';
+    var sidebar = document.getElementById('xf-sidebar');
+    var links = Array.prototype.slice.call(sidebar.querySelectorAll('a'));
+    var map = {};
+    links.forEach(function (a) {
+        var id = a.getAttribute('href').slice(1);
+        var el = document.getElementById(id);
+        if (el) map[id] = a;
+    });
+    var sections = Object.keys(map).map(function (id) { return document.getElementById(id); });
+
+    function onScroll() {
+        var pos = window.scrollY + 100;
+        var current = null;
+        sections.forEach(function (sec) {
+            if (sec.offsetTop <= pos) current = sec.id;
+        });
+        links.forEach(function (a) { a.classList.remove('active'); });
+        if (current && map[current]) map[current].classList.add('active');
+        var top = document.getElementById('xf-top');
+        if (top) top.classList.toggle('show', window.scrollY > 400);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    /* 代码复制按钮 */
+    document.querySelectorAll('pre.xf-code').forEach(function (pre) {
+        var wrap = document.createElement('div');
+        wrap.className = 'xf-code-wrap';
+        pre.parentNode.insertBefore(wrap, pre);
+        wrap.appendChild(pre);
+        var btn = document.createElement('button');
+        btn.className = 'xf-copy';
+        btn.textContent = '复制';
+        btn.addEventListener('click', function () {
+            var text = pre.innerText;
+            navigator.clipboard.writeText(text).then(function () {
+                btn.textContent = '已复制';
+                setTimeout(function () { btn.textContent = '复制'; }, 1200);
+            });
+        });
+        wrap.appendChild(btn);
+    });
+
+    /* 返回顶部 */
+    var topBtn = document.getElementById('xf-top');
+    if (topBtn) topBtn.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+})();
+</script>
+
+</body>
+</html>

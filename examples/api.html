@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<!--
+    xfTextEditor JavaScript API 示例
+    说明：本页面汇总编辑器暴露的全部 JavaScript API（CKEDITOR / editor 实例 / XF 辅助对象），
+          并提供「实时演示 + 事件日志 + 接口参考表」，可边点边看效果。
+    所有注释均为中文。
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>xfTextEditor - JavaScript API 示例</title>
+    <script defer src="../ckeditor.js"></script>
+    <script defer src="../config.full.js"></script>
+    <script defer src="js/xf.js"></script>
+    <link rel="stylesheet" href="css/xf.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+
+<header class="xf-header">
+    <span class="brand">xfTextEditor</span>
+    <nav>
+        <a href="index.html">首页</a>
+        <a href="simple.html">简易编辑器</a>
+        <a href="full.html">完整示例</a>
+        <a href="export.html">导出预览</a>
+        <a href="docs.html">开发文档</a>
+        <a href="php.html">上传接口</a>
+        <a href="api.html">JS API</a>
+    </nav>
+</header>
+
+<main class="xf-container">
+
+    <div class="xf-hero">
+        <h1>JavaScript API 示例</h1>
+        <p>本页演示如何在页面中通过 JavaScript 操作编辑器：读取 / 写入内容、插入片段、执行命令、
+           监听事件、导出自包含 HTML。下方按钮均可<strong>实时操作</strong>上方编辑器，事件日志会同步显示回调结果。</p>
+        <div class="tags">
+            <span>getData / setData</span>
+            <span>insertHtml / insertText</span>
+            <span>execCommand</span>
+            <span>事件监听</span>
+            <span>XF 导出辅助</span>
+        </div>
+    </div>
+
+    <!-- 编辑器挂载点 -->
+    <div class="xf-editor-wrap">
+        <textarea id="editor"><h2>欢迎使用 API 演示</h2><p>通过下方按钮操作这个编辑器，事件日志会实时显示回调结果。</p></textarea>
+    </div>
+
+    <h2>一、实时操作演示</h2>
+    <div class="xf-grid">
+        <a href="javascript:void(0)" id="btn-get"><span class="title">获取内容</span><span class="desc">getData() 取得 HTML</span></a>
+        <a href="javascript:void(0)" id="btn-set"><span class="title">设置内容</span><span class="desc">setData() 写入 HTML</span></a>
+        <a href="javascript:void(0)" id="btn-inserthtml"><span class="title">插入 HTML</span><span class="desc">insertHtml()</span></a>
+        <a href="javascript:void(0)" id="btn-inserttext"><span class="title">插入文本</span><span class="desc">insertText()</span></a>
+        <a href="javascript:void(0)" id="btn-cmd-bold"><span class="title">执行命令</span><span class="desc">execCommand('bold')</span></a>
+        <a href="javascript:void(0)" id="btn-focus"><span class="title">聚焦</span><span class="desc">focus()</span></a>
+        <a href="javascript:void(0)" id="btn-preview"><span class="title">导出预览</span><span class="desc">XF 自包含 HTML</span></a>
+        <a href="javascript:void(0)" id="btn-download"><span class="title">下载 .html</span><span class="desc">XF.downloadHtml()</span></a>
+        <a href="javascript:void(0)" id="btn-destroy"><span class="title">销毁 / 重建</span><span class="desc">destroy() / 重新 init</span></a>
+    </div>
+
+    <h2>二、事件日志</h2>
+    <div class="xf-tip">每次内容变化、编辑器就绪、命令执行都会在下方实时打印，便于理解编辑器生命周期与事件机制。</div>
+    <pre id="log" class="xf-code" style="max-height:240px;overflow:auto;background:#0f172a;color:#e2e8f0;"></pre>
+
+    <h2>三、XF 辅助对象方法</h2>
+    <p><code class="xf-inline">XF</code> 为示例页统一的初始化与导出辅助对象（定义于 <code class="xf-inline">examples/js/xf.js</code>）：</p>
+    <table class="xf-params">
+        <tr><th>方法</th><th>参数</th><th>返回值</th><th>说明</th></tr>
+        <tr><td><code>XF.init(id, cfg)</code></td><td>id；cfg 覆写配置</td><td>editor</td><td>创建编辑器，自动复用 config.full.js 并合并页面配置（extraPlugins 去重）。</td></tr>
+        <tr><td><code>XF.getHtml(id, opts)</code></td><td>opts.standalone/full/title</td><td>String</td><td>读取内容；standalone 返回内联样式片段，full 返回完整文档。</td></tr>
+        <tr><td><code>XF.exportDocument(id, title)</code></td><td>id；title 可选</td><td>String</td><td>导出完整自包含 HTML 文档字符串（含 &lt;!DOCTYPE html&gt;）。</td></tr>
+        <tr><td><code>XF.downloadHtml(id, filename)</code></td><td>id；filename 可选</td><td>—</td><td>触发浏览器下载为 .html 文件（自包含，离线可用）。</td></tr>
+        <tr><td><code>XF.getStandaloneCss()</code></td><td>—</td><td>String</td><td>仅获取内联样式字符串（基础 + 特效）。</td></tr>
+        <tr><td><code>XF.merge(cfg)</code></td><td>cfg</td><td>Object</td><td>合并全局配置与页面配置，返回最终配置。</td></tr>
+        <tr><td><code>XF.getCsrfToken()</code></td><td>—</td><td>String/Null</td><td>读取页面 csrf-token meta。</td></tr>
+    </table>
+
+    <h2>四、编辑器实例（editor）常用方法</h2>
+    <table class="xf-params">
+        <tr><th>方法</th><th>说明</th></tr>
+        <tr><td><code>editor.getData()</code></td><td>获取 HTML 内容。</td></tr>
+        <tr><td><code>editor.setData(html, cb)</code></td><td>设置 HTML 内容。</td></tr>
+        <tr><td><code>editor.insertHtml(html)</code></td><td>在光标处插入 HTML。</td></tr>
+        <tr><td><code>editor.insertText(text)</code></td><td>在光标处插入纯文本。</td></tr>
+        <tr><td><code>editor.execCommand('name')</code></td><td>执行命令（如 bold、source、maximize）。</td></tr>
+        <tr><td><code>editor.focus()</code> / <code>editor.destroy()</code></td><td>聚焦 / 销毁实例。</td></tr>
+        <tr><td><code>editor.on('change', fn)</code></td><td>监听内容变化事件。</td></tr>
+        <tr><td><code>editor.config</code> / <code>editor.name</code></td><td>当前配置 / 实例名（元素 id）。</td></tr>
+    </table>
+
+    <h2>五、常用代码示例</h2>
+    <div class="xf-code-wrap"><pre class="xf-code">// 取得编辑器实例
+var editor = CKEDITOR.instances.editor;
+
+// 读取 / 写入内容
+editor.getData();
+editor.setData('&lt;p&gt;新内容&lt;/p&gt;');
+
+// 在光标处插入
+editor.insertText('纯文本');
+editor.insertHtml('&lt;strong&gt;带格式&lt;/strong&gt;');
+
+// 执行命令
+editor.execCommand('bold');
+editor.execCommand('source');   // 切换源码模式
+
+// 事件监听
+editor.on('change', function () {
+    console.log('内容变化', this.getData());
+});
+editor.on('instanceReady', function () {
+    console.log('编辑器就绪');
+});
+
+// 聚焦 / 销毁
+editor.focus();
+editor.destroy();</pre></div>
+
+    <div class="xf-warn">更多命令、事件与上传后端对接细节，请查阅 <a href="docs.html">docs.html 完整开发文档</a>。</div>
+</main>
+
+<footer class="xf-footer">
+    xfTextEditor &mdash; 基于 CKEditor 4 的富文本编辑器 &copy; 2021-2026
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // 基础能力由 config.full.js 统一提供；API 演示不再重复声明插件。
+    var editor = XF.init('editor', { height: 320 });
+    var destroyed = false;
+
+    var logEl = document.getElementById('log');
+    function log(msg) {
+        var time = new Date().toLocaleTimeString();
+        logEl.textContent += '[' + time + '] ' + msg + '\n';
+        logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    // 监听编辑器事件，写入日志
+    editor.on('instanceReady', function () { log('instanceReady：编辑器就绪'); });
+    editor.on('change', function () { log('change：内容已变化（' + this.getData().length + ' 字符）'); });
+    editor.on('focus', function () { log('focus：编辑区获得焦点'); });
+    editor.on('blur', function () { log('blur：编辑区失去焦点'); });
+
+    function bind(id, fn) {
+        var el = document.getElementById(id);
+        if (el) el.addEventListener('click', function (e) { e.preventDefault(); fn(); });
+    }
+
+    bind('btn-get', function () {
+        alert(editor.getData());
+        log('getData()：已弹出当前 HTML');
+    });
+    bind('btn-set', function () {
+        editor.setData('<p>通过 <strong>setData</strong> 设置的新内容。' + new Date().toLocaleTimeString() + '</p>');
+        log('setData()：已写入新内容');
+    });
+    bind('btn-inserthtml', function () {
+        editor.insertHtml('<span class="xf-tex-highlight">插入的高亮片段</span> ');
+        log('insertHtml()：已插入 HTML 片段');
+    });
+    bind('btn-inserttext', function () {
+        editor.insertText('【插入的纯文本】');
+        log('insertText()：已插入纯文本');
+    });
+    bind('btn-cmd-bold', function () {
+        editor.focus();
+        editor.execCommand('bold');
+        log("execCommand('bold')：已切换加粗");
+    });
+    bind('btn-focus', function () {
+        editor.focus();
+        log('focus()：已聚焦编辑区');
+    });
+    bind('btn-preview', function () {
+        // 优先新窗口，失败（弹窗拦截 / 跨域沙箱）则自动回退到同源模态预览
+        XF.openPreview('editor', 'API 预览');
+        log('XF.openPreview()：已打开自包含预览');
+    });
+    bind('btn-download', function () {
+        XF.downloadHtml('editor', 'api-content.html');
+        log('XF.downloadHtml()：已触发下载');
+    });
+    bind('btn-destroy', function () {
+        if (!destroyed) {
+            editor.destroy();
+            destroyed = true;
+            log('destroy()：编辑器已销毁（再次点击重建）');
+        } else {
+            editor = XF.init('editor', { height: 320 });
+            destroyed = false;
+            log('init()：编辑器已重建');
+        }
+    });
+});
+</script>
+
+</body>
+</html>

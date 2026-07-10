@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<!-- xfTextEditor HTML5 音频示例 -->
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>xfTextEditor - HTML5 音频示例</title>
+    <script defer src="../ckeditor.js"></script>
+    <script defer src="../config.full.js"></script>
+    <script defer src="js/xf.js"></script>
+    <link rel="stylesheet" href="css/xf.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+<header class="xf-header">
+    <span class="brand">xfTextEditor</span>
+    <nav>
+        <a href="index.html">首页</a>
+        <a href="simple.html">简易编辑器</a>
+        <a href="full.html">完整示例</a>
+        <a href="export.html">导出预览</a>
+        <a href="docs.html">开发文档</a>
+        <a href="php.html">上传接口</a>
+        <a href="api.html">JS API</a>
+    </nav>
+</header>
+<main class="xf-container">
+    <h1>HTML5 音频示例</h1>
+    <p><code class="xf-inline">html5audio</code> 插件基于 widget，在编辑器中插入 <code class="xf-inline">&lt;audio&gt;</code> 播放器，
+       支持设置地址、自动播放、对齐方式与是否允许下载。</p>
+    <div class="xf-editor-wrap"><textarea id="editor"></textarea></div>
+    <h2>插入方式</h2>
+    <pre class="xf-code">// 通过命令打开音频对话框
+editor.execCommand('html5audio');
+
+// 或直接设置数据（widget 数据格式）
+editor.setData('&lt;div class="ckeditor-html5-audio"&gt;' +
+    '&lt;audio src="demo.mp3" controls&gt;&lt;/audio&gt;&lt;/div&gt;');</pre>
+</main>
+<footer class="xf-footer">xfTextEditor &copy; 2021-2026</footer>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+// 基础能力由 config.full.js 统一提供；此处叠加 html5audio 插件与自定义工具栏。
+    XF.init('editor', {
+        height: 300,
+        extraPlugins: 'html5audio',
+        toolbar: [ { name: 'insert', items: [ 'html5audio' ] }, '/', { name: 'xfstyles', items: [ 'xfTexFx', 'xfBlockFx', 'xfEditEffect' ] } ]
+    });
+});
+</script>
+</body>
+</html>

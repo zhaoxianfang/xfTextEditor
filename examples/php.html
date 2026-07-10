@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<!--
+    xfTextEditor 上传接口（PHP）展示页
+    说明：本页面既展示「PHP 上传接口」的请求/响应说明，也提供一个可直接测试的 live 编辑器，
+          其图片与文件上传会真正请求 php/upload_image.php 与 php/upload_file.php。
+    所有注释均为中文。
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>xfTextEditor - PHP 上传接口</title>
+    <script defer src="../ckeditor.js"></script>
+    <script defer src="../config.full.js"></script>
+    <script defer src="js/xf.js"></script>
+    <link rel="stylesheet" href="css/xf.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+
+<header class="xf-header">
+    <span class="brand">xfTextEditor</span>
+    <nav>
+        <a href="index.html">首页</a>
+        <a href="simple.html">简易编辑器</a>
+        <a href="full.html">完整示例</a>
+        <a href="export.html">导出预览</a>
+        <a href="docs.html">开发文档</a>
+        <a href="php.html">上传接口</a>
+        <a href="api.html">JS API</a>
+    </nav>
+</header>
+
+<main class="xf-container">
+    <h1>PHP 上传接口说明与演示</h1>
+    <p class="xf-tip">编辑器通过 CKEditor 的 <code class="xf-inline">fileTools</code> / <code class="xf-inline">uploadwidget</code>
+        机制，以 <strong>XHR + FormData</strong> 上传文件，并要求后端返回统一的 <strong>JSON</strong>。
+        本页下方提供了可实时测试的编辑器（需以 PHP 运行环境打开本页）。更完整的参数说明见
+        <a href="../php/README.md">php/README.md</a>。</p>
+
+    <h2>一、接口清单</h2>
+    <table class="xf-params">
+        <tr><th>入口</th><th>触发方式</th><th>前端配置项</th><th>后端脚本（本项目示例）</th></tr>
+        <tr><td>图片上传</td><td>图像按钮 / image2 / 拖拽图片</td><td><code>filebrowserImageUploadUrl</code></td><td><code>php/upload_image.php</code></td></tr>
+        <tr><td>文件上传</td><td>上传按钮 / 拖拽或粘贴文件</td><td><code>filebrowserUploadUrl</code></td><td><code>php/upload_file.php</code></td></tr>
+    </table>
+
+    <h2>二、通用请求参数</h2>
+    <table class="xf-params">
+        <tr><th>参数名</th><th>位置</th><th>类型</th><th>说明</th></tr>
+        <tr><td><code>upload</code></td><td>FormData</td><td>File</td><td>文件本体，PHP 侧通过 <code>$_FILES['upload']</code> 读取。</td></tr>
+        <tr><td><code>ckCsrfToken</code></td><td>FormData</td><td>String</td><td>fileTools 自动附加的 CSRF 令牌，用于基础防护。</td></tr>
+        <tr><td><code>_token</code></td><td>URL 查询</td><td>String</td><td>业务框架 CSRF Token，由前端从 <code>&lt;meta name="csrf-token"&gt;</code> 读取拼接。</td></tr>
+        <tr><td><code>responseType</code></td><td>URL 查询</td><td>String</td><td>固定值 <code>json</code>，约定后端返回 JSON。</td></tr>
+    </table>
+
+    <h2>三、通用响应结构（HTTP 200 + JSON）</h2>
+    <h3>成功</h3>
+    <pre class="xf-code">{
+  "uploaded": 1,
+  "fileName": "2026/07/10/a1b2c3.png",
+  "url": "https://你的域名/uploads/2026/07/10/a1b2c3.png"
+}</pre>
+    <h3>失败</h3>
+    <pre class="xf-code">{
+  "uploaded": 0,
+  "error": { "message": "文件类型不被允许" }
+}</pre>
+    <table class="xf-params">
+        <tr><th>字段</th><th>必填</th><th>说明</th></tr>
+        <tr><td><code>uploaded</code></td><td>是</td><td><strong>1=成功，0=失败</strong>，这是前端唯一判定依据。</td></tr>
+        <tr><td><code>url</code></td><td>成功时必填</td><td>上传后文件的可访问完整 URL（或 / 开头的相对路径）。</td></tr>
+        <tr><td><code>fileName</code></td><td>否</td><td>展示用文件名。</td></tr>
+        <tr><td><code>error.message</code></td><td>失败时必填</td><td>可读的错误原因，将展示给用户。</td></tr>
+    </table>
+
+    <h2>四、实时上传演示</h2>
+    <p>下方编辑器已配置为上传到 <code class="xf-inline">php/upload_image.php</code> 与
+        <code class="xf-inline">php/upload_file.php</code>。请拖拽一张图片或一个文件到编辑区，或点击
+        图片 / 上传按钮进行测试（需以 PHP 服务运行本页）。</p>
+    <div class="xf-editor-wrap">
+        <textarea id="editorPhp">
+            <h3>上传测试</h3>
+            <p>把图片或文件拖进来试试，上传成功后会在内容中插入。</p>
+        </textarea>
+    </div>
+
+    <h2>五、前端配置示例</h2>
+    <pre class="xf-code">CKEDITOR.replace('editorPhp', {
+    language: 'zh-cn',
+    extraPlugins: 'uploadfile,image2,divarea,filetools',
+    // 指向本项目提供的 PHP 示例接口（相对路径）
+    filebrowserImageUploadUrl: '../php/upload_image.php',
+    filebrowserUploadUrl: '../php/upload_file.php',
+    editorplaceholder: '试试拖拽图片或文件到此处上传……'
+});</pre>
+
+    <div class="xf-warn">注意：<code class="xf-inline">php/</code> 目录下的示例脚本使用原生 PHP 编写，
+        默认将文件保存到 <code>php/../public/uploads</code> 目录，并将 <code>$baseUrl</code> 指向
+        <code>https://cdn.example.com/uploads</code>。请按实际部署环境修改这两个变量，详见
+        <a href="../php/README.md">php/README.md</a> 第 9 节完整示例与第 10 节安全最佳实践。</div>
+</main>
+
+<footer class="xf-footer">
+    xfTextEditor &mdash; 基于 CKEditor 4 的富文本编辑器 &copy; 2021-2026
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+// 实时演示：图片/文件上传直接请求本项目提供的 PHP 接口
+    // 基础能力由 config.full.js 统一提供；此处叠加上传插件并指向本地 PHP 接口。
+    XF.init('editorPhp', {
+        height: 360,
+        extraPlugins: 'uploadfile,image2,filetools',
+        filebrowserImageUploadUrl: '../php/upload_image.php',
+        filebrowserUploadUrl: '../php/upload_file.php',
+        editorplaceholder: '试试拖拽图片或文件到此处上传……'
+    });
+});
+</script>
+
+</body>
+</html>

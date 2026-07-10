@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<!-- xfTextEditor 上传功能示例 -->
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>xfTextEditor - 上传功能示例</title>
+    <script defer src="../ckeditor.js"></script>
+    <script defer src="../config.full.js"></script>
+    <script defer src="js/xf.js"></script>
+    <link rel="stylesheet" href="css/xf.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+<header class="xf-header">
+    <span class="brand">xfTextEditor</span>
+    <nav>
+        <a href="index.html">首页</a>
+        <a href="simple.html">简易编辑器</a>
+        <a href="full.html">完整示例</a>
+        <a href="export.html">导出预览</a>
+        <a href="docs.html">开发文档</a>
+        <a href="php.html">上传接口</a>
+        <a href="api.html">JS API</a>
+    </nav>
+</header>
+<main class="xf-container">
+    <h1>上传功能示例</h1>
+    <p>本编辑器提供三种上传入口，均需后端返回统一的 JSON 结构（详见 <code class="xf-inline">docs.html</code> 与 <code class="xf-inline">php/</code> 目录）：</p>
+    <table class="xf-params">
+        <tr><th>入口</th><th>触发方式</th><th>对应配置项</th></tr>
+        <tr><td>图片上传</td><td>「图像」按钮 / 拖拽图片</td><td><code>filebrowserImageUploadUrl</code></td></tr>
+        <tr><td>文件上传</td><td>「上传」按钮</td><td><code>filebrowserUploadUrl</code></td></tr>
+        <tr><td>拖拽上传</td><td>将文件拖入编辑区</td><td><code>uploadfile</code> 插件（复用 filebrowserUploadUrl）</td></tr>
+    </table>
+
+    <div class="xf-editor-wrap"><textarea id="editor"></textarea></div>
+
+    <h2>后端响应格式（成功）</h2>
+    <pre class="xf-code">{
+  "uploaded": 1,
+  "fileName": "example.jpg",
+  "url": "https://your-cdn.com/uploads/example.jpg"
+}</pre>
+
+    <h2>后端响应格式（失败）</h2>
+    <pre class="xf-code">{
+  "uploaded": 0,
+  "error": { "message": "文件类型不被允许" }
+}</pre>
+
+    <div class="xf-tip">完整 PHP 示例与参数说明，请查看项目根目录 <code class="xf-inline">php/</code> 文件夹。</div>
+</main>
+<footer class="xf-footer">xfTextEditor &copy; 2021-2026</footer>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+// 基础能力由 config.full.js 统一提供；此处叠加上传相关插件与自定义工具栏。
+    XF.init('editor', {
+        height: 360,
+        extraPlugins: 'image2,uploadfile,filetools',
+        filebrowserImageUploadUrl: '/files/uploads/ckeditor/img/docs?responseType=json',
+        filebrowserUploadUrl: '/files/uploads/ckeditor/file/docs?responseType=json',
+        toolbar: [
+            { name: 'insert', items: [ 'Image', 'uploadfile' ] },
+            '/', { name: 'xfstyles', items: [ 'xfTexFx', 'xfBlockFx', 'xfEditEffect' ] }
+        ]
+    });
+});
+</script>
+</body>
+</html>

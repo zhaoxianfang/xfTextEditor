@@ -122,11 +122,15 @@
 
             });
 
-        // 赵先方 2021-07-21 监听表单提交
-        $('form').submit(function(e) {
-            // console.log('监听到提交事件 就进行storage 清除')
-            RemoveStorage(config.SaveKey, editorInstance);
-        });
+        // 赵先方 2021-07-21 监听表单提交：提交成功后清除本地缓存。
+        // 注意：此处不能使用 jQuery 的 $('form')，因为编辑器初始化作用域中可能并未加载 jQuery，
+        // 否则会抛出 ReferenceError: $ is not defined（at loadPlugin）。改用原生实现。
+        var xfForms = document.querySelectorAll('form');
+        for (var xfFormIndex = 0; xfFormIndex < xfForms.length; xfFormIndex++) {
+            xfForms[xfFormIndex].addEventListener('submit', function() {
+                RemoveStorage(config.SaveKey, editorInstance);
+            });
+        }
         // 赵先方 2021-07-21  监听页面关闭前保存[窗口关闭前]
         window.addEventListener("beforeunload", function(event) {
             SaveData(config.SaveKey, editorInstance, config);

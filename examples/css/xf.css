@@ -1,0 +1,282 @@
+/* ==========================================================================
+   xfTextEditor 示例页面公共样式
+   说明：本文件为 examples 目录下所有示例页面提供统一、简洁的排版与导航样式。
+   所有注释均为中文，便于二次维护。
+   ========================================================================== */
+
+/* 基础重置 */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    color: #2b2b2b;
+    background: #f5f6f8;
+    line-height: 1.7;
+    font-size: 15px;
+}
+
+a {
+    color: #1d6fb8;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* 顶部导航 */
+.xf-header {
+    background: #1f2937;
+    color: #fff;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.xf-header .brand {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.xf-header nav a {
+    color: #d1d5db;
+    margin-left: 18px;
+    font-size: 14px;
+}
+
+.xf-header nav a:hover {
+    color: #fff;
+}
+
+/* 页面容器 */
+.xf-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.xf-container h1 {
+    font-size: 28px;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 10px;
+}
+
+.xf-container h2 {
+    font-size: 22px;
+    margin-top: 36px;
+    padding-left: 10px;
+    border-left: 4px solid #1d6fb8;
+}
+
+.xf-container h3 {
+    font-size: 18px;
+    margin-top: 24px;
+    color: #374151;
+}
+
+/* 编辑器容器 */
+.xf-editor-wrap {
+    margin: 16px 0;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    /* 注意：此处不能设置 overflow:hidden，否则会破坏工具栏的 position: sticky 吸附效果 */
+    overflow: visible;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* 代码块 */
+pre.xf-code {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 16px;
+    border-radius: 8px;
+    overflow: auto;
+    font-size: 13px;
+    line-height: 1.6;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+code.xf-inline {
+    background: #eef2f7;
+    color: #b91c1c;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+/* 卡片 / 提示框 */
+.xf-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.xf-tip {
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 16px 0;
+}
+
+.xf-warn {
+    background: #fffbeb;
+    border-left: 4px solid #f59e0b;
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 16px 0;
+}
+
+/* 功能列表 / 导航网格 */
+.xf-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+}
+
+.xf-grid a {
+    display: block;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    transition: all 0.15s ease;
+}
+
+.xf-grid a:hover {
+    border-color: #1d6fb8;
+    box-shadow: 0 4px 12px rgba(29, 111, 184, 0.15);
+    text-decoration: none;
+    transform: translateY(-2px);
+}
+
+.xf-grid .title {
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 4px;
+}
+
+.xf-grid .desc {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* 参数表格 */
+table.xf-params {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    background: #fff;
+    font-size: 14px;
+}
+
+table.xf-params th,
+table.xf-params td {
+    border: 1px solid #e5e7eb;
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top;
+}
+
+table.xf-params th {
+    background: #f1f5f9;
+    font-weight: 700;
+    color: #334155;
+}
+
+table.xf-params td code {
+    background: #fef2f2;
+    color: #b91c1c;
+    padding: 1px 5px;
+    border-radius: 3px;
+}
+
+/* 页脚 */
+.xf-footer {
+    text-align: center;
+    color: #9ca3af;
+    font-size: 13px;
+    padding: 30px 0;
+}
+
+/* 自包含内容预览框 */
+.xf-preview-frame {
+    width: 100%;
+    min-height: 420px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, .08);
+}
+
+/* 左右分栏（文档导航 + 内容） */
+.xf-layout {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+.xf-sidebar {
+    width: 240px;
+    flex: 0 0 240px;
+    position: sticky;
+    top: 70px;
+    max-height: calc(100vh - 90px);
+    overflow: auto;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px 0;
+}
+
+.xf-sidebar a {
+    display: block;
+    padding: 7px 18px;
+    color: #374151;
+    font-size: 14px;
+    border-left: 3px solid transparent;
+}
+
+.xf-sidebar a:hover {
+    background: #f1f5f9;
+    text-decoration: none;
+}
+
+.xf-sidebar a.active {
+    border-left-color: #1d6fb8;
+    color: #1d6fb8;
+    font-weight: 600;
+    background: #eff6ff;
+}
+
+.xf-content {
+    flex: 1;
+    min-width: 0;
+}
+
+@media (max-width: 820px) {
+    .xf-layout {
+        flex-direction: column;
+    }
+
+    .xf-sidebar {
+        width: 100%;
+        flex: none;
+        position: static;
+    }
+}

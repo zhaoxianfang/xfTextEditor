@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<!--
+    xfTextEditor 全功能示例（默认展示页）
+    说明：本页基于 config.full.js，启用编辑器「支持的全部功能与网页效果」，
+          并在编辑器中预置了最丰富的富文本内容（排版 / 特效 / 多媒体 / 图表等），
+          进入页面即可看到完整能力。所有功能均 100% 离线可用。
+    所有注释均为中文。
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>xfTextEditor - 全功能示例（最全展示）</title>
+    <!-- defer：等待 DOM 解析完成再执行，避免阻塞页面渲染；顺序保持 ckeditor → config → xf -->
+    <script defer src="../ckeditor.js"></script>
+    <!-- 统一配置：内含全部扩展插件、中文语言、样式集、上传地址、自研插件等 -->
+    <script defer src="../config.full.js"></script>
+    <script defer src="js/xf.js"></script>
+    <link rel="stylesheet" href="css/xf.css">
+    <!-- 编辑器（divarea 模式）内容样式：必须显式引入，否则编辑区内的特效 class 无样式 -->
+    <link rel="stylesheet" href="../contents.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+
+<header class="xf-header">
+    <span class="brand">xfTextEditor</span>
+    <nav>
+        <a href="index.html">首页</a>
+        <a href="simple.html">简易编辑器</a>
+        <a href="full.html">完整示例</a>
+        <a href="export.html">导出预览</a>
+        <a href="docs.html">开发文档</a>
+        <a href="php.html">上传接口</a>
+        <a href="api.html">JS API</a>
+    </nav>
+</header>
+
+<main class="xf-container">
+    <h1>xfTextEditor 全功能演示</h1>
+    <p>本页是编辑器的<strong>最全功能展示页</strong>：进入页面即可看到涵盖文字排版、颜色、行高、字号、
+       字体、列表、表格、图片、链接、代码块、提示框、卡片、时间轴、图表、二维码、音频、视频、字数统计、
+       自动保存等几乎所有能力的富文本内容。向下滚动页面，可体验<strong>工具栏吸附固定</strong>效果，
+       点击工具栏「预览」可查看带完整排版的独立预览页。</p>
+
+    <div class="xf-tip">
+        <strong>再次编辑：</strong>在编辑器中<strong>双击</strong>任意「文字特效」或「段落特效」（提示框 / 卡片 / 时间轴 / 按钮等），
+        会像双击图片一样弹出编辑窗口，可修改其内容与样式；也可选中效果后点击工具栏的
+        <strong>「编辑效果」</strong>按钮。导出的内容均为<strong>自包含 HTML</strong>，不依赖任何外部文件即可呈现。
+    </div>
+
+    <div class="xf-warn">
+        提示：本页所有功能<strong>默认离线可用</strong>。图片、音频、视频的<em>上传</em>需要配合后端服务
+        （见 <a href="php.html">PHP 上传接口</a>）；下拉「文字特效 / 段落特效」可一键插入现代化网页效果。
+    </div>
+
+    <!-- 编辑器容器：预置最全的富文本内容 -->
+    <div class="xf-editor-wrap">
+        <textarea id="editorFull">
+            <h1>一、标题与文字排版</h1>
+            <p>这是一段<strong>加粗</strong>、<em>斜体</em>、<u>下划线</u>、<s>删除线</s>以及<sub>下标</sub>和<sup>上标</sup>混排的示范文字，
+               用于展示基础文字样式。本段设置了不同<font face="微软雅黑">字体</font>与
+               <span style="font-size:24px">字号</span>对比效果。</p>
+            <p style="line-height:2.2">本段落演示<strong>行高</strong>效果：行高被设置为 2.2 倍，文字之间更为疏朗，
+               适合长文阅读场景；你可以通过工具栏「行高」下拉随时调整。</p>
+
+            <h2>二、文字特效（xfTexFx，选中文字后点击应用，再次点击取消）</h2>
+            <p>
+                <span class="xf-tex-gradient">渐变文字</span>、
+                <span class="xf-tex-glow">发光文字</span>、
+                <span class="xf-tex-stroke">描边文字</span>、
+                <span class="xf-tex-highlight">荧光高亮</span>、
+                <span class="xf-tex-wave">波浪下划线</span>、
+                <span class="xf-tex-colorful">彩色文字</span>、
+                <span class="xf-tex-vertical">竖排文字</span>、
+                <span class="xf-tex-shadow">立体阴影</span>、
+                <span class="xf-tex-neon">霓虹呼吸</span>、
+                <span class="xf-tex-mono">等宽代码</span>、
+                <span class="xf-tex-stamp">印章红章</span>、
+                <span class="xf-tex-emboss">浮雕文字</span>、
+                <span class="xf-tex-underline2">重点下划线</span>、
+                <span class="xf-tex-blur">模糊文字</span>。
+            </p>
+
+            <h2>三、段落特效（xfBlockFx，有选区则包裹选区，无选区则插入模板）</h2>
+            <div class="xf-callout xf-callout-info"><p>这是一条<strong>信息提示</strong>：可在编辑器中直接修改此处文字内容。</p></div>
+            <div class="xf-callout xf-callout-success"><p><strong>操作成功！</strong>您的更改已保存。</p></div>
+            <div class="xf-callout xf-callout-warning"><p><strong>请注意：</strong>此处为需要引起注意的提示内容。</p></div>
+            <div class="xf-callout xf-callout-danger"><p><strong>危险操作！</strong>该操作不可恢复，请谨慎处理。</p></div>
+
+            <div class="xf-card-block"><h4>内容卡片</h4><p>卡片常用于突出展示关键图文信息，支持任意富文本内容，并带柔和阴影与圆角。</p></div>
+
+            <div class="xf-banner"><span class="xf-banner-icon">🔔</span><p>这是一条<strong>横幅通知</strong>，用于展示网站公告、活动或重要提醒。</p></div>
+
+            <div class="xf-hlbox"><p>这是一段<strong>高亮重点</strong>文字，用于强调关键信息，吸引读者注意。</p></div>
+
+            <div class="xf-note"><span class="xf-note-mark">注</span><p>这里是注释或补充说明内容，适合放置脚注、来源或备注信息。</p></div>
+
+            <p class="xf-badges"><span class="xf-badge">默认</span> <span class="xf-badge xf-badge-success">成功</span> <span class="xf-badge xf-badge-warning">警告</span> <span class="xf-badge xf-badge-danger">危险</span></p>
+
+            <p class="xf-tags"><span class="xf-tag">HTML</span> <span class="xf-tag">CSS</span> <span class="xf-tag">JavaScript</span> <span class="xf-tag">富文本</span></p>
+
+            <p class="xf-dropcap">首字下沉是一种经典的排版方式，首字放大后能让段落更有视觉冲击力与仪式感，常用于文章开篇引导阅读。</p>
+
+            <blockquote class="xf-quote-fancy"><p>“好的排版是隐形的，它让读者专注于内容，而非形式。”</p><cite>— xfTextEditor</cite></blockquote>
+
+            <blockquote class="xf-pullquote"><p>“设计不仅是外观与感受，设计是它如何运作。”</p><cite>— 史蒂夫·乔布斯</cite></blockquote>
+
+            <div class="xf-cols">
+                <div class="xf-col"><h4>左栏标题</h4><p>左栏内容，可放置并列的说明、功能或案例。</p></div>
+                <div class="xf-col"><h4>右栏标题</h4><p>右栏内容，与左栏形成对照或互补。</p></div>
+            </div>
+
+            <div class="xf-media"><div class="xf-media-img">📌</div><div class="xf-media-body"><strong>图文混排标题</strong><p>左侧图标、右侧文字，常用于功能介绍、列表项与特性说明。</p></div></div>
+
+            <div class="xf-stats">
+                <div class="xf-stat"><div class="xf-stat-num">99%</div><div class="xf-stat-label">用户满意度</div></div>
+                <div class="xf-stat"><div class="xf-stat-num">10w+</div><div class="xf-stat-label">活跃用户</div></div>
+                <div class="xf-stat"><div class="xf-stat-num">24h</div><div class="xf-stat-label">极速响应</div></div>
+            </div>
+
+            <div class="xf-progress-row"><div class="xf-progress"><div class="xf-progress-bar" style="width:70%"></div></div><p class="xf-progress-label">完成度 70%</p></div>
+
+            <details class="xf-spoiler"><summary>点击展开 / 收起</summary><div class="xf-spoiler-body"><p>这里是折叠隐藏的内容，点击摘要即可展开查看。适合放置剧透、补充说明或长文附录。</p></div></details>
+
+            <p><a class="xf-btn" href="#">点击按钮</a></p>
+
+            <hr class="xf-divider">
+            <hr class="xf-divider xf-divider-dashed">
+            <hr class="xf-divider xf-divider-double">
+            <hr class="xf-divider xf-divider-dots">
+
+            <div class="xf-timeline">
+                <div class="xf-tl-item"><span class="xf-tl-dot"></span><div class="xf-tl-body"><strong>第一步</strong><p>创建并配置编辑器。</p></div></div>
+                <div class="xf-tl-item"><span class="xf-tl-dot"></span><div class="xf-tl-body"><strong>第二步</strong><p>编写与排版内容。</p></div></div>
+                <div class="xf-tl-item"><span class="xf-tl-dot"></span><div class="xf-tl-body"><strong>第三步</strong><p>发布到网站。</p></div></div>
+            </div>
+
+            <div class="xf-steps"><span class="xf-step">1</span><span class="xf-step-line"></span><span class="xf-step">2</span><span class="xf-step-line"></span><span class="xf-step">3</span></div>
+
+            <h2>四、列表与引用</h2>
+            <ol>
+                <li>有序列表项一</li>
+                <li>有序列表项二
+                    <ul>
+                        <li>嵌套无序列表项</li>
+                        <li>嵌套无序列表项</li>
+                    </ul>
+                </li>
+                <li>有序列表项三</li>
+            </ol>
+            <blockquote><p>普通引用块：用于强调某段观点或他人言论。</p></blockquote>
+
+            <h2>五、表格（quicktable / 行列缩放）</h2>
+            <table>
+                <thead>
+                    <tr><th>功能</th><th>说明</th><th>快捷键</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>撤销</td><td>回退上一步操作</td><td>Ctrl+Z</td></tr>
+                    <tr><td>重做</td><td>恢复被撤销的操作</td><td>Ctrl+Y</td></tr>
+                    <tr><td>加粗</td><td>将选中文字加粗</td><td>Ctrl+B</td></tr>
+                </tbody>
+            </table>
+
+            <h2>六、图片（image2，离线 SVG 示例）</h2>
+            <figure class="image"><img alt="示例图片" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='240'%3E%3Crect width='480' height='240' rx='12' fill='%232563eb'/%3E%3Ctext x='50%25' y='50%25' fill='white' font-size='28' font-family='sans-serif' text-anchor='middle' dominant-baseline='middle'%3ExfTextEditor 示例图片%3C/text%3E%3C/svg%3E"><figcaption>图：内嵌 SVG 占位图，断网也可用</figcaption></figure>
+
+            <h2>七、链接与锚点</h2>
+            <p>这是一个<a href="https://www.example.com" target="_blank" rel="noopener">外部链接示例</a>，
+               以及一个<a href="#sec-code">跳转到代码块章节的页内锚点</a>。</p>
+
+            <h2 id="sec-code">八、代码块（pbckcode，离线 Ace）</h2>
+            <pre data-pbcklang="javascript">// 代码块内容完全离线高亮，不依赖任何 CDN
+function greet(name) {
+    return '你好，' + name + '！欢迎使用 xfTextEditor。';
+}
+console.log(greet('世界'));</pre>
+
+            <h2>九、图表（chart）</h2>
+            <p>点击工具栏「图表」按钮可插入柱状图 / 折线图 / 饼图 / 环形图 / 极区图（基于本地 Chart.js，离线可用）。
+               下方为预置的柱状图示例，导出 / 预览时会<strong>自动转为内联图片</strong>，不依赖任何外部资源，且与编辑器内显示一致。</p>
+            <div class="chartjs" data-chart="bar" data-chart-height="280" data-chart-value='[{"value":35,"label":"一月"},{"value":52,"label":"二月"},{"value":48,"label":"三月"},{"value":70,"label":"四月"},{"value":63,"label":"五月"}]'></div>
+
+            <h2>十、音频 / 视频 / 二维码</h2>
+            <p>音频（HTML5 Audio）、视频、二维码均由对应工具栏按钮插入，依赖本地插件资源，离线可用。
+               上传类功能需配合后端（见 PHP 上传接口页）。</p>
+
+            <h2>十一、特殊符号与分隔</h2>
+            <p>常用特殊符号：© ® ™ ★ ☆ ✔ ✘ → ← ↑ ↓ § ¶ … — “ ” ‘ ’。</p>
+            <hr>
+            <p style="text-align:center;color:#6b7280;">—— 全功能演示正文结束，可继续在编辑器中创作 ——</p>
+        </textarea>
+    </div>
+
+    <h2>功能速览（对应工具栏）</h2>
+    <div class="xf-grid">
+        <a href="#"><span class="title">文字特效 / 段落特效</span><span class="desc">渐变、发光、提示框、卡片、时间轴等</span></a>
+        <a href="#"><span class="title">编辑效果（双击）</span><span class="desc">双击提示框/卡片/文字特效即可再次修改</span></a>
+        <a href="#"><span class="title">行高 / 字号 / 字体</span><span class="desc">中文友好字号命名与行高集合</span></a>
+        <a href="#"><span class="title">图片 / 表格 / 列表</span><span class="desc">image2、quicktable、行列缩放</span></a>
+        <a href="#"><span class="title">代码块 / 图表 / 二维码</span><span class="desc">pbckcode、chart、yaqr（均离线）</span></a>
+        <a href="#"><span class="title">音频 / 视频</span><span class="desc">html5audio、video 插件</span></a>
+        <a href="#"><span class="title">字数统计 / 自动保存</span><span class="desc">wordcount、autosave</span></a>
+        <a href="#"><span class="title">工具栏吸附</span><span class="desc">滚动时自动固定工具栏</span></a>
+        <a href="export.html"><span class="title">增强预览 / 导出</span><span class="desc">自包含 HTML，离线可独立呈现</span></a>
+    </div>
+
+    <h2>实时预览与自包含导出</h2>
+    <div class="xf-tip">
+        下方内容由上方编辑器<strong>实时生成</strong>，并内联「基础排版 + 特效」样式后独立呈现——
+        即把编辑器内容变成「自包含 HTML」，可脱离任何外部文件直接展示、复制或下载。
+        这与 <code class="xf-inline">XF.getStandaloneCss()</code> 及导出 API 产出的效果完全一致。
+    </div>
+    <div class="xf-grid">
+        <a href="#" id="xf-preview-btn"><span class="title">刷新预览</span><span class="desc">将当前编辑器内容渲染到下方预览框</span></a>
+        <a href="#" id="xf-copy-btn"><span class="title">复制 HTML</span><span class="desc">复制自包含 HTML 到剪贴板</span></a>
+        <a href="#" id="xf-download-btn"><span class="title">下载 .html</span><span class="desc">导出为自包含 HTML 文件</span></a>
+        <a href="#" id="xf-newwin-btn"><span class="title">新窗口预览</span><span class="desc">打开带完整排版的独立页面</span></a>
+    </div>
+    <iframe id="xf-preview" class="xf-preview-frame" title="自包含预览"></iframe>
+
+    <!-- 长占位文本，便于演示工具栏吸附滚动效果 -->
+    <h2>滚动演示区</h2>
+    <p>继续向下滚动本页面，当编辑器工具栏即将被屏幕顶部遮挡时，它会自动「吸附」固定在页面顶部；
+       向上回滚后则恢复为正常位置。这一行为由 stickytoolbar 插件基于原生 CSS sticky 实现，性能开销极低。</p>
+    <p>此处填充若干段落以增加页面高度：编辑器在富文本处理、内容过滤、撤销栈管理等方面均已做性能优化，
+       包括禁用自动 inline 扫描、限制撤销栈深度、去除空段落等，从而在保证功能完整的同时保持流畅响应。</p>
+    <p>更多使用说明与完整 API 请参阅 <a href="docs.html">开发文档</a>；若需后端上传能力，请查看
+       <a href="php.html">PHP 上传接口</a> 页面。</p>
+    <p>（占位段落，用于延长页面以演示滚动吸附……）</p>
+    <p>（占位段落，用于延长页面以演示滚动吸附……）</p>
+    <p>（占位段落，用于延长页面以演示滚动吸附……）</p>
+</main>
+
+<footer class="xf-footer">
+    xfTextEditor &mdash; 基于 CKEditor 4 的富文本编辑器 &copy; 2021-2026
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+// 全功能初始化：基础能力由 config.full.js 统一提供，此处仅设置高度与就绪回调。
+    XF.init('editorFull', {
+        height: 620,
+        on: {
+            instanceReady: function () {
+                console.log('xfTextEditor 全功能实例已就绪');
+                renderPreview();          // 首次渲染预览
+            }
+        }
+    });
+
+    // 将编辑器内容以「自包含 HTML」渲染到预览 iframe
+    function renderPreview() {
+        var frame = document.getElementById('xf-preview');
+        if (!frame) return;
+        var html = XF.getHtml('editorFull', { standalone: true });
+        frame.srcdoc = html;
+    }
+
+    function bind(id, fn) {
+        var el = document.getElementById(id);
+        if (el) el.addEventListener('click', function (e) { e.preventDefault(); fn(); });
+    }
+
+    // 内容变化时同步刷新预览（防抖）
+    var t;
+    CKEDITOR.on('instanceReady', function (evt) {
+        evt.editor.on('change', function () {
+            clearTimeout(t);
+            t = setTimeout(renderPreview, 400);
+        });
+    });
+
+    bind('xf-preview-btn', renderPreview);
+    bind('xf-copy-btn', function () {
+        var html = XF.getHtml('editorFull', { standalone: true });
+        // 复用 XF.copyText：自动兼容非安全上下文 / 旧浏览器（剪贴板 API 不可用时回退）
+        XF.copyText(html);
+    });
+    bind('xf-download-btn', function () {
+        XF.downloadHtml('editorFull', 'xf-content.html');
+    });
+    bind('xf-newwin-btn', function () {
+        // 优先新窗口，失败（弹窗拦截 / 跨域沙箱）则自动回退到同源模态预览
+        XF.openPreview('editorFull', 'xfTextEditor 内容预览');
+    });
+});
+</script>
+
+</body>
+</html>

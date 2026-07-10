@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<!-- xfTextEditor 视频插入示例（video 插件） -->
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>xfTextEditor - 视频插入示例</title>
+    <script defer src="../ckeditor.js"></script>
+    <script defer src="../config.full.js"></script>
+    <script defer src="js/xf.js"></script>
+    <link rel="stylesheet" href="css/xf.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+<header class="xf-header">
+    <span class="brand">xfTextEditor</span>
+    <nav>
+        <a href="index.html">首页</a>
+        <a href="simple.html">简易编辑器</a>
+        <a href="full.html">完整示例</a>
+        <a href="export.html">导出预览</a>
+        <a href="docs.html">开发文档</a>
+        <a href="php.html">上传接口</a>
+        <a href="api.html">JS API</a>
+    </nav>
+</header>
+<main class="xf-container">
+    <h1>视频插入示例</h1>
+    <p>通过 <code class="xf-inline">video</code> 插件，可在编辑器中插入 HTML5 <code class="xf-inline">&lt;video&gt;</code> 标签，
+       支持设置 URL、宽高、自动播放、循环、静音、预加载等属性。</p>
+    <div class="xf-editor-wrap"><textarea id="editor"></textarea></div>
+    <h2>配置</h2>
+    <pre class="xf-code">CKEDITOR.replace('editor', {
+    extraPlugins: 'video,fakeobjects',
+    toolbar: [ [ 'Video' ] ]   // 仅显示视频按钮做演示
+});</pre>
+    <h2>命令与事件</h2>
+    <ul>
+        <li>命令：<code class="xf-inline">editor.execCommand('video')</code> 打开视频对话框。</li>
+        <li>双击已插入的视频占位符可重新编辑。</li>
+    </ul>
+</main>
+<footer class="xf-footer">xfTextEditor &copy; 2021-2026</footer>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+// 基础能力由 config.full.js 统一提供；此处叠加 video 插件与自定义工具栏。
+    XF.init('editor', {
+        height: 320,
+        extraPlugins: 'video,fakeobjects',
+        toolbar: [ { name: 'insert', items: [ 'Video' ] }, '/', { name: 'xfstyles', items: [ 'xfTexFx', 'xfBlockFx', 'xfEditEffect' ] } ]
+    });
+});
+</script>
+</body>
+</html>

@@ -5,9 +5,9 @@ CKEDITOR.plugins.setLang("pbckcode", "zh-cn",
     editCode: '编辑代码',
     editor: '编辑器',
     settings: '设置',
-    mode: 'Mode',
-    tabSize: 'Tab size',
+    mode: '语言模式',
+    tabSize: 'Tab 宽度',
     theme: '主题',
-    softTab: 'Enable soft tabs',
-    emmet: '启用 Emmet'
+    softTab: '启用软 Tab',
+    emmet: '启用 Emmet 快速输入'
   });

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<!-- xfTextEditor 表格增强示例 -->
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>xfTextEditor - 表格增强示例</title>
+    <script defer src="../ckeditor.js"></script>
+    <script defer src="../config.full.js"></script>
+    <script defer src="js/xf.js"></script>
+    <link rel="stylesheet" href="css/xf.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+<header class="xf-header">
+    <span class="brand">xfTextEditor</span>
+    <nav>
+        <a href="index.html">首页</a>
+        <a href="simple.html">简易编辑器</a>
+        <a href="full.html">完整示例</a>
+        <a href="export.html">导出预览</a>
+        <a href="docs.html">开发文档</a>
+        <a href="php.html">上传接口</a>
+        <a href="api.html">JS API</a>
+    </nav>
+</header>
+<main class="xf-container">
+    <h1>表格增强示例</h1>
+    <p>本编辑器在原生表格（table）基础上整合了多项增强能力：</p>
+    <ul>
+        <li><code class="xf-inline">quicktable</code>：可视化快速插入网格表格。</li>
+        <li><code class="xf-inline">tableresizerowandcolumn</code>：用鼠标拖拽调整表格行高与列宽。</li>
+        <li><code class="xf-inline">imageresizerowandcolumn</code>：图片随表格行列缩放。</li>
+    </ul>
+    <div class="xf-editor-wrap"><textarea id="editor"></textarea></div>
+    <h2>相关配置</h2>
+    <pre class="xf-code">CKEDITOR.replace('editor', {
+    extraPlugins: 'table,quicktable,tableresizerowandcolumn,imageresizerowandcolumn',
+    // 表格单元格、表头、边框等样式在对话框中可配置
+});</pre>
+</main>
+<footer class="xf-footer">xfTextEditor &copy; 2021-2026</footer>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+// 基础能力由 config.full.js 统一提供；此处叠加表格增强插件与自定义工具栏。
+    XF.init('editor', {
+        height: 360,
+        extraPlugins: 'quicktable,tableresizerowandcolumn,imageresizerowandcolumn',
+        toolbar: [
+            { name: 'insert', items: [ 'Table', 'quicktable' ] },
+            { name: 'edit', items: [ 'Rowspan', 'Columns' ] },
+            '/', { name: 'xfstyles', items: [ 'xfTexFx', 'xfBlockFx', 'xfEditEffect' ] }
+        ]
+    });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<!--
+    xfTextEditor 内容导出与预览示例
+    说明：演示如何把编辑器内容导出为「自包含」的 HTML——
+          即使不依赖任何外部 js / css 资源文件，也能独立呈现，
+          且展示效果与编辑器内完全一致。同时演示「双击效果即可再次编辑」。
+    所有注释均为中文。
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>xfTextEditor - 内容导出与预览示例</title>
+    <script defer src="../ckeditor.js"></script>
+    <script defer src="../config.full.js"></script>
+    <script defer src="js/xf.js"></script>
+    <link rel="stylesheet" href="css/xf.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+
+<header class="xf-header">
+    <span class="brand">xfTextEditor</span>
+    <nav>
+        <a href="index.html">首页</a>
+        <a href="simple.html">简易编辑器</a>
+        <a href="full.html">完整示例</a>
+        <a href="export.html">导出预览</a>
+        <a href="docs.html">开发文档</a>
+        <a href="php.html">上传接口</a>
+        <a href="api.html">JS API</a>
+    </nav>
+</header>
+
+<main class="xf-container">
+    <h1>内容导出与预览示例</h1>
+    <p>本页演示把编辑器内容导出为<strong>自包含</strong>的 HTML：无论保存为 .html 文件还是嵌入任意页面，
+       都<strong>不依赖任何外部 js / css 资源文件</strong>即可完整呈现，且展示效果与编辑器内一致。</p>
+
+    <div class="xf-tip">
+        <strong>小技巧：</strong>在编辑器中<strong>双击</strong>任意「文字特效」或「段落特效」（提示框 / 卡片 / 时间轴 / 按钮等），
+        即可像双击图片一样弹出编辑窗口，再次修改其内容或样式；也可选中效果后点击工具栏的
+        <strong>「编辑效果」</strong>按钮。
+    </div>
+
+    <div class="xf-editor-wrap">
+        <textarea id="editor">
+            <h2>一、文字特效</h2>
+            <p>
+                <span class="xf-tex-gradient">渐变文字</span>、
+                <span class="xf-tex-glow">发光文字</span>、
+                <span class="xf-tex-highlight">荧光高亮</span>、
+                <span class="xf-tex-stroke">描边文字</span>。
+            </p>
+            <h2>二、段落特效</h2>
+            <div class="xf-callout xf-callout-info"><p>这是一条<strong>信息提示</strong>：双击我可以再次编辑内容。</p></div>
+            <div class="xf-card-block"><h4>内容卡片</h4><p>卡片支持任意富文本内容，并带柔和阴影与圆角。双击即可修改。</p></div>
+            <div class="xf-timeline">
+                <div class="xf-tl-item"><span class="xf-tl-dot"></span><div class="xf-tl-body"><strong>第一步</strong><p>创建并配置编辑器。</p></div></div>
+                <div class="xf-tl-item"><span class="xf-tl-dot"></span><div class="xf-tl-body"><strong>第二步</strong><p>编写与排版内容。</p></div></div>
+                <div class="xf-tl-item"><span class="xf-tl-dot"></span><div class="xf-tl-body"><strong>第三步</strong><p>发布到网站。</p></div></div>
+            </div>
+            <h2>三、常规排版</h2>
+            <table>
+                <thead><tr><th>功能</th><th>说明</th></tr></thead>
+                <tbody><tr><td>撤销</td><td>回退上一步操作</td></tr><tr><td>加粗</td><td>加粗选中文字</td></tr></tbody>
+            </table>
+            <p><a class="xf-btn" href="#">点击按钮</a></p>
+        </textarea>
+    </div>
+
+    <h2>导出操作</h2>
+    <div class="xf-grid">
+        <a href="javascript:void(0)" onclick="doRaw()"><span class="title">获取原始 HTML</span><span class="desc">getData() 原文</span></a>
+        <a href="javascript:void(0)" onclick="doStandalone()"><span class="title">获取自包含片段</span><span class="desc">内联样式，可直接嵌入</span></a>
+        <a href="javascript:void(0)" onclick="doPreview()"><span class="title">实时预览</span><span class="desc">iframe 内渲染完整文档</span></a>
+        <a href="javascript:void(0)" onclick="doDownload()"><span class="title">下载 .html</span><span class="desc">自包含文件，离线可用</span></a>
+        <a href="javascript:void(0)" onclick="doCopyRaw()"><span class="title">复制原始 HTML</span><span class="desc">写入剪贴板</span></a>
+        <a href="javascript:void(0)" onclick="doCopyStandalone()"><span class="title">复制自包含 HTML</span><span class="desc">写入剪贴板</span></a>
+    </div>
+
+    <h2>实时预览（自包含渲染，与编辑器效果一致）</h2>
+    <iframe id="pv" class="xf-preview-frame" title="自包含内容预览"></iframe>
+
+    <h2>接口说明</h2>
+    <pre class="xf-code">// 原始 HTML（依赖外部 contents.css / 特效样式才完整呈现）
+XF.getHtml('editor');
+
+// 自包含片段：内联 &lt;style&gt;，可直接粘贴到任意页面，不依赖外部文件
+XF.getHtml('editor', { standalone: true });
+
+// 完整独立 HTML 文档字符串（可保存为 .html 离线打开）
+XF.exportDocument('editor', '我的内容');
+
+// 直接触发浏览器下载为 .html 文件
+XF.downloadHtml('editor', 'my-content.html');</pre>
+</main>
+
+<footer class="xf-footer">
+    xfTextEditor &mdash; 基于 CKEditor 4 的富文本编辑器 &copy; 2021-2026
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // 基础能力由 config.full.js 统一提供；导出演示无需额外插件。
+    var editor = XF.init('editor', { height: 460 });
+
+    function renderPreview() {
+        var pv = document.getElementById('pv');
+        if (pv) pv.srcdoc = XF.exportDocument('editor', '内容导出预览');
+    }
+    // 内容变化时刷新预览
+    editor.on('change', function () { renderPreview(); });
+
+    window.doRaw = function () { show(XF.getHtml('editor'), '原始 HTML'); };
+    window.doStandalone = function () { show(XF.getHtml('editor', { standalone: true }), '自包含片段 HTML'); };
+    window.doPreview = function () { renderPreview(); document.getElementById('pv').scrollIntoView({ behavior: 'smooth' }); };
+    window.doDownload = function () { XF.downloadHtml('editor', 'xf-content.html'); };
+    window.doCopyRaw = function () { copyText(XF.getHtml('editor')); };
+    window.doCopyStandalone = function () { copyText(XF.getHtml('editor', { standalone: true })); };
+
+    function show(html, title) {
+        var content = '<pre style="white-space:pre-wrap;padding:16px;font-family:monospace;">' +
+            escapeHtml(html) + '</pre>';
+        // 优先新窗口；跨域沙箱 / 弹窗拦截导致访问 document 抛 SecurityError 时，
+        // 自动回退到页面内模态浮层显示源码，避免崩溃。
+        var ok = false;
+        try {
+            var w = window.open('', '_blank');
+            if (w && w.document) {
+                w.document.open();
+                w.document.write(content);
+                w.document.close();
+                w.document.title = title;
+                ok = true;
+            }
+        } catch (e) { ok = false; }
+        if (!ok) showSourceModal(content, title);
+    }
+
+    // 页面内源码查看浮层（同源，无跨域风险）
+    function showSourceModal(content, title) {
+        var existing = document.getElementById('xf-src-modal');
+        if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
+        var overlay = document.createElement('div');
+        overlay.id = 'xf-src-modal';
+        overlay.style.cssText = 'position:fixed;inset:0;z-index:2147483647;' +
+            'background:rgba(15,23,42,.55);display:flex;justify-content:center;' +
+            'align-items:flex-start;padding:24px;font-family:-apple-system,"PingFang SC",sans-serif;';
+        overlay.innerHTML = '<div style="width:100%;max-width:960px;background:#fff;' +
+            'border-radius:10px;box-shadow:0 10px 30px rgba(15,23,42,.18);' +
+            'display:flex;flex-direction:column;max-height:88vh;">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;' +
+            'padding:10px 16px;background:#0f172a;color:#fff;border-radius:10px 10px 0 0;">' +
+            '<span>' + (title || '源码') + '</span>' +
+            '<button type="button" style="background:rgba(255,255,255,.14);color:#fff;' +
+            'border:0;padding:6px 14px;border-radius:6px;cursor:pointer;">关闭</button></div>' +
+            '<div style="overflow:auto;flex:1;">' + content + '</div></div>';
+        document.body.appendChild(overlay);
+        function close() { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }
+        overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+        overlay.querySelector('button').addEventListener('click', close);
+    }
+    function copyText(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(function () {
+                alert('已复制到剪贴板（自包含，不依赖外部文件）。');
+            }, function () { fallbackCopy(text); });
+        } else { fallbackCopy(text); }
+    }
+    function fallbackCopy(text) {
+        var ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); alert('已复制到剪贴板。'); }
+        catch (e) { alert('复制失败，请手动复制。'); }
+        document.body.removeChild(ta);
+    }
+    function escapeHtml(s) {
+        return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // 首次渲染预览
+    renderPreview();
+});
+</script>
+
+</body>
+</html>

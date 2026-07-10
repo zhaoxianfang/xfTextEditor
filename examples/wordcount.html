@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<!-- xfTextEditor 字数统计示例 -->
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>xfTextEditor - 字数统计示例</title>
+    <script defer src="../ckeditor.js"></script>
+    <script defer src="../config.full.js"></script>
+    <script defer src="js/xf.js"></script>
+    <link rel="stylesheet" href="css/xf.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+<header class="xf-header">
+    <span class="brand">xfTextEditor</span>
+    <nav>
+        <a href="index.html">首页</a>
+        <a href="simple.html">简易编辑器</a>
+        <a href="full.html">完整示例</a>
+        <a href="export.html">导出预览</a>
+        <a href="docs.html">开发文档</a>
+        <a href="php.html">上传接口</a>
+        <a href="api.html">JS API</a>
+    </nav>
+</header>
+<main class="xf-container">
+    <h1>字数统计示例</h1>
+    <p><code class="xf-inline">wordcount</code> 插件在编辑器底部状态栏实时显示字数、段落数与字符数。</p>
+    <div class="xf-editor-wrap"><textarea id="editor"></textarea></div>
+    <h2>配置项（config.wordcount）</h2>
+    <table class="xf-params">
+        <tr><th>配置项</th><th>默认值</th><th>说明</th></tr>
+        <tr><td><code>showParagraphs</code></td><td>true</td><td>是否显示段落计数。</td></tr>
+        <tr><td><code>showWordCount</code></td><td>true</td><td>是否显示字数。</td></tr>
+        <tr><td><code>showCharCount</code></td><td>false</td><td>是否显示字符计数。</td></tr>
+        <tr><td><code>countSpacesAsChars</code></td><td>false</td><td>是否将空格计入字符数。</td></tr>
+        <tr><td><code>countHTML</code></td><td>false</td><td>是否在字符数中包含 HTML 标签。</td></tr>
+        <tr><td><code>maxWordCount</code></td><td>-1</td><td>最大字数限制，-1 表示无限制。</td></tr>
+        <tr><td><code>maxCharCount</code></td><td>-1</td><td>最大字符数限制，-1 表示无限制。</td></tr>
+        <tr><td><code>filter</code></td><td>null</td><td>计数前的 HTML 过滤规则（htmlParser.filter）。</td></tr>
+    </table>
+    <pre class="xf-code">CKEDITOR.replace('editor', {
+    extraPlugins: 'wordcount',
+    wordcount: { showWordCount: true, showCharCount: true, maxCharCount: 2000 }
+});</pre>
+</main>
+<footer class="xf-footer">xfTextEditor &copy; 2021-2026</footer>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+// 基础能力由 config.full.js 统一提供；此处叠加 wordcount 插件与自定义字数配置。
+    XF.init('editor', {
+        height: 320,
+        extraPlugins: 'wordcount',
+        wordcount: {
+            showParagraphs: true,
+            showWordCount: true,
+            showCharCount: true,
+            countSpacesAsChars: false,
+            countHTML: false,
+            maxWordCount: -1,
+            maxCharCount: 2000
+        }
+    });
+});
+</script>
+</body>
+</html>

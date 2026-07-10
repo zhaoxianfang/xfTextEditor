@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<!-- xfTextEditor 代码块编辑示例（pbckcode 插件） -->
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>xfTextEditor - 代码块编辑示例</title>
+    <script defer src="../ckeditor.js"></script>
+    <script defer src="../config.full.js"></script>
+    <script defer src="js/xf.js"></script>
+    <link rel="stylesheet" href="css/xf.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+<header class="xf-header">
+    <span class="brand">xfTextEditor</span>
+    <nav>
+        <a href="index.html">首页</a>
+        <a href="simple.html">简易编辑器</a>
+        <a href="full.html">完整示例</a>
+        <a href="export.html">导出预览</a>
+        <a href="docs.html">开发文档</a>
+        <a href="php.html">上传接口</a>
+        <a href="api.html">JS API</a>
+    </nav>
+</header>
+<main class="xf-container">
+    <h1>代码块编辑示例</h1>
+    <p><code class="xf-inline">pbckcode</code> 插件基于 Ace 编辑器，在对话框中提供带语法高亮的代码编辑，
+       支持多种语言与主题。</p>
+    <div class="xf-editor-wrap"><textarea id="editor"></textarea></div>
+    <h2>配置项（config.pbckcode）</h2>
+    <table class="xf-params">
+        <tr><th>配置项</th><th>默认值</th><th>说明</th></tr>
+        <tr><td><code>theme</code></td><td>"textmate"</td><td>Ace 编辑器主题，如 monokai、github 等。</td></tr>
+        <tr><td><code>modes</code></td><td>内置语言列表</td><td>对话框中可选的高亮语言（如 php、javascript、python、java 等）。</td></tr>
+        <tr><td><code>js</code></td><td>cdnjs ace 1.2.6</td><td>Ace 脚本的 CDN 基础路径。</td></tr>
+        <tr><td><code>tabSize</code></td><td>4</td><td>缩进空格数。</td></tr>
+        <tr><td><code>highlightActiveLine</code></td><td>true</td><td>是否高亮当前行。</td></tr>
+    </table>
+    <pre class="xf-code">CKEDITOR.replace('editor', {
+    extraPlugins: 'pbckcode',
+    pbckcode: { theme: 'monokai', tabSize: 2 }
+});</pre>
+    <div class="xf-warn">注意：pbckcode 通过 CDN 加载 Ace 编辑器脚本，内网环境需将脚本下载到本地并修改 <code class="xf-inline">js</code> 配置路径。</div>
+</main>
+<footer class="xf-footer">xfTextEditor &copy; 2021-2026</footer>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+// 基础能力由 config.full.js 统一提供；此处叠加 pbckcode 插件与自定义工具栏。
+    XF.init('editor', {
+        height: 320,
+        extraPlugins: 'pbckcode',
+        toolbar: [ { name: 'tools', items: [ 'pbckcode' ] }, '/', { name: 'xfstyles', items: [ 'xfTexFx', 'xfBlockFx', 'xfEditEffect' ] } ],
+        pbckcode: { theme: 'monokai', tabSize: 4 }
+    });
+});
+</script>
+</body>
+</html>

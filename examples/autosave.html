@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<!-- xfTextEditor 自动保存示例 -->
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>xfTextEditor - 自动保存示例</title>
+    <script defer src="../ckeditor.js"></script>
+    <script defer src="../config.full.js"></script>
+    <script defer src="js/xf.js"></script>
+    <link rel="stylesheet" href="css/xf.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body>
+<header class="xf-header">
+    <span class="brand">xfTextEditor</span>
+    <nav>
+        <a href="index.html">首页</a>
+        <a href="simple.html">简易编辑器</a>
+        <a href="full.html">完整示例</a>
+        <a href="export.html">导出预览</a>
+        <a href="docs.html">开发文档</a>
+        <a href="php.html">上传接口</a>
+        <a href="api.html">JS API</a>
+    </nav>
+</header>
+<main class="xf-container">
+    <h1>自动保存示例</h1>
+    <p><code class="xf-inline">autosave</code> 插件利用浏览器 localStorage 定时缓存编辑器内容，
+       防止意外刷新 / 关闭导致内容丢失。</p>
+    <div class="xf-editor-wrap"><textarea id="editor"></textarea></div>
+    <h2>配置项（config.autosave）</h2>
+    <table class="xf-params">
+        <tr><th>配置项</th><th>默认值</th><th>说明</th></tr>
+        <tr><td><code>Savekey</code></td><td>自动</td><td>localStorage 存储键，需保证页面唯一。</td></tr>
+        <tr><td><code>delay</code></td><td>15</td><td>内容变化后多少秒执行一次保存。</td></tr>
+        <tr><td><code>NotOlderThen</code></td><td>1440</td><td>仅加载多少分钟以内的缓存（默认一天）。</td></tr>
+        <tr><td><code>saveOnDestroy</code></td><td>false</td><td>编辑器销毁时是否保存。</td></tr>
+        <tr><td><code>messageType</code></td><td>"notification"</td><td>提示方式：notification / statusbar / no。</td></tr>
+        <tr><td><code>diffType</code></td><td>"sideBySide"</td><td>对比对话框差异展示方式。</td></tr>
+        <tr><td><code>autoLoad</code></td><td>false</td><td>启动后是否自动恢复缓存内容。</td></tr>
+    </table>
+    <pre class="xf-code">CKEDITOR.replace('editor', {
+    extraPlugins: 'autosave',
+    autosave: { delay: 10, messageType: 'notification', autoLoad: true }
+});</pre>
+</main>
+<footer class="xf-footer">xfTextEditor &copy; 2021-2026</footer>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+// 基础能力由 config.full.js 统一提供；此处叠加 autosave 插件与自定义配置。
+    XF.init('editor', {
+        height: 320,
+        extraPlugins: 'autosave',
+        autosave: {
+            Savekey: 'autosave_demo_page',
+            delay: 10,
+            NotOlderThen: 1440,
+            saveOnDestroy: true,
+            messageType: 'notification',
+            diffType: 'sideBySide',
+            autoLoad: true
+        }
+    });
+});
+</script>
+</body>
+</html>

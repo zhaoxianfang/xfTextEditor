@@ -1,130 +1,97 @@
 <!DOCTYPE html>
 <!--
-Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
-For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+    xfTextEditor 示例首页（入口）
+    说明：本页面用于介绍本编辑器支持的全部接口、功能与特性，
+          并提供到各示例 HTML 文件与开发文档的导航链接。
+    所有注释均为中文。
 -->
-<html lang="en">
+<html lang="zh-CN">
 <head>
-	<meta charset="utf-8">
-	<title>CKEditor Sample</title>
-	<script src="../ckeditor.js"></script>
-	<script src="js/sample.js"></script>
-	<link rel="stylesheet" href="css/samples.css">
-	<link rel="stylesheet" href="toolbarconfigurator/lib/codemirror/neo.css">
-	<meta name="viewport" content="width=device-width,initial-scale=1">
-	<meta name="description" content="Try the latest sample of CKEditor 4 and learn more about customizing your WYSIWYG editor with endless possibilities.">
+    <meta charset="utf-8">
+    <title>xfTextEditor - 编辑器功能总览</title>
+    <!-- defer：等待 DOM 解析完成再执行，避免阻塞页面渲染；顺序保持 ckeditor → config → xf -->
+    <script defer src="../ckeditor.js"></script>
+    <!-- 统一配置：提供全部扩展插件、中文语言、stylesSet、行高、字号、上传地址、自研插件等 -->
+    <script defer src="../config.full.js"></script>
+    <script defer src="js/xf.js"></script>
+    <link rel="stylesheet" href="css/xf.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
 </head>
-<body id="main">
+<body>
 
-<nav class="navigation-a">
-	<div class="grid-container">
-		<ul class="navigation-a-left grid-width-70">
-			<li><a href="https://ckeditor.com/ckeditor-4/">Project Homepage</a></li>
-			<li><a href="https://github.com/ckeditor/ckeditor4/issues">I found a bug</a></li>
-			<li><a href="https://github.com/ckeditor/ckeditor4" class="icon-pos-right icon-navigation-a-github">Fork CKEditor on GitHub</a></li>
-		</ul>
-		<ul class="navigation-a-right grid-width-30">
-			<li><a href="https://ckeditor.com/blog/">CKEditor Blog</a></li>
-		</ul>
-	</div>
-</nav>
-
-<header class="header-a">
-	<div class="grid-container">
-		<h1 class="header-a-logo grid-width-30">
-			<a href="index.html"><img src="img/logo.svg" onerror="this.src='img/logo.png'; this.onerror=null;" alt="CKEditor Sample"></a>
-		</h1>
-
-		<nav class="navigation-b grid-width-70">
-			<ul>
-				<li><a href="index.html" class="button-a button-a-background">Start</a></li>
-				<li><a href="toolbarconfigurator/index.html" class="button-a">Toolbar configurator <span class="balloon-a balloon-a-nw">Edit your toolbar now!</span></a></li>
-			</ul>
-		</nav>
-	</div>
+<header class="xf-header">
+    <span class="brand">xfTextEditor 功能总览</span>
+    <nav>
+        <a href="index.html">首页</a>
+        <a href="simple.html">简易编辑器</a>
+        <a href="full.html">完整示例</a>
+        <a href="export.html">导出预览</a>
+        <a href="docs.html">开发文档</a>
+        <a href="php.html">上传接口</a>
+        <a href="api.html">JS API</a>
+    </nav>
 </header>
 
-<main>
-	<div class="adjoined-top">
-		<div class="grid-container">
-			<div class="content grid-width-100">
-				<h1>Congratulations!</h1>
-				<p>
-					If you can see CKEditor below, it means that the installation succeeded.
-					You can now try out your new editor version, see its features, and when you are ready to move on, check some of the <a href="#sample-customize">most useful resources</a> recommended below.
-				</p>
-			</div>
-		</div>
-	</div>
-	<div class="adjoined-bottom">
-		<div class="grid-container">
-			<div class="grid-width-100">
-				<div id="editor">
-					<h1>Hello world!</h1>
-					<p>I'm an instance of <a href="https://ckeditor.com">CKEditor</a>.</p>
-				</div>
-			</div>
-		</div>
-	</div>
+<main class="xf-container">
+    <h1>xfTextEditor 富文本编辑器</h1>
+    <p class="xf-tip">基于 CKEditor 4 深度定制的富文本编辑器，集成了视频、图表、二维码、代码块、
+       字数统计、自动保存、增强图片、拖拽上传等大量扩展能力。本页汇总其全部接口、功能与特性，
+       点击任意卡片查看独立示例。</p>
 
-	<div class="grid-container">
-		<div class="content grid-width-100">
-			<section id="sample-customize">
-				<h2>Customize Your Editor</h2>
-				<p>Modular build and <a href="https://ckeditor.com/docs/ckeditor4/latest/guide/dev_configuration.html">numerous configuration options</a> give you nearly endless possibilities to customize CKEditor. Replace the content of your <code><a href="../config.js">config.js</a></code> file with the following code and refresh this page (<strong>remember to clear the browser cache</strong>.html)!</p>
-		<pre class="cm-s-neo CodeMirror"><code><span style="padding-right: 0.1px;"><span class="cm-variable">CKEDITOR</span>.<span class="cm-property">editorConfig</span> <span class="cm-operator">=</span> <span class="cm-keyword">function</span>( <span class="cm-def">config</span> ) {</span>
-<span style="padding-right: 0.1px;"><span class="cm-tab">	</span><span class="cm-variable-2">config</span>.<span class="cm-property">language</span> <span class="cm-operator">=</span> <span class="cm-string">'es'</span>;</span>
-<span style="padding-right: 0.1px;"><span class="cm-tab">	</span><span class="cm-variable-2">config</span>.<span class="cm-property">uiColor</span> <span class="cm-operator">=</span> <span class="cm-string">'#F7B42C'</span>;</span>
-<span style="padding-right: 0.1px;"><span class="cm-tab">	</span><span class="cm-variable-2">config</span>.<span class="cm-property">height</span> <span class="cm-operator">=</span> <span class="cm-number">300</span>;</span>
-<span style="padding-right: 0.1px;"><span class="cm-tab">	</span><span class="cm-variable-2">config</span>.<span class="cm-property">toolbarCanCollapse</span> <span class="cm-operator">=</span> <span class="cm-atom">true</span>;</span>
-<span style="padding-right: 0.1px;">};</span></code></pre>
-			</section>
+    <h2>一、快速开始</h2>
+    <div class="xf-grid">
+        <a href="simple.html"><span class="title">简易编辑器</span><span class="desc">最小配置，仅保留核心功能</span></a>
+        <a href="full.html"><span class="title">完整示例</span><span class="desc">启用全部插件的最全示例</span></a>
+        <a href="api.html"><span class="title">JavaScript API</span><span class="desc">getData/setData/事件等</span></a>
+    </div>
 
-			<section>
-				<h2>Toolbar Configuration</h2>
-				<p>If you want to reorder toolbar buttons or remove some of them, check <a href="toolbarconfigurator/index.html">this handy tool</a>!</p>
-			</section>
+    <h2>二、媒体与插入</h2>
+    <div class="xf-grid">
+        <a href="video.html"><span class="title">视频插入</span><span class="desc">video 插件，HTML5 &lt;video&gt;</span></a>
+        <a href="audio.html"><span class="title">HTML5 音频</span><span class="desc">html5audio 插件</span></a>
+        <a href="chart.html"><span class="title">图表</span><span class="desc">chart 插件，柱状/折线/饼图</span></a>
+        <a href="qrcode.html"><span class="title">二维码</span><span class="desc">yaqr 插件</span></a>
+        <a href="code.html"><span class="title">代码块</span><span class="desc">pbckcode 插件，Ace 高亮</span></a>
+        <a href="upload.html"><span class="title">上传功能</span><span class="desc">图片/文件/拖拽上传</span></a>
+    </div>
 
-			<section>
-				<h2>More Samples!</h2>
-				<p>Visit the <a href="https://ckeditor.com/docs/ckeditor4/latest/examples/index.html">CKEditor Examples</a> for a huge collection of samples showcasing editor features, with source code readily available to copy and use in your own implementation.</p>
-			</section>
+    <h2>三、排版与表格</h2>
+    <div class="xf-grid">
+        <a href="table.html"><span class="title">表格增强</span><span class="desc">quicktable / 行列缩放</span></a>
+        <a href="lineheight.html"><span class="title">行高设置</span><span class="desc">lineheight 插件</span></a>
+    </div>
 
-			<section>
-				<h2>Developer's Guide</h2>
-				<p>The most important resource for all developers working with CKEditor, integrating it with their websites and applications, and customizing to their needs. You can start from here:</p>
-				<ul>
-					<li><a href="https://ckeditor.com/docs/ckeditor4/latest/guide/dev_installation.html">Getting Started</a> &ndash; Explains most crucial editor concepts and practices as well as the installation process and integration with your website.</li>
-					<li><a href="https://ckeditor.com/docs/ckeditor4/latest/guide/dev_advanced_installation.html">Advanced Installation Concepts</a> &ndash; Describes how to upgrade, install additional components (plugins, skins.html), or create a custom build.</li>
-				</ul>
-					<p>When you have the basics sorted out, feel free to browse some more advanced sections like:</p>
-				<ul>
-					<li><a href="https://ckeditor.com/docs/ckeditor4/latest/features/index.html">Features Overview</a> &ndash; Descriptions and samples of various editor features.</li>
-					<li><a href="https://ckeditor.com/docs/ckeditor4/latest/guide/plugin_sdk_intro.html">Plugin SDK</a>, <a href="https://ckeditor.com/docs/ckeditor4/latest/guide/widget_sdk_intro.html">Widget SDK</a>, and <a href="https://ckeditor.com/docs/ckeditor4/latest/guide/skin_sdk_intro.html">Skin SDK</a> &ndash; Useful when you want to create your own editor components.</li>
-				</ul>
-			</section>
+    <h2>四、辅助能力</h2>
+    <div class="xf-grid">
+        <a href="wordcount.html"><span class="title">字数统计</span><span class="desc">wordcount 插件</span></a>
+        <a href="autosave.html"><span class="title">自动保存</span><span class="desc">autosave 插件，防丢稿</span></a>
+    </div>
 
-			<section>
-				<h2>CKEditor JavaScript API</h2>
-				<p>CKEditor boasts a rich <a href="https://ckeditor.com/docs/ckeditor4/latest/api/index.html">JavaScript API</a> that you can use to adjust the editor to your needs and integrate it with your website or application.</p>
-			</section>
-		</div>
-	</div>
+    <h2>五、文档与后端</h2>
+    <div class="xf-grid">
+        <a href="docs.html"><span class="title">完整开发文档</span><span class="desc">配置项/命令/事件/API 全集</span></a>
+        <a href="php.html"><span class="title">PHP 上传接口说明</span><span class="desc">接口参数、响应结构与实时演示</span></a>
+    </div>
+
+    <h2>六、原生 CKEditor 能力</h2>
+    <p>除扩展插件外，本编辑器完整保留 CKEditor 4 的全部原生能力，包括：</p>
+    <ul>
+        <li><strong>基础样式</strong>：加粗、斜体、下划线、删除线、上下标、清除格式、格式刷。</li>
+        <li><strong>段落</strong>：有序/无序列表、缩进、引用、对齐（左/中/右/两端）、文字方向。</li>
+        <li><strong>链接</strong>：超链接、锚点、取消链接。</li>
+        <li><strong>字体</strong>：字体族、字号、文字颜色、背景颜色。</li>
+        <li><strong>编辑</strong>：撤销/重做、查找/替换、全选、复制粘贴（含 Word 粘贴净化）。</li>
+        <li><strong>插入</strong>：图片、表格、水平线、特殊符号、分页符、Iframe。</li>
+        <li><strong>工具</strong>：源码模式、最大化、打印、预览、导出 PDF。</li>
+    </ul>
+
+    <div class="xf-warn">更多接口、配置项、命令、事件与上传后端对接细节，请查阅
+        <a href="docs.html">docs.html 完整开发文档</a> 与项目根目录 <code class="xf-inline">php/</code> 文件夹。</div>
 </main>
 
-<footer class="footer-a grid-container">
-	<div class="grid-container">
-		<p class="grid-width-100">
-			CKEditor &ndash; The text editor for the Internet &ndash; <a class="samples" href="https://ckeditor.com/">https://ckeditor.com</a>
-		</p>
-		<p class="grid-width-100" id="copy">
-			Copyright &copy; 2003-2021, <a class="samples" href="https://cksource.com/">CKSource</a> &ndash; Frederico Knabben. All rights reserved.
-		</p>
-	</div>
+<footer class="xf-footer">
+    xfTextEditor &mdash; 基于 CKEditor 4 的富文本编辑器 &copy; 2021-2026
 </footer>
-<script>
-	initSample();
-</script>
 
 </body>
 </html>

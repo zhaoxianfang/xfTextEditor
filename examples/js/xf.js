@@ -962,7 +962,16 @@ var MODAL_CSS = [
     }
 
     /** 将宿主 <html> 的 data-theme 状态同步到所有编辑器 iframe 的内容文档，
-     *  使 iframe 模式下的内容区也能随整页主题变暗 / 变亮。 */
+     *  使 iframe 模式下的内容区也能随整页主题变暗 / 变亮。
+     *
+     *  !!! 重要：divarea 模式下编辑器与宿主共用同一 document（inst.document.$.documentElement
+     *  === document.documentElement），此时「宿主 <html> 的 data-theme」已经通过 CSS 级联
+     *  （contents.css 的 [data-theme="dark"] .cke_editable 规则）自动作用到编辑区，
+     *  绝对不能再把它写回 document.documentElement —— 否则会与下方监听 documentElement 的
+     *  MutationObserver（以及 CKEditor 自身对文档注册的 MutationObserver）互相触发，
+     *  形成「观察者写回自身被观察节点」的反馈环，导致主线程被持续占满、页面卡死；
+     *  同时还会破坏宿主主题状态（亮色时被 removeAttribute 清除）。
+     *  因此这里显式跳过「与宿主同源」的文档，只对真正独立的 iframe 文档写入。 */
     function syncIframeTheme() {
         if (typeof XfEditor === 'undefined' || !XfEditor.instances) return;
         var hostDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -970,7 +979,9 @@ var MODAL_CSS = [
             if (!XfEditor.instances.hasOwnProperty(key)) continue;
             var inst = XfEditor.instances[key];
             var docEl = inst.document && inst.document.$ && inst.document.$.documentElement;
-            if (docEl) {
+            // 跳过与宿主同源的文档（divarea 模式）：其 data-theme 由宿主 <html> 级联即可，
+            // 写回会触发自身被监听的 MutationObserver，造成页面卡死。
+            if (docEl && docEl !== document.documentElement) {
                 if (hostDark) docEl.setAttribute('data-theme', 'dark');
                 else docEl.removeAttribute('data-theme');
             }

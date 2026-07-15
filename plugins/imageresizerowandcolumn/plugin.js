@@ -330,15 +330,19 @@
                 cellsCount = leftSideCells.length,
                 cellsSaved = 0;
 
-            // Perform the actual resize to table cells, only for those by side of the pillar.
+            // Perform the actual resize to cells, only for those by side of the pillar.
             for ( var i = 0; i < cellsCount; i++ ) {
-                var leftCell = leftSideCells[ i ]
+                var leftCell = leftSideCells[ i ];
 
-                table = pillar.table;
-
+                // 说明：本插件针对「图片」做行列缩放，pillar 由 buildImgRowPillars 构造，
+                // 其对象不含 table 属性，因此不存在标准表格缩放里的 pillar.table，
+                // 也不需要「拖最后一行时整表高度跟随」的逻辑。原代码中的
+                //   table = pillar.table;
+                // 属于从表格缩放复制残留的死代码，会在非严格模式下创建隐式全局变量 table，
+                // 且对图片缩放毫无作用，故删除。
                 // Defer the resizing to avoid any interference among cells.
-                CKEDITOR.tools.setTimeout( function( leftCell, leftOldHeight, tableHeight ) {
-                    // 1px is the minimum valid width (http://dev.ckeditor.com/ticket/11626).
+                CKEDITOR.tools.setTimeout( function( leftCell, leftOldHeight ) {
+                    // 1px is the minimum valid height (http://dev.ckeditor.com/ticket/11626).
                     leftCell && leftCell.setStyle( 'height', pxUnit( Math.max( leftOldHeight + direction, 1 ) ) );
 
                     // Cells resizing is asynchronous-y, so we have to use syncing
@@ -347,8 +351,7 @@
                         editor.fire( 'saveSnapshot' );
                     }
                 }, 0, this, [
-                    leftCell, leftCell && getHeight( leftCell ),
-                    ( !leftCell ) && ( getHeight( leftCell.img ) )
+                    leftCell, leftCell && getHeight( leftCell )
                 ] );
             }
         }

@@ -119,10 +119,21 @@
                     }
                   }
                   else if (this.isImage) {
-                    editor.insertHtml('<img src="' + imageUrl + '" alt="" /><br>', 'unfiltered_html');
+                    // 安全：用 DOM 节点构造，避免 imageUrl 含引号 / onerror= 等注入。
+                    var img = new CKEDITOR.dom.element('img');
+                    img.setAttribute('src', imageUrl);
+                    img.setAttribute('alt', '');
+                    editor.insertElement(img);
+                    editor.insertElement(new CKEDITOR.dom.element('br'));
                   }
                   else {
-                    editor.insertHtml('<a href="' + this.cdnUrl + '">' + this.name + '</a> ', 'unfiltered_html');
+                    // 安全：this.name 是用户侧文件名，this.cdnUrl 经由 setAttribute
+                    // 自动规范化（拦截 javascript: 等伪协议），文本用 setText 不会被解析为 HTML。
+                    var a = new CKEDITOR.dom.element('a');
+                    a.setAttribute('href', this.cdnUrl);
+                    a.setText(this.name);
+                    editor.insertElement(a);
+                    editor.insertElement(new CKEDITOR.dom.element('br'));
                   }
                 });
               });

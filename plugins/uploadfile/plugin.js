@@ -34,13 +34,22 @@
 				},
 
 				onUploaded: function( upload ) {
-					this.replaceWith( '<a href="' + upload.url + '" target="_blank">' + upload.fileName + '</a>' );
+					// 注意：不能用字符串拼接 '<a href="' + upload.url + '">' + upload.fileName + '</a>'，
+					// 因为 upload.url / upload.fileName 来自服务端响应，若返回
+					// javascript: 伪协议或含引号/标签的恶意文件名，会造成 XSS。
+					// 这里改用 DOM 节点 + setAttribute / setText，由浏览器做转义与校验。
+					var a = new CKEDITOR.dom.element( 'a' );
+					a.setAttribute( 'href', upload.url );
+					a.setAttribute( 'target', '_blank' );
+					a.setText( upload.fileName );
+					this.replaceWith( a );
 				}
 			} );
 		},
 
 		isSupportedEnvironment: function() {
-			return CKEDITOR.plugins.clipboard.isFileApiSupported;
+			// 防御：可能早于 clipboard 插件初始化，先判空再访问属性。
+			return !!( CKEDITOR.plugins && CKEDITOR.plugins.clipboard && CKEDITOR.plugins.clipboard.isFileApiSupported );
 		}
 	} );
 } )();

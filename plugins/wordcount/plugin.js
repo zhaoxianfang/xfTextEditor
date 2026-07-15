@@ -279,7 +279,7 @@ CKEDITOR.plugins.add("wordcount",
 
                 if (!config.warnOnLimitOnly) {
                     if (config.hardLimit) {
-                        if (editor.mode === "source" && editor.plugins.codemirror) {
+                        if (editor.mode === "source" && editor.plugins.codemirror && window["codemirror_" + editor.id]) {
                             window["codemirror_" + editor.id].undo();
                         } else {
                             editorInstance.execCommand("undo");

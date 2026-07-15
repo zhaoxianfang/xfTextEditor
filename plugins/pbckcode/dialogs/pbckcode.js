@@ -74,16 +74,10 @@ CKEDITOR.dialog.add('pbckcodeDialog', function(editor) {
         className: 'cke_pbckcode_ace',
         style: 'position: absolute; top: 80px; left: 10px; right: 10px; bottom: 50px;',
         setup: function(element) {
-          // get the value of the editor
-          var code = element.getHtml();
-
-          // replace some regexp
-          code = code.replace(new RegExp('<br/>', 'g'), '\n')
-            .replace(new RegExp('<br>', 'g'), '\n')
-            .replace(new RegExp('&lt;', 'g'), '<')
-            .replace(new RegExp('&gt;', 'g'), '>')
-            .replace(new RegExp('&amp;', 'g'), '&')
-            .replace(new RegExp('&nbsp;', 'g'), ' ');
+          // 直接用 getText() 取得经实体解码后的原始代码文本，
+          // 避免手写正则反转义导致 &nbsp; / 连续空格 / 其它实体还原错误、
+          // 复杂代码被损坏（所见非所得）。
+          var code = element.getText();
 
           aceEditor.setValue(code);
         },
@@ -191,15 +185,5 @@ CKEDITOR.dialog.add('pbckcodeDialog', function(editor) {
       }
     }
   };
-});
-
-/*
- * Resize the ACE Editor
- */
-CKEDITOR.dialog.on('resize', function(evt) {
-  var AceEditor = evt.editor.aceEditor;
-  if (AceEditor !== undefined) {
-    AceEditor.resize();
-  }
 });
 

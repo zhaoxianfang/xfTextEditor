@@ -10,6 +10,11 @@
 var domPreviewImg = null;
 var domPreviewImgAdv = null;
 var myWidgetData = null;
+// setup 中赋值的预览图 DOM id 引用（原代码未声明，会泄漏为隐式全局，这里显式声明）。
+var previewImg_ref = null;
+var previewImg_adv = null;
+// clean_css_value 在不匹配时回退到该默认值；必须定义，否则会抛 ReferenceError。
+var defSize = "100px";
 function clean_css_value(text) {
     ////console.log( "clean_css_value value ", text );
     var re = /^(\d+(?:\.\d*)?|\.\d+)([^\d\s]+)?$/m;

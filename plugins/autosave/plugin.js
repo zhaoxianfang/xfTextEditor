@@ -113,40 +113,45 @@
 
         CheckForAutoSavedContent(editorInstance, config, config.SaveKey, config.NotOlderThen);
 
-        CKEDITOR.tools.array.forEach(CKEDITOR.document.find(config.saveDetectionSelectors).toArray(),
-            function(el) {
-                el.$.addEventListener("click",
-                    function() {
-                        RemoveStorage(config.SaveKey, editorInstance);
-                    });
-
-            });
+        // 统一、具名的监听函数，便于在编辑器 destroy 时精确移除，避免内存泄漏
+        // 与向已销毁实例写入 localStorage / 触发已回收 DOM 的异常。
+        function beforeUnloadHandler() {
+            SaveData(config.SaveKey, editorInstance, config);
+        }
+        function visibilityHandler() {
+            // 页面变为不可见时触发
+            if (document.visibilityState == 'hidden') {
+                SaveData(config.SaveKey, editorInstance, config);
+            }
+        }
+        window.addEventListener("beforeunload", beforeUnloadHandler);
+        document.addEventListener('visibilitychange', visibilityHandler);
 
         // 赵先方 2021-07-21 监听表单提交：提交成功后清除本地缓存。
         // 注意：此处不能使用 jQuery 的 $('form')，因为编辑器初始化作用域中可能并未加载 jQuery，
         // 否则会抛出 ReferenceError: $ is not defined（at loadPlugin）。改用原生实现。
+        // 收集所有监听器引用，destroy 时移除。
+        var xfFormSubmitHandlers = [];
         var xfForms = document.querySelectorAll('form');
         for (var xfFormIndex = 0; xfFormIndex < xfForms.length; xfFormIndex++) {
-            xfForms[xfFormIndex].addEventListener('submit', function() {
-                RemoveStorage(config.SaveKey, editorInstance);
-            });
+            (function(form) {
+                var submitHandler = function() {
+                    RemoveStorage(config.SaveKey, editorInstance);
+                };
+                form.addEventListener('submit', submitHandler);
+                xfFormSubmitHandlers.push({ form: form, handler: submitHandler });
+            })(xfForms[xfFormIndex]);
         }
-        // 赵先方 2021-07-21  监听页面关闭前保存[窗口关闭前]
-        window.addEventListener("beforeunload", function(event) {
-            SaveData(config.SaveKey, editorInstance, config);
-        });
-        // 赵先方 2021-07-21  监听离开页面时候保存
-        document.addEventListener('visibilitychange', function() {
-          // 页面变为不可见时触发 
-          if (document.visibilityState == 'hidden') {
-            // document.title = '离开';
-            SaveData(config.SaveKey, editorInstance, config);
-          } 
-          // 页面变为可见时触发 
-          // if (document.visibilityState == 'visible') { 
-          //   document.title = '回来';
-          // } 
-        });
+
+        var xfClickHandlers = [];
+        CKEDITOR.tools.array.forEach(CKEDITOR.document.find(config.saveDetectionSelectors).toArray(),
+            function(el) {
+                var clickHandler = function() {
+                    RemoveStorage(config.SaveKey, editorInstance);
+                };
+                el.$.addEventListener("click", clickHandler);
+                xfClickHandlers.push({ el: el.$, handler: clickHandler });
+            });
 
         editorInstance.on("change",
             function() {
@@ -160,6 +165,17 @@
 
         editorInstance.on("destroy",
             function() {
+                window.removeEventListener("beforeunload", beforeUnloadHandler);
+                document.removeEventListener("visibilitychange", visibilityHandler);
+                for (var i = 0; i < xfFormSubmitHandlers.length; i++) {
+                    xfFormSubmitHandlers[i].form.removeEventListener("submit", xfFormSubmitHandlers[i].handler);
+                }
+                for (var j = 0; j < xfClickHandlers.length; j++) {
+                    xfClickHandlers[j].el.removeEventListener("click", xfClickHandlers[j].handler);
+                }
+                if (editorInstance.config.autosave_timeOutId) {
+                    clearTimeout(editorInstance.config.autosave_timeOutId);
+                }
                 if (config.saveOnDestroy) {
                     SaveData(config.SaveKey, editorInstance, config);
                 }
@@ -185,7 +201,7 @@
             var editor = editorInstance,
                 autoSaveKey = configAutosave.SaveKey != null
                     ? configAutosave.SaveKey
-                    : "autosave_" + window.location + "_" + document.getElementById(editor.name).getAttribute("name");
+                    : "autosave_" + window.location + "_" + (editor.element && editor.element.getAttribute("name") || "");
 
             SaveData(autoSaveKey, editor, configAutosave);
 
@@ -194,6 +210,19 @@
             editorInstance.config.autosave_timeOutId = null;
         }
     };
+
+    // localStorage 安全访问封装：即便「探测」通过，Safari 隐私模式、沙箱 iframe、
+    // 部分移动端浏览器在后续的 getItem/setItem/removeItem 仍可能抛 SecurityError /
+    // QuotaExceededError。全部包裹 try/catch，避免整编辑器初始化崩溃。
+    function lsGet(key) {
+        try { return localStorage.getItem(key); } catch (e) { return null; }
+    }
+    function lsSet(key, val) {
+        try { localStorage.setItem(key, val); return true; } catch (e) { return false; }
+    }
+    function lsRemove(key) {
+        try { localStorage.removeItem(key); } catch (e) {}
+    }
 
     // localStorage detection
     function supportsLocalStorage() {
@@ -221,13 +250,14 @@
                         RenderDiff(this, editorInstance, autoSaveKey);
                     },
                     onOk: function() {
-                        if (localStorage.getItem(autoSaveKey)) {
-                            var jsonSavedContent = LoadData(autoSaveKey);
+        if (lsGet(autoSaveKey)) {
+            var jsonSavedContent = LoadData(autoSaveKey);
 
-                            RemoveStorage(autoSaveKey, editorInstance);
-
-                            editorInstance.setData(jsonSavedContent.data);
-                        }
+            if (jsonSavedContent) {
+                RemoveStorage(autoSaveKey, editorInstance);
+                editorInstance.setData(jsonSavedContent.data);
+            }
+        }
                     },
                     onCancel: function() {
                         RemoveStorage(autoSaveKey, editorInstance);
@@ -287,8 +317,11 @@
 
     function CheckForAutoSavedContent(editorInstance, config, autoSaveKey, notOlderThen) {
         // Checks If there is data available and load it
-        if (localStorage.getItem(autoSaveKey)) {
+        if (lsGet(autoSaveKey)) {
             var jsonSavedContent = LoadData(autoSaveKey);
+            if (!jsonSavedContent) {
+                return;
+            }
 
             var autoSavedContent = jsonSavedContent.data;
             var autoSavedContentDate = jsonSavedContent.saveTime;
@@ -297,7 +330,7 @@
 
             // check if the loaded editor content is the same as the auto saved content
             if (editorLoadedContent == autoSavedContent) {
-                localStorage.removeItem(autoSaveKey);
+                lsRemove(autoSaveKey);
                 return;
             }
 
@@ -309,12 +342,14 @@
             }
 
             if (config.autoLoad) {
-                if (localStorage.getItem(autoSaveKey)) {
+                if (lsGet(autoSaveKey)) {
                     var jsonSavedContent = LoadData(autoSaveKey);
-                    editorInstance.setData(jsonSavedContent.data);
+                    if (jsonSavedContent) {
+                        editorInstance.setData(jsonSavedContent.data);
 
-                    if (config.removeStorageAfterAutoLoad) {
-                        RemoveStorage(autoSaveKey, editorInstance);
+                        if (config.removeStorageAfterAutoLoad) {
+                            RemoveStorage(autoSaveKey, editorInstance);
+                        }
                     }
                 }
             } else {
@@ -333,23 +368,24 @@
     }
 
     function LoadData(autoSaveKey) {
-        var compressedJSON = LZString.decompressFromUTF16(localStorage.getItem(autoSaveKey));
-        return JSON.parse(compressedJSON);
+        try {
+            var compressed = LZString.decompressFromUTF16(lsGet(autoSaveKey));
+            var obj = JSON.parse(compressed);
+            // 防御：数据缺失 / 损坏 / 非预期结构时返回 null，由调用方判空。
+            if (obj && typeof obj.data === "string") {
+                return obj;
+            }
+        } catch (e) {}
+        return null;
     }
 
     function SaveData(autoSaveKey, editorInstance, config) {
         var compressedJSON =
             LZString.compressToUTF16(JSON.stringify({ data: editorInstance.getData(), saveTime: new Date() }));
 
-        var quotaExceeded = false;
-
-        try {
-            localStorage.setItem(autoSaveKey, compressedJSON);
-        } catch (e) {
-            quotaExceeded = isQuotaExceeded(e);
-            if (quotaExceeded) {
-                console.log(editorInstance.lang.autosave.localStorageFull);
-            }
+        var quotaExceeded = !lsSet(autoSaveKey, compressedJSON);
+        if (quotaExceeded) {
+            console.log(editorInstance.lang.autosave.localStorageFull);
         }
 
         if (quotaExceeded) {
@@ -389,11 +425,14 @@
             clearTimeout(editor.config.autosave_timeOutId);
         }
 
-        localStorage.removeItem(autoSaveKey);
+        lsRemove(autoSaveKey);
     }
 
     function RenderDiff(dialog, editorInstance, autoSaveKey) {
         var jsonSavedContent = LoadData(autoSaveKey);
+        if (!jsonSavedContent) {
+            return;
+        }
 
         var base = difflib.stringAsLines(editorInstance.getData());
         var newtxt = difflib.stringAsLines(jsonSavedContent.data);

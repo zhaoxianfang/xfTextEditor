@@ -45,10 +45,16 @@
       updatePreview(dialog);
     });
     var video = dialog.video;
-    if (metadata) {
+    if (metadata && metadata.width) {
       dialog.commitContent(video);
       var ratio = (100 * metadata.height / metadata.width).toFixed(5) + '%';
-      video.setStyle('display', 'block').getParent().getParent().setStyle('padding-top', ratio);
+      // 防御：width 为 0 时避免 "Infinity%"；父级不足两级时避免空指针。
+      var parent = video.getParent();
+      if (parent && parent.getParent()) {
+        video.setStyle('display', 'block').getParent().getParent().setStyle('padding-top', ratio);
+      } else {
+        video.setStyle('display', 'block');
+      }
     }
     else {
       video.setStyle('display', 'none');

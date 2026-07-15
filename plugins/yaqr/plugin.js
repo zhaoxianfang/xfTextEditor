@@ -6,13 +6,19 @@
  */
 'use strict';
 function rgbToHex(a) {
-    if (a.startsWith("#")) {
+    if (!a || a === "transparent") {
+        return "#000000";
+    }
+    if (a.charAt(0) === "#") {
         return a;
     }
-    a = a.replace(/[^\d,]/g, "").split(",");
-    var rgb = (1 << 24) + (+a[0] << 16) + (+a[1] << 8) + +a[2];
-    var res = "#" + rgb.toString(16).slice(1);
-    return res;
+    // 兼容 rgb(0,0,0) / rgba(0,0,0,0) 等；空值 / 非法值回退黑色，避免返回 #NaN。
+    var m = a.match(/(\d+)\D+(\d+)\D+(\d+)/);
+    if (!m) {
+        return "#000000";
+    }
+    var rgb = (1 << 24) + (+m[1] << 16) + (+m[2] << 8) + +m[3];
+    return "#" + rgb.toString(16).slice(1);
 }
 var isHandlingData;
 // Register the plugin within the editor.

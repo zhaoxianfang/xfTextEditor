@@ -5,10 +5,29 @@ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 xfTextEditor 内容区样式增强：
 - 中文友好的字体栈与排版
 - 图片自适应、表格美化、代码块、视频响应式等
+
+========================================================================
+【重要 · 样式作用域说明】
+本项目启用了 divarea 插件（编辑器不使用 iframe，而是直接在宿主页面的
+<div> 内编辑）。此时 contents.css 会被注入到宿主页面主文档，如果使用
+裸标签选择器（body/h1/a/img/table/pre 等），会污染「编辑器之外」的整个
+宿主页面。为避免样式外泄，本文件所有基础排版样式都限定在以下作用域内：
+
+  1. .cke_editable   —— 编辑区容器
+     （divarea 的可编辑 div 与 iframe 模式的 body 都带此类）
+  2. .xf-rich-content —— 内容展示容器
+     宿主页面渲染编辑器「生成的网页内容」时，请用该 class 的容器包裹，
+     例如：<div class="xf-rich-content"> ...编辑器生成的 HTML... </div>
+     这样即可获得与编辑区一致的排版，且不会影响页面其它区域。
+
+特效/组件类（.xf-*、.marker、.embed-* 等）本身带独立类名，不会误伤宿主
+普通元素，故不加作用域前缀，以保持 stylesSet 直接给元素加类的用法可用。
+========================================================================
 */
 
 /* ============ 基础排版 ============ */
-body
+.cke_editable,
+.xf-rich-content
 {
 	/* 中英文混排更协调的字体栈 */
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
@@ -17,43 +36,46 @@ body
 	font-size: 15px;
 	color: #2b2b2b;
 	background-color: #fff;
-	margin: 20px;
-	line-height: 1.8;
-	word-wrap: break-word;
-}
-
-.cke_editable
-{
-	font-size: 15px;
 	line-height: 1.8;
 	letter-spacing: .2px;
 	/* Fix for missing scrollbars with RTL texts. (#10488) */
 	word-wrap: break-word;
 }
 
+/* 编辑区（iframe body / divarea div）额外的内边距留白 */
+.cke_editable
+{
+	margin: 20px;
+}
+
 /* 段落间距更舒适 */
-.cke_editable p
+.cke_editable p,
+.xf-rich-content p
 {
 	margin: 0 0 1em;
 }
 
 /* ============ 标题 ============ */
-h1, h2, h3, h4, h5, h6
+.cke_editable h1, .cke_editable h2, .cke_editable h3,
+.cke_editable h4, .cke_editable h5, .cke_editable h6,
+.xf-rich-content h1, .xf-rich-content h2, .xf-rich-content h3,
+.xf-rich-content h4, .xf-rich-content h5, .xf-rich-content h6
 {
 	font-weight: 600;
 	line-height: 1.4;
 	margin: 1.4em 0 .6em;
 	color: #1f2937;
 }
-h1 { font-size: 2em; }
-h2 { font-size: 1.6em; }
-h3 { font-size: 1.35em; }
-h4 { font-size: 1.15em; }
-h5 { font-size: 1em; }
-h6 { font-size: .9em; color: #6b7280; }
+.cke_editable h1, .xf-rich-content h1 { font-size: 2em; }
+.cke_editable h2, .xf-rich-content h2 { font-size: 1.6em; }
+.cke_editable h3, .xf-rich-content h3 { font-size: 1.35em; }
+.cke_editable h4, .xf-rich-content h4 { font-size: 1.15em; }
+.cke_editable h5, .xf-rich-content h5 { font-size: 1em; }
+.cke_editable h6, .xf-rich-content h6 { font-size: .9em; color: #6b7280; }
 
 /* ============ 引用 ============ */
-blockquote
+.cke_editable blockquote,
+.xf-rich-content blockquote
 {
 	font-style: normal;
 	font-family: inherit;
@@ -82,18 +104,21 @@ blockquote
 }
 
 /* ============ 链接 ============ */
-a
+.cke_editable a,
+.xf-rich-content a
 {
 	color: #1d6fb8;
 	text-decoration: none;
 }
-a:hover
+.cke_editable a:hover,
+.xf-rich-content a:hover
 {
 	text-decoration: underline;
 }
 
 /* ============ 列表 ============ */
-ol, ul, dl
+.cke_editable ol, .cke_editable ul, .cke_editable dl,
+.xf-rich-content ol, .xf-rich-content ul, .xf-rich-content dl
 {
 	/* IE7: reset rtl list margin. (#7334) */
 	*margin-right: 0px;
@@ -101,13 +126,15 @@ ol, ul, dl
 	padding: 0 40px;
 	margin: 1em 0;
 }
-li
+.cke_editable li,
+.xf-rich-content li
 {
 	margin: .25em 0;
 }
 
 /* ============ 水平线 ============ */
-hr
+.cke_editable hr,
+.xf-rich-content hr
 {
 	border: 0;
 	border-top: 1px solid #e5e7eb;
@@ -115,14 +142,16 @@ hr
 }
 
 /* ============ 图片（自适应 + 间距） ============ */
-img
+.cke_editable img,
+.xf-rich-content img
 {
 	max-width: 100%;
 	height: auto;
 	border: 0;
 	vertical-align: middle;
 }
-img.right
+.cke_editable img.right,
+.xf-rich-content img.right
 {
 	border: 1px solid #e5e7eb;
 	float: right;
@@ -131,7 +160,8 @@ img.right
 	background: #fff;
 	border-radius: 4px;
 }
-img.left
+.cke_editable img.left,
+.xf-rich-content img.left
 {
 	border: 1px solid #e5e7eb;
 	float: left;
@@ -141,37 +171,44 @@ img.left
 	border-radius: 4px;
 }
 /* 让编辑器内对齐样式在内容区也生效 */
-img.cke_float_left  { float: left;  margin: 4px 16px 12px 0; }
-img.cke_float_right { float: right; margin: 4px 0 12px 16px; }
+.cke_editable img.cke_float_left,
+.xf-rich-content img.cke_float_left  { float: left;  margin: 4px 16px 12px 0; }
+.cke_editable img.cke_float_right,
+.xf-rich-content img.cke_float_right { float: right; margin: 4px 0 12px 16px; }
 
 /* ============ 表格美化 ============ */
-table
+.cke_editable table,
+.xf-rich-content table
 {
 	border-collapse: collapse;
 	width: 100%;
 	margin: 1em 0;
 	font-size: 14px;
 }
-table td, table th
+.cke_editable table td, .cke_editable table th,
+.xf-rich-content table td, .xf-rich-content table th
 {
 	border: 1px solid #d1d5db;
 	padding: 8px 10px;
 	vertical-align: top;
 }
-table th
+.cke_editable table th,
+.xf-rich-content table th
 {
 	background: #f1f5f9;
 	font-weight: 600;
 	color: #334155;
 	text-align: left;
 }
-table tr:nth-child(even) td
+.cke_editable table tr:nth-child(even) td,
+.xf-rich-content table tr:nth-child(even) td
 {
 	background: #fafbfc;
 }
 
 /* ============ 代码 / 预格式化 ============ */
-pre
+.cke_editable pre,
+.xf-rich-content pre
 {
 	white-space: pre-wrap; /* CSS 2.1 */
 	word-wrap: break-word; /* IE7 */
@@ -186,7 +223,8 @@ pre
 	line-height: 1.6;
 	overflow: auto;
 }
-code
+.cke_editable code,
+.xf-rich-content code
 {
 	font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
 	background: #eef2f7;
@@ -202,13 +240,15 @@ code
 	background-color: #fef08a;
 }
 
-span[lang]
+.cke_editable span[lang],
+.xf-rich-content span[lang]
 {
 	font-style: italic;
 }
 
 /* ============ 视频 / 媒体 响应式 ============ */
-figure
+.cke_editable figure,
+.xf-rich-content figure
 {
 	text-align: center;
 	outline: solid 1px #e5e7eb;
@@ -218,7 +258,8 @@ figure
 	display: inline-block;
 	border-radius: 6px;
 }
-figure > figcaption
+.cke_editable figure > figcaption,
+.xf-rich-content figure > figcaption
 {
 	text-align: center;
 	display: block; /* For IE8 */
@@ -230,13 +271,17 @@ figure > figcaption
 /* video / iframe 在内容区自适应 */
 .cke_editable video,
 .cke_editable iframe,
-.cke_editable embed
+.cke_editable embed,
+.xf-rich-content video,
+.xf-rich-content iframe,
+.xf-rich-content embed
 {
 	max-width: 100%;
 	border: 0;
 }
 
-a > img {
+.cke_editable a > img,
+.xf-rich-content a > img {
 	padding: 1px;
 	margin: 1px;
 	border: none;
@@ -321,6 +366,7 @@ a > img {
    xfTextEditor 扩展特效样式（xfeffects 插件）
    这些样式同时作用于编辑器内预览与最终生成的网页，保证展示一致。
    全部为纯 CSS 实现，无外部依赖，可离线使用。
+   均带独立 .xf-* 类名，作用域安全，不会污染宿主页面普通元素。
    ========================================================================= */
 
 /* ---------- 文字特效 ---------- */
@@ -767,3 +813,320 @@ a.xf-btn {
 	font-weight: 600;
 }
 a.xf-btn:hover { background: #1d4ed8; text-decoration: none; }
+
+/* =========================================================================
+   暗色主题（Dark Theme）
+   触发条件：祖先元素（html / body / 任意容器）带属性 data-theme="dark"。
+   例如：
+     <html lang="zh_CN" data-theme="dark">
+   或仅让某段内容暗色：
+     <div class="xf-rich-content" data-theme="dark"> ... </div>
+   或预览导出时：
+     <div class="xf-standalone" data-theme="dark"> ... </div>
+   编辑器编辑区（divarea 的 .cke_editable 也支持，宿主切换 html[data-theme]
+   即可实时跟随）同样生效。
+   仅覆盖「颜色 / 背景 / 边框」等外观属性，不改变布局，避免与亮色规则冲突。
+   ========================================================================= */
+
+/* ---------- 基础排版（暗色） ---------- */
+[data-theme="dark"] .cke_editable,
+[data-theme="dark"] .xf-rich-content,
+[data-theme="dark"] .xf-standalone
+{
+	color: #e5e7eb;
+	background-color: #0f172a;
+}
+
+/* ---------- 标题（暗色） ---------- */
+[data-theme="dark"] .cke_editable h1,
+[data-theme="dark"] .cke_editable h2,
+[data-theme="dark"] .cke_editable h3,
+[data-theme="dark"] .cke_editable h4,
+[data-theme="dark"] .cke_editable h5,
+[data-theme="dark"] .cke_editable h6,
+[data-theme="dark"] .xf-rich-content h1,
+[data-theme="dark"] .xf-rich-content h2,
+[data-theme="dark"] .xf-rich-content h3,
+[data-theme="dark"] .xf-rich-content h4,
+[data-theme="dark"] .xf-rich-content h5,
+[data-theme="dark"] .xf-rich-content h6,
+[data-theme="dark"] .xf-standalone h1,
+[data-theme="dark"] .xf-standalone h2,
+[data-theme="dark"] .xf-standalone h3,
+[data-theme="dark"] .xf-standalone h4,
+[data-theme="dark"] .xf-standalone h5,
+[data-theme="dark"] .xf-standalone h6
+{
+	color: #f1f5f9;
+}
+[data-theme="dark"] .cke_editable h6,
+[data-theme="dark"] .xf-rich-content h6,
+[data-theme="dark"] .xf-standalone h6
+{
+	color: #94a3b8;
+}
+
+/* ---------- 引用（暗色） ---------- */
+[data-theme="dark"] .cke_editable blockquote,
+[data-theme="dark"] .xf-rich-content blockquote,
+[data-theme="dark"] .xf-standalone blockquote
+{
+	border-left-color: #475569;
+	background: #1e293b;
+	color: #cbd5e1;
+}
+[data-theme="dark"] .cke_contents_rtl blockquote
+{
+	border-right-color: #475569;
+}
+
+/* ---------- 链接（暗色） ---------- */
+[data-theme="dark"] .cke_editable a,
+[data-theme="dark"] .xf-rich-content a,
+[data-theme="dark"] .xf-standalone a
+{
+	color: #60a5fa;
+}
+
+/* ---------- 水平线（暗色） ---------- */
+[data-theme="dark"] .cke_editable hr,
+[data-theme="dark"] .xf-rich-content hr,
+[data-theme="dark"] .xf-standalone hr
+{
+	border-top-color: #334155;
+}
+
+/* ---------- 图片（暗色） ---------- */
+[data-theme="dark"] .cke_editable img.right,
+[data-theme="dark"] .xf-rich-content img.right,
+[data-theme="dark"] .xf-standalone img.right,
+[data-theme="dark"] .cke_editable img.left,
+[data-theme="dark"] .xf-rich-content img.left,
+[data-theme="dark"] .xf-standalone img.left
+{
+	border-color: #334155;
+	background: #1e293b;
+}
+
+/* ---------- 表格（暗色） ---------- */
+[data-theme="dark"] .cke_editable table td,
+[data-theme="dark"] .cke_editable table th,
+[data-theme="dark"] .xf-rich-content table td,
+[data-theme="dark"] .xf-rich-content table th,
+[data-theme="dark"] .xf-standalone table td,
+[data-theme="dark"] .xf-standalone table th
+{
+	border-color: #334155;
+}
+[data-theme="dark"] .cke_editable table th,
+[data-theme="dark"] .xf-rich-content table th,
+[data-theme="dark"] .xf-standalone table th
+{
+	background: #1e293b;
+	color: #e2e8f0;
+}
+[data-theme="dark"] .cke_editable table tr:nth-child(even) td,
+[data-theme="dark"] .xf-rich-content table tr:nth-child(even) td,
+[data-theme="dark"] .xf-standalone table tr:nth-child(even) td
+{
+	background: #111c30;
+}
+
+/* ---------- 代码 / 预格式化（暗色，pre 本身已是深色背景，仅微调边框） ---------- */
+[data-theme="dark"] .cke_editable code,
+[data-theme="dark"] .xf-rich-content code,
+[data-theme="dark"] .xf-standalone code
+{
+	background: #1e293b;
+	color: #fca5a5;
+}
+
+/* ---------- 高亮 / 标记（暗色） ---------- */
+[data-theme="dark"] .marker
+{
+	background-color: #a16207;
+	color: #fef9c3;
+}
+
+/* ---------- 图片 / 媒体占位（暗色） ---------- */
+[data-theme="dark"] .cke_editable figure,
+[data-theme="dark"] .xf-rich-content figure,
+[data-theme="dark"] .xf-standalone figure
+{
+	outline-color: #334155;
+	background: rgba(255,255,255,.04);
+}
+[data-theme="dark"] .cke_editable figure > figcaption,
+[data-theme="dark"] .xf-rich-content figure > figcaption,
+[data-theme="dark"] .xf-standalone figure > figcaption
+{
+	color: #94a3b8;
+}
+
+/* ---------- 卡片（暗色） ---------- */
+[data-theme="dark"] .xf-card-block
+{
+	border-color: #334155;
+	background: #1e293b;
+	box-shadow: 0 6px 18px rgba(0,0,0,.35);
+}
+[data-theme="dark"] .xf-card-block h4 { color: #f1f5f9; }
+[data-theme="dark"] .xf-card-block p { color: #cbd5e1; }
+
+/* ---------- 分割线（暗色） ---------- */
+[data-theme="dark"] hr.xf-divider
+{
+	background: linear-gradient(90deg, transparent, #475569, transparent);
+}
+[data-theme="dark"] hr.xf-divider-dashed { border-top-color: #475569; }
+[data-theme="dark"] hr.xf-divider-double { border-top-color: #64748b; }
+[data-theme="dark"] hr.xf-divider-dots { border-top-color: #475569; }
+
+/* ---------- 徽章（暗色） ---------- */
+[data-theme="dark"] .xf-badge
+{
+	background: #334155;
+	color: #e2e8f0;
+}
+[data-theme="dark"] .xf-badge-success { background:#065f46; color:#a7f3d0; }
+[data-theme="dark"] .xf-badge-warning { background:#92610e; color:#fde68a; }
+[data-theme="dark"] .xf-badge-danger  { background:#991b1b; color:#fecaca; }
+
+/* ---------- 首字下沉（暗色） ---------- */
+[data-theme="dark"] p.xf-dropcap::first-letter { color: #60a5fa; }
+
+/* ---------- 居中容器（暗色） ---------- */
+[data-theme="dark"] .xf-center
+{
+	background: #1e293b;
+	border-radius: 10px;
+}
+
+/* ---------- 优雅引用 / 大字引言（暗色） ---------- */
+[data-theme="dark"] blockquote.xf-quote-fancy
+{
+	background: linear-gradient(135deg, #1e293b, #312e81);
+	border-left-color: #818cf8;
+	color: #cbd5e1;
+}
+[data-theme="dark"] blockquote.xf-quote-fancy cite { color: #94a3b8; }
+
+[data-theme="dark"] blockquote.xf-pullquote
+{
+	border-left-color: #60a5fa;
+	background: #1e293b;
+	color: #f1f5f9;
+}
+[data-theme="dark"] blockquote.xf-pullquote cite { color: #94a3b8; }
+
+/* ---------- 时间轴（暗色） ---------- */
+[data-theme="dark"] .xf-tl-item { border-left-color: #334155; }
+[data-theme="dark"] .xf-tl-dot
+{
+	background: #3b82f6;
+	border-color: #0f172a;
+	box-shadow: 0 0 0 2px #3b82f6;
+}
+[data-theme="dark"] .xf-tl-body strong { color: #f1f5f9; }
+[data-theme="dark"] .xf-tl-body p { color: #94a3b8; }
+
+/* ---------- 步骤条（暗色） ---------- */
+[data-theme="dark"] .xf-step-line { background: #475569; }
+
+/* ---------- 标签云（暗色） ---------- */
+[data-theme="dark"] .xf-tag
+{
+	background: #3730a3;
+	color: #c7d2fe;
+}
+
+/* ---------- 高亮重点 / 注释 / 横幅（暗色） ---------- */
+[data-theme="dark"] .xf-hlbox
+{
+	background: linear-gradient(90deg, #713f12, #1e293b);
+	border-left-color: #eab308;
+}
+[data-theme="dark"] .xf-note
+{
+	background: #1e293b;
+}
+[data-theme="dark"] .xf-note p { color: #cbd5e1; }
+[data-theme="dark"] .xf-banner
+{
+	background: linear-gradient(90deg, #1e3a8a, #1e293b);
+	border-color: #1e40af;
+}
+[data-theme="dark"] .xf-banner p { color: #bfdbfe; }
+
+/* ---------- 双栏 / 图文混排（暗色） ---------- */
+[data-theme="dark"] .xf-col
+{
+	background: #1e293b;
+	border-color: #334155;
+}
+[data-theme="dark"] .xf-col h4 { color: #f1f5f9; }
+[data-theme="dark"] .xf-col p { color: #cbd5e1; }
+
+[data-theme="dark"] .xf-media
+{
+	background: #1e293b;
+	border-color: #334155;
+}
+[data-theme="dark"] .xf-media-img { background: #312e81; }
+[data-theme="dark"] .xf-media-body strong { color: #f1f5f9; }
+[data-theme="dark"] .xf-media-body p { color: #94a3b8; }
+
+/* ---------- 进度条 / 统计（暗色） ---------- */
+[data-theme="dark"] .xf-progress { background: #334155; }
+[data-theme="dark"] .xf-progress-label { color: #94a3b8; }
+[data-theme="dark"] .xf-stat
+{
+	background: linear-gradient(135deg, #312e81, #1e293b);
+	border-color: #3730a3;
+}
+[data-theme="dark"] .xf-stat-num { color: #60a5fa; }
+[data-theme="dark"] .xf-stat-label { color: #94a3b8; }
+
+/* ---------- 折叠（暗色） ---------- */
+[data-theme="dark"] .xf-spoiler
+{
+	border-color: #334155;
+	background: #1e293b;
+}
+[data-theme="dark"] .xf-spoiler summary
+{
+	background: #1e293b;
+	color: #f1f5f9;
+}
+
+/* ---------- 按钮（暗色） ---------- */
+[data-theme="dark"] a.xf-btn
+{
+	background: #1d4ed8;
+	color: #fff;
+}
+[data-theme="dark"] a.xf-btn:hover { background: #2563eb; }
+
+/* ---------- 文字特效中的白底类（暗色下改深色底，避免黑字压黑底） ---------- */
+[data-theme="dark"] .xf-tex-glow { color: #e0f2fe; }
+[data-theme="dark"] .xf-tex-stroke
+{
+	color: #0f172a;
+	-webkit-text-stroke: 1.2px #e2e8f0;
+	text-stroke: 1.2px #e2e8f0;
+}
+[data-theme="dark"] .xf-tex-emboss
+{
+	color: #94a3b8;
+	text-shadow: 1px 1px 0 #475569, -1px -1px 0 #0f172a;
+}
+[data-theme="dark"] .xf-tex-mono
+{
+	background: #1e293b;
+	color: #67e8f9;
+}
+[data-theme="dark"] .xf-tex-stamp
+{
+	color: #fca5a5;
+	border-color: #fca5a5;
+}

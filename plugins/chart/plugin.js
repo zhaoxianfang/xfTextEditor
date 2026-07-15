@@ -70,9 +70,14 @@
 			// 2. Load the Chart.js library
 			// 3. Load a helper script that will "upcast" widgets and initiate charts.
 			editor.on( 'contentPreview', function( evt ) {
+				// 注意：直接把 JSON 当作 JS 字面量输出（JSON 本身是合法 JS 字面量），
+				// 并转义序列 "</" 以防数据中含有 </script> 提前闭合脚本造成注入；
+				// 比原先「手工把双引号转成 \" 再套字符串引号」更安全、更准确。
+				var colorsJson = JSON.stringify( colors ).replace( /<\//g, '<\\/' );
+				var configJson = JSON.stringify( config ).replace( /<\//g, '<\\/' );
 				evt.data.dataValue = evt.data.dataValue.replace( /<\/head>/,
-					'<script>var chartjs_colors_json = "' + JSON.stringify( colors ).replace( /\"/g, '\\"' ) + '";<\/script>' +
-					'<script>var chartjs_config_json = "' + JSON.stringify( config ).replace( /\"/g, '\\"' ) + '";<\/script>' +
+					'<script>var chartjs_colors_json = ' + colorsJson + ';<\/script>' +
+					'<script>var chartjs_config_json = ' + configJson + ';<\/script>' +
 						'<script src="' + CKEDITOR.getUrl( plugin.path + 'lib/chart.min.js' ) + '"><\/script>' +
 						'<script src="' + CKEDITOR.getUrl( plugin.path + 'widget2chart.js' ) + '"><\/script><\/head>' );
 			} );
@@ -246,9 +251,10 @@
 				// Ugly charts will be drawn if colors are not provided for each data.
 				// http://www.chartjs.org/docs/#doughnut-pie-chart-data-structure
 				if ( chartType != 'bar' ) {
+					var colorLen = colors.data.length;
 					for ( i = 0; i < values.length; i++ ) {
-						values[i].color = colors.data[i];
-						values[i].highlight = colors.data[i];
+						values[i].color = colors.data[ i % colorLen ];
+						values[i].highlight = colors.data[ i % colorLen ];
 					}
 				}
 
@@ -310,21 +316,24 @@
 			   data:image/png，确保 getHtml / 预览不依赖 Chart.js 即可完整呈现，
 			   且与编辑器内绘制的图表视觉一致。依赖本闭包内的 colors / config 与全局 Chart。 */
 			CKEDITOR.tools.xfChartToImage = function( values, chartType, height ) {
-				if ( typeof Chart === 'undefined' || !values ) return null;
+				// 防御：Chart.js 未加载、数据非数组或为空时直接返回 null，避免抛错。
+				if ( typeof Chart === 'undefined' || !CKEDITOR.tools.isArray( values ) || !values.length ) return null;
 				var h = height || 300, w = 640;
 				var canvas = document.createElement( 'canvas' );
 				canvas.width = w; canvas.height = h;
 				var ctx = canvas.getContext( '2d' );
 				var chart = new Chart( ctx );
-				var i, v = [];
+				var i, v = [], colorLen = colors.data.length;
 				for ( i = 0; i < values.length; i++ ) {
+					if ( !values[i] ) continue;
 					v.push( { value: values[i].value, label: values[i].label } );
 				}
-				// 饼图 / 环形图 / 极区图需要逐条颜色
+				if ( !v.length ) return null;
+				// 饼图 / 环形图 / 极区图需要逐条颜色（循环取色，避免越界）
 				if ( chartType !== 'bar' ) {
 					for ( i = 0; i < v.length; i++ ) {
-						v[i].color = colors.data[i];
-						v[i].highlight = colors.data[i];
+						v[i].color = colors.data[ i % colorLen ];
+						v[i].highlight = colors.data[ i % colorLen ];
 					}
 				}
 				var data;

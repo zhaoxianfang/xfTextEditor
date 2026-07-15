@@ -75,6 +75,9 @@ CKEDITOR.plugins.add('pbckcode', {
       //暗黑主题； ambiance','chaos','clouds_midnight','cobalt','idle_fingers','kr_theme','merbivore','merbivore_soft','mono_industrial','monokai','pastel_on_dark','solarized_dark','terminal','tomorrow_night','tomorrow_night_blue','tomorrow_night_bright','tomorrow_night_eighties','twilight','vibrant_ink'
       theme: 'textmate', 
       tab_size: 4,
+      // 语法高亮器标识；供 dialogs/pbckcode.js 的 PBSyntaxHighlighter 使用，
+      // 缺少时 getTag() 行为不确定，这里给出默认。
+      highlighter: 'DEFAULT',
       // 关键修复：原先指向 CDN（//cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/），
       // 断网环境下代码块编辑功能将完全失效，违背「100% 离线可用」要求。
       // 现已将 Ace 1.2.6 全部资源（ace.js、ext-whitespace.js、mode-*、theme-*）
@@ -83,7 +86,10 @@ CKEDITOR.plugins.add('pbckcode', {
     };
 
     // merge user settings with default settings
-    editor.settings = CKEDITOR.tools.extend(DEFAULT_SETTINGS, editor.config.pbckcode, true);
+    // 注意：用 {} 作为目标避免污染 DEFAULT_SETTINGS 原型对象；
+    // 采用浅合并（不使用 deep 标记），这样用户配置（如 modes / js）
+    // 会整体替换默认值，而不是把数组逐项合并产生畸形列表。
+    editor.settings = CKEDITOR.tools.extend({}, DEFAULT_SETTINGS, editor.config.pbckcode);
     editor.settings.js = normalizeJsUrl(editor.settings.js);
 
     // load CSS for the dialog
@@ -141,6 +147,19 @@ CKEDITOR.plugins.add('pbckcode', {
       CKEDITOR.scriptLoader.load([
         getScriptUrl(editor.settings.js, js.aceExtWhitespace)
       ]);
+    });
+
+    // ACE 编辑器随对话框尺寸变化自适应。把 resize 监听挂到全局 dialog 事件，
+    // 但必须在编辑器销毁时移除，否则会泄漏，并导致多编辑器实例互相干扰。
+    var resizeHandler = function(evt) {
+      var aceEditor = evt.editor && evt.editor.aceEditor;
+      if (aceEditor !== undefined) {
+        aceEditor.resize();
+      }
+    };
+    CKEDITOR.dialog.on('resize', resizeHandler);
+    editor.on('destroy', function() {
+      CKEDITOR.dialog.removeListener('resize', resizeHandler);
     });
   }
 });

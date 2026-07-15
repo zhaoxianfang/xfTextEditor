@@ -2,7 +2,7 @@
 	function addCombo( editor, comboName, styleType, lang, entries, defaultLabel, styleDefinition, order ) {
 		var config = editor.config,style = new CKEDITOR.style( styleDefinition );		
 		var names = entries.split( ';' ),values = [];		
-		var styles = {};
+		var styles = {}, onSelectionChange;
 		for ( var i = 0; i < names.length; i++ ) {
 			var parts = names[ i ];
 			if ( parts ) {
@@ -57,25 +57,31 @@
 				function norm( v ) {
 					return String( v ).replace( /\s+/g, '' ).toLowerCase();
 				}
-				editor.on( 'selectionChange', function( ev ) {
-					var currentValue = this.getValue();
-					// 行高作用在块级元素上，故直接读取当前块（block / blockLimit）的内联 line-height。
-					var block = ev.data.path.block || ev.data.path.blockLimit;
-					if ( block ) {
-						var lh = block.getStyle( 'line-height' );
-						if ( lh ) {
-							var nl = norm( lh );
-							for ( var value in styles ) {
-								if ( styles.hasOwnProperty( value ) && norm( value ) === nl ) {
-									if ( value != currentValue )
-										this.setValue( value );
-									return;
+				// 使用稳定引用注册：onRender 在切换源码模式等场景会被多次调用，
+				// 若每次都传新的匿名函数，CKEditor 不会去重，导致 selectionChange
+				// 监听器累积。这里仅创建一次，重复渲染时复用同一引用。
+				if ( !onSelectionChange ) {
+					onSelectionChange = function( ev ) {
+						var currentValue = this.getValue();
+						// 行高作用在块级元素上，故直接读取当前块（block / blockLimit）的内联 line-height。
+						var block = ev.data.path.block || ev.data.path.blockLimit;
+						if ( block ) {
+							var lh = block.getStyle( 'line-height' );
+							if ( lh ) {
+								var nl = norm( lh );
+								for ( var value in styles ) {
+									if ( styles.hasOwnProperty( value ) && norm( value ) === nl ) {
+										if ( value != currentValue )
+											this.setValue( value );
+										return;
+									}
 								}
 							}
 						}
-					}
-					this.setValue( '', defaultLabel );
-				}, this );
+						this.setValue( '', defaultLabel );
+					};
+				}
+				editor.on( 'selectionChange', onSelectionChange, this );
 			},
 			refresh: function() {
 				var path = editor.elementPath();

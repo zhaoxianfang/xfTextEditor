@@ -183,6 +183,7 @@
 
 					if ( row > quickRows - 1 || column > quickColumns - 1 ) {
 						editor.execCommand( 'table' );
+						return;
 					}
 					select( caption, table, row + 1, column + 1 );
 					evt.data.preventDefault();

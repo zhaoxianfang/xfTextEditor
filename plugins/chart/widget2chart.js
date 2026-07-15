@@ -96,9 +96,10 @@ if ( typeof document.addEventListener !== 'undefined' )
 			// Ugly charts will be drawn if colors are not provided for each data.
 			// http://www.chartjs.org/docs/#doughnut-pie-chart-data-structure
 			if ( chartType != 'bar' ) {
+				var colorLen = colors.data.length;
 				for ( i = 0; i < values.length; i++ ) {
-					values[i].color = colors.data[i];
-					values[i].highlight = colors.data[i];
+					values[i].color = colors.data[ i % colorLen ];
+					values[i].highlight = colors.data[ i % colorLen ];
 				}
 			}
 

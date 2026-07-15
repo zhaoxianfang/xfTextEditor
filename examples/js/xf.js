@@ -637,10 +637,13 @@ var XF = (function () {
         if (!editor) return '';
         opts = opts || {};
         var data = editor.getData();
-        if (opts.full) return exportDocument(id, opts.title);
+        if (opts.full) return exportDocument(id, opts.title, opts.theme);
         if (opts.standalone) {
+            // 支持通过 opts.theme 指定导出片段的主题（'dark' / 'light'），
+            // 暗色时给 .xf-standalone 容器加 data-theme="dark"，使 contents.css 暗色规则生效。
+            var themeAttr = (opts.theme === 'dark') ? ' data-theme="dark"' : '';
             var standalone = '<style data-xf-standalone>\n' + getStandaloneCss() + '\n</style>\n' +
-                   '<div class="xf-standalone">' + data + '</div>';
+                   '<div class="xf-standalone"' + themeAttr + '>' + data + '</div>';
             // 预览类片段：图表保留为 div，交由末尾注入的 Chart.js 运行时实时绘制，
             // 与编辑器内完全一致；同时内嵌二维码、绝对化资源地址。
             standalone = renderSelfContained(standalone, true);
@@ -656,7 +659,7 @@ var XF = (function () {
      * @param {string} [title]
      * @returns {string}
      */
-    function exportDocument(id, title) {
+    function exportDocument(id, title, theme) {
         var editor = resolveEditor(id);
         if (!editor) return '';
         var data = editor.getData();
@@ -664,8 +667,14 @@ var XF = (function () {
         // 同时在 <head> 注入 Chart.js 运行时作为兜底——万一静态化失败，图表仍以实时绘制呈现，绝不空白。
         data = renderSelfContained(data, false);
         title = title || 'xfTextEditor 内容导出';
+        // 暗色主题：导出文档的 <html> 带 data-theme="dark"，使 contents.css 暗色规则生效；
+        // 同时 body / .xf-standalone 背景同步为深色，避免外壳亮色、内容暗色的突兀断层。
+        var isDark = (theme === 'dark');
+        var htmlAttr = isDark ? ' lang="zh-CN" data-theme="dark"' : ' lang="zh-CN"';
+        var shellBg = isDark ? '#0f172a' : '#fff';
+        var shellColor = isDark ? '#e5e7eb' : '#2b2b2b';
         return '<!DOCTYPE html>\n' +
-            '<html lang="zh-CN">\n' +
+            '<html' + htmlAttr + '>\n' +
             '<head>\n' +
             '<meta charset="utf-8">\n' +
             '<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
@@ -673,7 +682,7 @@ var XF = (function () {
             '<style>\n' +
             getStandaloneCss() + '\n' +
             '.xf-standalone{max-width:960px;margin:0 auto;padding:24px;}\n' +
-            'body{background:#fff;margin:0;}\n' +
+            'body{background:' + shellBg + ';color:' + shellColor + ';margin:0;}\n' +
             '</style>\n' +
             getChartRuntime(data) + '\n' +
             '</head>\n' +
@@ -846,13 +855,96 @@ var XF = (function () {
      * @param {string|CKEDITOR.editor} id
      * @param {string} [title]
      */
-    function openPreview(id, title) {
+    function openPreview(id, title, opts) {
         title = title || 'xfTextEditor 内容预览';
-        var html = exportDocument(id, title);
+        opts = opts || {};
+        var html = exportDocument(id, title, opts.theme);
         if (!html) { alert('未找到编辑器内容，无法预览。'); return; }
         // 默认走页面内模态浮层：不弹新窗、不抢焦点、不跳转到其它窗口，
         // 彻底解决「点击预览后浏览器页面切换跳转到其它窗口」的异常。
         showPreviewModal(html, title);
+    }
+
+    /**
+     * 设置编辑器相关内容的主题（亮色 / 暗色）。
+     *
+     * 主题机制说明：
+     *   contents.css 的暗色规则以「祖先元素含 data-theme="dark"」为触发条件，
+     *   因此本方法通过给目标根节点设置 / 移除 data-theme 属性来切换主题，
+     *   无需重新加载样式，宿主页面可实时跟随（编辑区 divarea 的 .cke_editable
+     *   作为 html 的后代也会同步生效）。
+     *
+     * 用法：
+     *   XF.setTheme('dark');                        // 整页（<html>）切换为暗色
+     *   XF.setTheme('light');                       // 整页恢复亮色
+     *   XF.setTheme('dark', { target: el });        // 仅作用于某个 DOM 容器
+     *   XF.setTheme('dark', { editor: editor });    // 仅作用于某个编辑器实例的容器
+     *   XF.setTheme('dark', { target: '#wrap' });   // 支持传入选择器字符串
+     *
+     * @param {string} theme 'dark' | 'light'（其它值视为 light）
+     * @param {Object} [opts]
+     *        opts.target  {Element|string} 指定容器（元素或 CSS 选择器），
+     *                              不传则默认作用于 document.documentElement（<html>）。
+     *        opts.editor  {CKEDITOR.editor|string} 指定编辑器实例或 id，
+     *                              仅作用于该编辑器的可编辑容器（优先级高于 target）。
+     * @returns {void}
+     */
+    function setTheme(theme, opts) {
+        opts = opts || {};
+        var isDark = (theme === 'dark');
+        var node = null;
+
+        if (opts.editor) {
+            var ed = resolveEditor(opts.editor);
+            if (ed && ed.editable) {
+                // 编辑区的可编辑 DOM（divarea 为 div，iframe 模式需取 iframe 的 body）
+                var editable = ed.editable();
+                node = editable ? editable.$ || editable : null;
+                // iframe 模式：editable 是 iframe 内 body，直接设其属性即可（contents.css 注入到 iframe 内）
+                if (!node && editable && typeof editable.setAttribute === 'function') {
+                    node = editable;
+                }
+            }
+        } else if (opts.target) {
+            node = (typeof opts.target === 'string')
+                ? document.querySelector(opts.target)
+                : opts.target;
+        } else {
+            node = document.documentElement;   // 默认整页 <html>
+        }
+
+        if (!node) return;
+        if (isDark) node.setAttribute('data-theme', 'dark');
+        else node.removeAttribute('data-theme');
+    }
+
+    /**
+     * 读取当前生效的主题类型。
+     * 查找顺序：指定编辑器可编辑容器 → 指定容器 → <html>（就近的第一个含 data-theme 祖先）。
+     * @param {Object} [opts] 同 setTheme 的 opts（target / editor）
+     * @returns {string} 'dark' | 'light'
+     */
+    function getTheme(opts) {
+        opts = opts || {};
+        var node = null;
+        if (opts.editor) {
+            var ed = resolveEditor(opts.editor);
+            if (ed && ed.editable) node = ed.editable();
+        } else if (opts.target) {
+            node = (typeof opts.target === 'string')
+                ? document.querySelector(opts.target)
+                : opts.target;
+        } else {
+            node = document.documentElement;
+        }
+        if (node) {
+            var el = (node.$ && node.$.nodeType) ? node.$ : node;   // 兼容 CKEDITOR.dom.element
+            while (el && el.nodeType === 1) {
+                if (el.getAttribute && el.getAttribute('data-theme') === 'dark') return 'dark';
+                el = el.parentNode;
+            }
+        }
+        return 'light';
     }
 
     return {
@@ -867,6 +959,8 @@ var XF = (function () {
         renderSelfContained: renderSelfContained,
         showPreviewModal: showPreviewModal,
         openPreview: openPreview,
-        copyText: copyText
+        copyText: copyText,
+        setTheme: setTheme,
+        getTheme: getTheme
     };
 })();

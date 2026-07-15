@@ -552,7 +552,7 @@
 					}
 				}, 0, this, [
 					leftCell, leftCell && getHeight( leftCell ),
-					( !leftCell ) && ( getHeight( table ) + getBorderHeight( table, 'top' ) + getBorderHeight( table, 'down' ) ),
+					( !leftCell ) && ( getHeight( table ) + getBorderHeight( table, 'top' ) + getBorderHeight( table, 'bottom' ) ),
 					currentShift
 				] );
 			}

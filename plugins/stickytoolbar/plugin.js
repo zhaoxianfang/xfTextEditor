@@ -20,15 +20,16 @@
                 var header = document.querySelector( '.xf-header' );
                 var offset = header ? header.offsetHeight : 0;
 
-                // 让工具栏随页面滚动「吸附」在顶部
-                top.setStyles( {
-                    position: '-webkit-sticky',
-                    position: 'sticky',
-                    top: offset + 'px',
-                    zIndex: '9999',
-                    background: '#fff',
-                    margin: '0'
-                } );
+                // 让工具栏随页面滚动「吸附」在顶部。
+                // 注意：不能在同一个对象字面量里同时写 position:'-webkit-sticky' 与
+                // position:'sticky'，因为重复 key 后者会覆盖前者，导致带前缀的 WebKit
+                // （旧版 Safari）拿到不到 sticky。改为追加到 cssText，让浏览器自行选择
+                // 它能识别的最后一个合法声明。
+                var prevCss = top.getStyle( 'cssText' ) || '';
+                top.setStyle( 'cssText',
+                    prevCss +
+                    ';position:-webkit-sticky;position:sticky;' +
+                    'top:' + offset + 'px;z-index:9999;background:#fff;margin:0;' );
 
                 var STICKY_SHADOW = '0 6px 18px rgba(15, 23, 42, 0.12)';
                 var stuck = false;

@@ -136,7 +136,9 @@ CKEDITOR.editorConfig = function( config ) {
     config.autosave = {
         // 注意：CKEDITOR.editorConfig 作用域内并不存在 editor 对象，旧版写法会抛 ReferenceError；
         // 这里改用 window.location.pathname 作为稳定且唯一的键。
-        Savekey: 'autosave_' + window.location.pathname,
+        // 注意：键名必须与插件读取的 config.SaveKey（大写 K）一致，
+        // 否则显式指定的键会被忽略、回退到默认空键。
+        SaveKey: 'autosave_' + window.location.pathname,
         NotOlderThen: 1440,
         saveOnDestroy: true,
         saveDetectionSelectors: "a[href^='javascript:__doPostBack'][id*='Save'],a[id*='Cancel'],[type=submit]",

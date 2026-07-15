@@ -1,6 +1,6 @@
 ﻿// Romanian Translation by Bogdanov Mihail
 
-CKEDITOR.plugins.setLang('wordcount', 'ro', {
+XfEditor.plugins.setLang('wordcount', 'ro', {
     WordCount: 'Numar cuvinte',
     WordCountRemaining: 'Cuvinte ramase',
     CharCount: 'Numar caracter:',

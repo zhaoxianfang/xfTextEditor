@@ -2,7 +2,7 @@
  * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
-CKEDITOR.plugins.setLang( 'filetools', 'tr', {
+XfEditor.plugins.setLang( 'filetools', 'tr', {
 	loadError: 'Dosya okunurken hata oluştu.',
 	networkError: 'Dosya gönderilirken ağ hatası oluştu.',
 	httpError404: 'Dosya gönderilirken HTTP hatası oluştu (404: Dosya bulunamadı).',

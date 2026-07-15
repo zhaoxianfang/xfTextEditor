@@ -1,4 +1,4 @@
-CKEDITOR.plugins.setLang('video', 'en', {
+XfEditor.plugins.setLang('video', 'en', {
   button: 'Video',
   title: 'Video properties',
   emptySrc: 'URL must not be empty.',

@@ -2,7 +2,7 @@
 Copyright (c) 2003-2020, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 */
-CKEDITOR.plugins.setLang( 'image', 'bn', {
+XfEditor.plugins.setLang( 'image', 'bn', {
 	alt: 'বিকল্প টেক্সট',
 	border: 'বর্ডার',
 	btnUpload: 'ইহাকে সার্ভারে প্রেরন কর',

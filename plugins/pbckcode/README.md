@@ -17,8 +17,8 @@ The plugin will create a dialog where you will be able to format your code as yo
 1. Open the config.js file and add the following lines :
 
 ```js
-CKEDITOR.editorConfig = function(config) {
-  // CKEDITOR TOOLBAR CUSTOMIZATION
+XfEditor.editorConfig = function(config) {
+  // XfEditor TOOLBAR CUSTOMIZATION
   // I only set the needed buttons, so feel frey to add those you want in the array
   config.toolbarGroups = [
     {name: 'pbckcode'},
@@ -26,7 +26,7 @@ CKEDITOR.editorConfig = function(config) {
     // get information about available buttons here: bhttp://docs.ckeditor.com/?mobile=/guide/dev_toolbar
   ];
 
-  // CKEDITOR PLUGINS LOADING
+  // XfEditor PLUGINS LOADING
   config.extraPlugins = 'pbckcode'; // add other plugins here (comma separated)
 
   // ADVANCED CONTENT FILTER (ACF)

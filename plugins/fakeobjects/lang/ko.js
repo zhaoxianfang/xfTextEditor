@@ -2,7 +2,7 @@
 Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 */
-CKEDITOR.plugins.setLang( 'fakeobjects', 'ko', {
+XfEditor.plugins.setLang( 'fakeobjects', 'ko', {
 	anchor: '책갈피',
 	flash: '플래시 애니메이션',
 	hiddenfield: '숨은 입력 칸',

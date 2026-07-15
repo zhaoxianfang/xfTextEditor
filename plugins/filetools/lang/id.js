@@ -2,7 +2,7 @@
  * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
-CKEDITOR.plugins.setLang( 'filetools', 'id', {
+XfEditor.plugins.setLang( 'filetools', 'id', {
 	loadError: 'Error terjadi ketika berkas dibaca',
 	networkError: 'Jaringan error terjadi ketika mengunggah berkas',
 	httpError404: 'HTTP error terjadi ketika mengunggah berkas (404: Berkas tidak ditemukan)',

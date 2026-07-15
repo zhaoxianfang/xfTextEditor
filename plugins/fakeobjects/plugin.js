@@ -4,8 +4,8 @@
  */
 
 ( function() {
-	var cssStyle = CKEDITOR.htmlParser.cssStyle,
-		cssLength = CKEDITOR.tools.cssLength;
+	var cssStyle = XfEditor.htmlParser.cssStyle,
+		cssLength = XfEditor.tools.cssLength;
 
 	var cssLengthRegex = /^((?:\d*(?:\.\d+))|(?:\d+))(.*)?$/i;
 
@@ -32,7 +32,7 @@
 			$: function( element ) {
 				var attributes = element.attributes,
 					realHtml = attributes && attributes[ 'data-cke-realelement' ],
-					realFragment = realHtml && new CKEDITOR.htmlParser.fragment.fromHtml( decodeURIComponent( realHtml ) ),
+					realFragment = realHtml && new XfEditor.htmlParser.fragment.fromHtml( decodeURIComponent( realHtml ) ),
 					realElement = realFragment && realFragment.children[ 0 ];
 
 				// Width/height in the fake object are subjected to clone into the real element.
@@ -51,7 +51,7 @@
 		}
 	};
 
-	CKEDITOR.plugins.add( 'fakeobjects', {
+	XfEditor.plugins.add( 'fakeobjects', {
 		// jscs:disable maximumLineLength
 		lang: 'af,ar,az,bg,bn,bs,ca,cs,cy,da,de,de-ch,el,en,en-au,en-ca,en-gb,eo,es,es-mx,et,eu,fa,fi,fo,fr,fr-ca,gl,gu,he,hi,hr,hu,id,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,oc,pl,pt,pt-br,ro,ru,si,sk,sl,sq,sr,sr-latn,sv,th,tr,tt,ug,uk,vi,zh,zh-cn', // %REMOVE_LINE_CORE%
 		// jscs:enable maximumLineLength
@@ -75,17 +75,17 @@
 	} );
 
 	/**
-	 * Creates fake {@link CKEDITOR.dom.element} based on real element.
+	 * Creates fake {@link XfEditor.dom.element} based on real element.
 	 * Fake element is an img with special attributes, which keep real element properties.
 	 *
-	 * @member CKEDITOR.editor
-	 * @param {CKEDITOR.dom.element} realElement Real element to transform.
+	 * @member XfEditor.editor
+	 * @param {XfEditor.dom.element} realElement Real element to transform.
 	 * @param {String} className Class name which will be used as class of fake element.
 	 * @param {String} realElementType Stores type of fake element.
 	 * @param {Boolean} isResizable Keeps information if element is resizable.
-	 * @returns {CKEDITOR.dom.element} Fake element.
+	 * @returns {XfEditor.dom.element} Fake element.
 	 */
-	CKEDITOR.editor.prototype.createFakeElement = function( realElement, className, realElementType, isResizable ) {
+	XfEditor.editor.prototype.createFakeElement = function( realElement, className, realElementType, isResizable ) {
 		var lang = this.lang.fakeobjects,
 			label = lang[ realElementType ] || lang.unknown;
 
@@ -99,8 +99,8 @@
 		};
 
 		// Do not set "src" on high-contrast so the alt text is displayed. (https://dev.ckeditor.com/ticket/8945)
-		if ( !CKEDITOR.env.hc )
-			attributes.src = CKEDITOR.tools.transparentImageData;
+		if ( !XfEditor.env.hc )
+			attributes.src = XfEditor.tools.transparentImageData;
 
 		if ( realElementType )
 			attributes[ 'data-cke-real-element-type' ] = realElementType;
@@ -122,21 +122,21 @@
 	};
 
 	/**
-	 * Creates fake {@link CKEDITOR.htmlParser.element} based on real element.
+	 * Creates fake {@link XfEditor.htmlParser.element} based on real element.
 	 *
-	 * @member CKEDITOR.editor
-	 * @param {CKEDITOR.dom.element} realElement Real element to transform.
+	 * @member XfEditor.editor
+	 * @param {XfEditor.dom.element} realElement Real element to transform.
 	 * @param {String} className Class name which will be used as class of fake element.
 	 * @param {String} realElementType Store type of fake element.
 	 * @param {Boolean} isResizable Keep information if element is resizable.
-	 * @returns {CKEDITOR.htmlParser.element} Fake htmlParser element.
+	 * @returns {XfEditor.htmlParser.element} Fake htmlParser element.
 	 */
-	CKEDITOR.editor.prototype.createFakeParserElement = function( realElement, className, realElementType, isResizable ) {
+	XfEditor.editor.prototype.createFakeParserElement = function( realElement, className, realElementType, isResizable ) {
 		var lang = this.lang.fakeobjects,
 			label = lang[ realElementType ] || lang.unknown,
 			html;
 
-		var writer = new CKEDITOR.htmlParser.basicWriter();
+		var writer = new XfEditor.htmlParser.basicWriter();
 		realElement.writeHtml( writer );
 		html = writer.getHtml();
 
@@ -150,8 +150,8 @@
 		};
 
 		// Do not set "src" on high-contrast so the alt text is displayed. (https://dev.ckeditor.com/ticket/8945)
-		if ( !CKEDITOR.env.hc )
-			attributes.src = CKEDITOR.tools.transparentImageData;
+		if ( !XfEditor.env.hc )
+			attributes.src = XfEditor.tools.transparentImageData;
 
 		if ( realElementType )
 			attributes[ 'data-cke-real-element-type' ] = realElementType;
@@ -169,21 +169,21 @@
 			fakeStyle.populate( attributes );
 		}
 
-		return new CKEDITOR.htmlParser.element( 'img', attributes );
+		return new XfEditor.htmlParser.element( 'img', attributes );
 	};
 
 	/**
-	 * Creates {@link CKEDITOR.dom.element} from fake element.
+	 * Creates {@link XfEditor.dom.element} from fake element.
 	 *
-	 * @member CKEDITOR.editor
-	 * @param {CKEDITOR.dom.element} fakeElement Fake element to transform.
-	 * @returns {CKEDITOR.dom.element/null} Returns real element or `null` if transformed element wasn't fake.
+	 * @member XfEditor.editor
+	 * @param {XfEditor.dom.element} fakeElement Fake element to transform.
+	 * @returns {XfEditor.dom.element/null} Returns real element or `null` if transformed element wasn't fake.
 	 */
-	CKEDITOR.editor.prototype.restoreRealElement = function( fakeElement ) {
-		if ( fakeElement.data( 'cke-real-node-type' ) != CKEDITOR.NODE_ELEMENT )
+	XfEditor.editor.prototype.restoreRealElement = function( fakeElement ) {
+		if ( fakeElement.data( 'cke-real-node-type' ) != XfEditor.NODE_ELEMENT )
 			return null;
 
-		var element = CKEDITOR.dom.element.createFromHtml( decodeURIComponent( fakeElement.data( 'cke-realelement' ) ), this.document );
+		var element = XfEditor.dom.element.createFromHtml( decodeURIComponent( fakeElement.data( 'cke-realelement' ) ), this.document );
 
 		if ( fakeElement.data( 'cke-resizable' ) ) {
 			var width = fakeElement.getStyle( 'width' ),

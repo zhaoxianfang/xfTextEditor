@@ -3,14 +3,14 @@
  * For licensing, see LICENSE.html or http://ckeditor.com/license
  */
 
-CKEDITOR.plugins.add("wordcount",
+XfEditor.plugins.add("wordcount",
     {
         lang: "ar,bg,ca,cs,da,de,el,en,es,eu,fa,fi,fr,he,hr,hu,it,ka,ko,ja,nl,no,pl,pt,pt-br,ru,sk,sv,tr,uk,zh-cn,zh,ro", // %REMOVE_LINE_CORE%
         version: "1.17.9",
         requires: "htmlwriter,notification,undo",
         bbcodePluginLoaded: false,
         onLoad: function() {
-            CKEDITOR.document.appendStyleSheet(this.path + "css/wordcount.css");
+            XfEditor.document.appendStyleSheet(this.path + "css/wordcount.css");
         },
         init: function(editor) {
             var defaultFormat = "",
@@ -98,7 +98,7 @@ CKEDITOR.plugins.add("wordcount",
             };
 
             // Get Config & Lang
-            var config = CKEDITOR.tools.extend(defaultConfig, editor.config.wordcount || {}, true);
+            var config = XfEditor.tools.extend(defaultConfig, editor.config.wordcount || {}, true);
 
             if (config.showParagraphs) {
               if (config.maxParagraphs > -1) {
@@ -195,9 +195,9 @@ CKEDITOR.plugins.add("wordcount",
              * @returns string
              */
             function filter(html) {
-                if (config.filter instanceof CKEDITOR.htmlParser.filter) {
-                    var fragment = CKEDITOR.htmlParser.fragment.fromHtml(html),
-                        writer = new CKEDITOR.htmlParser.basicWriter();
+                if (config.filter instanceof XfEditor.htmlParser.filter) {
+                    var fragment = XfEditor.htmlParser.fragment.fromHtml(html),
+                        writer = new XfEditor.htmlParser.basicWriter();
                     config.filter.applyTo(fragment);
                     fragment.writeHtml(writer);
                     return writer.getHtml();
@@ -366,7 +366,7 @@ CKEDITOR.plugins.add("wordcount",
                 (editorInstance.config.wordcount || (editorInstance.config.wordcount = {})).wordCount = wordCount;
                 (editorInstance.config.wordcount || (editorInstance.config.wordcount = {})).charCount = charCount;
 
-                if (CKEDITOR.env.gecko) {
+                if (XfEditor.env.gecko) {
                     counterElement(editorInstance).innerHTML = html;
                 } else {
                     counterElement(editorInstance).innerText = html;
@@ -501,7 +501,7 @@ CKEDITOR.plugins.add("wordcount",
                         wordcountClass = wordcountClass + " cke_wordcount_rtl";
                     }
 
-                    if (editor.elementMode === CKEDITOR.ELEMENT_MODE_INLINE) {
+                    if (editor.elementMode === XfEditor.ELEMENT_MODE_INLINE) {
                         if (event.data.space == "top") {
                             event.data.html += "<div class=\"" + wordcountClass +"\" style=\"\"" +
                                 " title=\"" +
@@ -585,7 +585,7 @@ CKEDITOR.plugins.add("wordcount",
 
                         // Instantiate the notification when needed and only have one instance
                         if (notification === null) {
-                            notification = new CKEDITOR.plugins.notification(event.editor,
+                            notification = new XfEditor.plugins.notification(event.editor,
                                 {
                                     message: event.editor.lang.wordcount.pasteWarning,
                                     type: "warning",

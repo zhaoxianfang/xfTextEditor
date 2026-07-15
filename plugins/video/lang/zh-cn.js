@@ -1,4 +1,4 @@
-CKEDITOR.plugins.setLang('video', 'zh-cn', {
+XfEditor.plugins.setLang('video', 'zh-cn', {
   button: '视频',
   title: '视频标题',
   emptySrc: '视频地址不能为空',

@@ -57,7 +57,7 @@
 
     <h2>最简配置代码</h2>
     <pre class="xf-code">&lt;script&gt;
-    CKEDITOR.replace( 'editor1', {
+    XfEditor.replace( 'editor1', {
         language: 'zh-cn',
         width: '100%',
         height: 300,
@@ -72,13 +72,13 @@
 
     <h2>获取 / 设置内容</h2>
     <pre class="xf-code">// 获取编辑器 HTML 内容
-var html = CKEDITOR.instances.editor1.getData();
+var html = XfEditor.instances.editor1.getData();
 
 // 设置编辑器内容
-CKEDITOR.instances.editor1.setData( '&lt;p&gt;新内容&lt;/p&gt;' );
+XfEditor.instances.editor1.setData( '&lt;p&gt;新内容&lt;/p&gt;' );
 
 // 监听内容变化
-CKEDITOR.instances.editor1.on( 'change', function () {
+XfEditor.instances.editor1.on( 'change', function () {
     console.log( '内容已变化：', this.getData() );
 } );</pre>
 </main>
@@ -91,7 +91,7 @@ CKEDITOR.instances.editor1.on( 'change', function () {
 document.addEventListener('DOMContentLoaded', function () {
 // 创建简易编辑器：基础能力（含中文、行高、字号、自研插件等）由 config.full.js 统一提供，
     // 此处仅做「简易」定制：移除不常用按钮、精简工具栏，保留核心输入与特效能力。
-    XF.init('editor1', {
+    XfEditor.init('editor1', {
         height: 300,
         // 简易模式：移除不常用按钮，保持界面简洁（自研插件仍可用）
         removeButtons: 'Subscript,Superscript,Strike,Outdent,Indent,' +

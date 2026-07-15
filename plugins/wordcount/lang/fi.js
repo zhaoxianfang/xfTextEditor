@@ -3,7 +3,7 @@
  *
  * @author Joel Posti / Response200.pro
  */
-CKEDITOR.plugins.setLang('wordcount', 'fi', {
+XfEditor.plugins.setLang('wordcount', 'fi', {
     WordCount: 'Sanoja:',
     CharCount: 'Merkkejä:',
     CharCountWithHTML: 'Merkkejä (ml. HTML):',

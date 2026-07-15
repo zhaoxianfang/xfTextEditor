@@ -8,11 +8,11 @@
 <script>
 	exportPdfUtils.initManualTest();
 
-	var editor = CKEDITOR.replace( 'editor', exportPdfUtils.getDefaultConfig( 'manual', {
+	var editor = XfEditor.replace( 'editor', exportPdfUtils.getDefaultConfig( 'manual', {
 		readOnly: true
 	} ) );
 
-	CKEDITOR.document.getById( 'toggle' ).on( 'click', function() {
+	XfEditor.document.getById( 'toggle' ).on( 'click', function() {
 		editor.setReadOnly( !editor.readOnly );
 	} );
 </script>

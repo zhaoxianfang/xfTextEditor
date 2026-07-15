@@ -9,7 +9,7 @@
 
 ( function() {
 
-	CKEDITOR.plugins.add( 'image', {
+	XfEditor.plugins.add( 'image', {
 		requires: 'dialog',
 		// jscs:disable maximumLineLength
 		lang: 'af,ar,az,bg,bn,bs,ca,cs,cy,da,de,de-ch,el,en,en-au,en-ca,en-gb,eo,es,es-mx,et,eu,fa,fi,fo,fr,fr-ca,gl,gu,he,hi,hr,hu,id,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,oc,pl,pt,pt-br,ro,ru,si,sk,sl,sq,sr,sr-latn,sv,th,tr,tt,ug,uk,vi,zh,zh-cn', // %REMOVE_LINE_CORE%
@@ -26,16 +26,16 @@
 			}
 
 			// Register the dialog.
-			CKEDITOR.dialog.add( pluginName, this.path + 'dialogs/image.js' );
+			XfEditor.dialog.add( pluginName, this.path + 'dialogs/image.js' );
 
 			var allowed = 'img[alt,!src]{border-style,border-width,float,height,margin,margin-bottom,margin-left,margin-right,margin-top,width}',
 				required = 'img[alt,src]';
 
-			if ( CKEDITOR.dialog.isTabEnabled( editor, pluginName, 'advanced' ) )
+			if ( XfEditor.dialog.isTabEnabled( editor, pluginName, 'advanced' ) )
 				allowed = 'img[alt,dir,id,lang,longdesc,!src,title]{*}(*)';
 
 			// Register the command.
-			editor.addCommand( pluginName, new CKEDITOR.dialogCommand( pluginName, {
+			editor.addCommand( pluginName, new XfEditor.dialogCommand( pluginName, {
 				allowedContent: allowed,
 				requiredContent: required,
 				contentTransformations: [
@@ -73,7 +73,7 @@
 			if ( editor.contextMenu ) {
 				editor.contextMenu.addListener( function( element ) {
 					if ( getSelectedImage( editor, element ) )
-						return { image: CKEDITOR.TRISTATE_OFF };
+						return { image: XfEditor.TRISTATE_OFF };
 				} );
 			}
 		},
@@ -120,7 +120,7 @@
 							align = getImageAlignment( img );
 
 							this.setState(
-							( align == value ) ? CKEDITOR.TRISTATE_ON : ( value == 'right' || value == 'left' ) ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED );
+							( align == value ) ? XfEditor.TRISTATE_ON : ( value == 'right' || value == 'left' ) ? XfEditor.TRISTATE_OFF : XfEditor.TRISTATE_DISABLED );
 
 							evt.cancel();
 						}
@@ -161,7 +161,7 @@
  *
  * @since 4.5.0
  * @cfg {Boolean} [image_prefillDimensions=true]
- * @member CKEDITOR.config
+ * @member XfEditor.config
  */
 
 /**
@@ -170,15 +170,15 @@
  *		config.image_removeLinkByEmptyURL = false;
  *
  * @cfg {Boolean} [image_removeLinkByEmptyURL=true]
- * @member CKEDITOR.config
+ * @member XfEditor.config
  */
-CKEDITOR.config.image_removeLinkByEmptyURL = true;
+XfEditor.config.image_removeLinkByEmptyURL = true;
 
 /**
  * Padding text to set off the image in the preview area.
  *
- *		config.image_previewText = CKEDITOR.tools.repeat( '___ ', 100 );
+ *		config.image_previewText = XfEditor.tools.repeat( '___ ', 100 );
  *
  * @cfg {String} [image_previewText='Lorem ipsum dolor...' (placeholder text)]
- * @member CKEDITOR.config
+ * @member XfEditor.config
  */

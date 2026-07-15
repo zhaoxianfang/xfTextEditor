@@ -7,7 +7,7 @@
 (function(undefined) {
   'use strict';
 
-  var trim = CKEDITOR.tools.trim;
+  var trim = XfEditor.tools.trim;
 
   var unbind = function(video$) {
     video$.onloadedmetadata = video$.onerror = null;
@@ -61,7 +61,7 @@
     }
   };
 
-  CKEDITOR.dialog.add('video', function(editor) {
+  XfEditor.dialog.add('video', function(editor) {
     return {
       title: editor.lang.video.title,
       minWidth: 400,
@@ -77,7 +77,7 @@
           onChange: function() {
             updatePreview(this.getDialog());
           },
-          validate: CKEDITOR.dialog.validate.notEmpty(editor.lang.video.emptySrc),
+          validate: XfEditor.dialog.validate.notEmpty(editor.lang.video.emptySrc),
           setup: function(element) {
             this.setValue(element && element.getAttribute('src') || '');
           },
@@ -163,7 +163,7 @@
           dialog.definition.onOk.apply(dialog);
         });
         if (metadata) {
-          var realElement = CKEDITOR.dom.element.createFromHtml('<cke:video></cke:video>', editor.document);
+          var realElement = XfEditor.dom.element.createFromHtml('<cke:video></cke:video>', editor.document);
           realElement.setAttributes({
             preload: 'metadata',
             width: metadata.width,
@@ -171,7 +171,7 @@
           });
           dialog.commitContent(realElement);
           var element = editor.createFakeElement(realElement, 'cke-video', 'video', false);
-          element.$.src = CKEDITOR.tools.createImageData(metadata);
+          element.$.src = XfEditor.tools.createImageData(metadata);
           editor.insertElement(element);
           dialog.hide();
           return;

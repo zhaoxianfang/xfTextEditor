@@ -6,34 +6,34 @@
 'use strict';
 
 ( function() {
-	CKEDITOR.plugins.add( 'filetools', {
+	XfEditor.plugins.add( 'filetools', {
 		lang: 'az,bg,ca,cs,da,de,de-ch,en,en-au,eo,es,es-mx,et,eu,fa,fr,gl,hr,hu,id,it,ja,km,ko,ku,lv,nb,nl,no,oc,pl,pt,pt-br,ro,ru,sk,sq,sr,sr-latn,sv,tr,ug,uk,vi,zh,zh-cn', // %REMOVE_LINE_CORE%
 
 		beforeInit: function( editor ) {
 			/**
-			 * An instance of the {@link CKEDITOR.fileTools.uploadRepository upload repository}.
-			 * It allows you to create and get {@link CKEDITOR.fileTools.fileLoader file loaders}.
+			 * An instance of the {@link XfEditor.fileTools.uploadRepository upload repository}.
+			 * It allows you to create and get {@link XfEditor.fileTools.fileLoader file loaders}.
 			 *
 			 *		var loader = editor.uploadRepository.create( file );
 			 *		loader.loadAndUpload( 'http://foo/bar' );
 			 *
 			 * @since 4.5.0
 			 * @readonly
-			 * @property {CKEDITOR.fileTools.uploadRepository} uploadRepository
-			 * @member CKEDITOR.editor
+			 * @property {XfEditor.fileTools.uploadRepository} uploadRepository
+			 * @member XfEditor.editor
 			 */
 			editor.uploadRepository = new UploadRepository( editor );
 
 			/**
-			 * Event fired when the {@link CKEDITOR.fileTools.fileLoader file loader} should send XHR. If the event is not
-			 * {@link CKEDITOR.eventInfo#stop stopped} or {@link CKEDITOR.eventInfo#cancel canceled}, the default request
+			 * Event fired when the {@link XfEditor.fileTools.fileLoader file loader} should send XHR. If the event is not
+			 * {@link XfEditor.eventInfo#stop stopped} or {@link XfEditor.eventInfo#cancel canceled}, the default request
 			 * will be sent. Refer to the {@glink guide/dev_file_upload Uploading Dropped or Pasted Files} article for more information.
 			 *
 			 * @since 4.5.0
 			 * @event fileUploadRequest
-			 * @member CKEDITOR.editor
+			 * @member XfEditor.editor
 			 * @param data
-			 * @param {CKEDITOR.fileTools.fileLoader} data.fileLoader A file loader instance.
+			 * @param {XfEditor.fileTools.fileLoader} data.fileLoader A file loader instance.
 			 * @param {Object} data.requestData An object containing all data to be sent to the server.
 			 */
 			editor.on( 'fileUploadRequest', function( evt ) {
@@ -64,7 +64,7 @@
 					}
 				}
 				// Append token preventing CSRF attacks.
-				$formData.append( 'ckCsrfToken', CKEDITOR.tools.getCsrfToken() );
+				$formData.append( 'ckCsrfToken', XfEditor.tools.getCsrfToken() );
 
 				if ( configXhrHeaders ) {
 					for ( header in configXhrHeaders ) {
@@ -76,16 +76,16 @@
 			}, null, null, 999 );
 
 			/**
-			 * Event fired when the {@link CKEDITOR.fileTools.fileLoader file upload} response is received and needs to be parsed.
-			 * If the event is not {@link CKEDITOR.eventInfo#stop stopped} or {@link CKEDITOR.eventInfo#cancel canceled},
+			 * Event fired when the {@link XfEditor.fileTools.fileLoader file upload} response is received and needs to be parsed.
+			 * If the event is not {@link XfEditor.eventInfo#stop stopped} or {@link XfEditor.eventInfo#cancel canceled},
 			 * the default response handler will be used. Refer to the
 			 * {@glink guide/dev_file_upload Uploading Dropped or Pasted Files} article for more information.
 			 *
 			 * @since 4.5.0
 			 * @event fileUploadResponse
-			 * @member CKEDITOR.editor
-			 * @param data All data will be passed to {@link CKEDITOR.fileTools.fileLoader#responseData}.
-			 * @param {CKEDITOR.fileTools.fileLoader} data.fileLoader A file loader instance.
+			 * @member XfEditor.editor
+			 * @param data All data will be passed to {@link XfEditor.fileTools.fileLoader#responseData}.
+			 * @param {XfEditor.fileTools.fileLoader} data.fileLoader A file loader instance.
 			 * @param {String} data.message The message from the server. Needs to be set in the listener &mdash; see the example above.
 			 * @param {String} data.fileName The file name on server. Needs to be set in the listener &mdash; see the example above.
 			 * @param {String} data.url The URL to the uploaded file. Needs to be set in the listener &mdash; see the example above.
@@ -115,7 +115,7 @@
 				} catch ( err ) {
 					// Response parsing error.
 					data.message = fileLoader.lang.filetools.responseError;
-					CKEDITOR.warn( 'filetools-response-error', { responseText: xhr.responseText } );
+					XfEditor.warn( 'filetools-response-error', { responseText: xhr.responseText } );
 
 					evt.cancel();
 				}
@@ -124,20 +124,20 @@
 	} );
 
 	/**
-	 * File loader repository. It allows you to create and get {@link CKEDITOR.fileTools.fileLoader file loaders}.
+	 * File loader repository. It allows you to create and get {@link XfEditor.fileTools.fileLoader file loaders}.
 	 *
-	 * An instance of the repository is available as the {@link CKEDITOR.editor#uploadRepository}.
+	 * An instance of the repository is available as the {@link XfEditor.editor#uploadRepository}.
 	 *
 	 *		var loader = editor.uploadRepository.create( file );
 	 *		loader.loadAndUpload( 'http://foo/bar' );
 	 *
-	 * To find more information about handling files see the {@link CKEDITOR.fileTools.fileLoader} class.
+	 * To find more information about handling files see the {@link XfEditor.fileTools.fileLoader} class.
 	 *
 	 * @since 4.5.0
-	 * @class CKEDITOR.fileTools.uploadRepository
-	 * @mixins CKEDITOR.event
+	 * @class XfEditor.fileTools.uploadRepository
+	 * @mixins XfEditor.event
 	 * @constructor Creates an instance of the repository.
-	 * @param {CKEDITOR.editor} editor Editor instance. Used only to get the language data.
+	 * @param {XfEditor.editor} editor Editor instance. Used only to get the language data.
 	 */
 	function UploadRepository( editor ) {
 		this.editor = editor;
@@ -147,16 +147,16 @@
 
 	UploadRepository.prototype = {
 		/**
-		 * Creates a {@link CKEDITOR.fileTools.fileLoader file loader} instance with a unique ID.
+		 * Creates a {@link XfEditor.fileTools.fileLoader file loader} instance with a unique ID.
 		 * The instance can be later retrieved from the repository using the {@link #loaders} array.
 		 *
-		 * Fires the {@link CKEDITOR.fileTools.uploadRepository#instanceCreated instanceCreated} event.
+		 * Fires the {@link XfEditor.fileTools.uploadRepository#instanceCreated instanceCreated} event.
 		 *
-		 * @param {Blob/String} fileOrData See {@link CKEDITOR.fileTools.fileLoader}.
-		 * @param {String} fileName See {@link CKEDITOR.fileTools.fileLoader}.
-		 * @param {Function} [loaderType] Loader type to be created. If skipped, the default {@link CKEDITOR.fileTools.fileLoader}
+		 * @param {Blob/String} fileOrData See {@link XfEditor.fileTools.fileLoader}.
+		 * @param {String} fileName See {@link XfEditor.fileTools.fileLoader}.
+		 * @param {Function} [loaderType] Loader type to be created. If skipped, the default {@link XfEditor.fileTools.fileLoader}
 		 * type will be used.
-		 * @returns {CKEDITOR.fileTools.fileLoader} The created file loader instance.
+		 * @returns {XfEditor.fileTools.fileLoader} The created file loader instance.
 		 */
 		create: function( fileOrData, fileName, loaderType ) {
 			loaderType = loaderType || FileLoader;
@@ -188,18 +188,18 @@
 		}
 
 		/**
-		 * Array of loaders created by the {@link #create} method. Loaders' {@link CKEDITOR.fileTools.fileLoader#id IDs}
+		 * Array of loaders created by the {@link #create} method. Loaders' {@link XfEditor.fileTools.fileLoader#id IDs}
 		 * are indexes.
 		 *
 		 * @readonly
-		 * @property {CKEDITOR.fileTools.fileLoader[]} loaders
+		 * @property {XfEditor.fileTools.fileLoader[]} loaders
 		 */
 
 		/**
-		 * Event fired when the {@link CKEDITOR.fileTools.fileLoader file loader} is created.
+		 * Event fired when the {@link XfEditor.fileTools.fileLoader file loader} is created.
 		 *
 		 * @event instanceCreated
-		 * @param {CKEDITOR.fileTools.fileLoader} data Created file loader.
+		 * @param {XfEditor.fileTools.fileLoader} data Created file loader.
 		 */
 	};
 
@@ -208,7 +208,7 @@
 	 * the user's device into the memory and uploading the file to the server.
 	 *
 	 * There are two possible ways to crate a `FileLoader` instance: with a [Blob](https://developer.mozilla.org/en/docs/Web/API/Blob)
-	 * (e.g. acquired from the {@link CKEDITOR.plugins.clipboard.dataTransfer#getFile} method) or with data as a Base64 string.
+	 * (e.g. acquired from the {@link XfEditor.plugins.clipboard.dataTransfer#getFile} method) or with data as a Base64 string.
 	 * Note that if the constructor gets the data as a Base64 string, there is no need to load the data, the data is already loaded.
 	 *
 	 * The `FileLoader` is created for a single load and upload process so if you abort the process,
@@ -230,10 +230,10 @@
 	 * be called to refresh the progress.
 	 *
 	 * Default request and response formats will work with CKFinder 2.4.3 and above. If you need a custom request
-	 * or response handling you need to overwrite the default behavior using the {@link CKEDITOR.editor#fileUploadRequest} and
-	 * {@link CKEDITOR.editor#fileUploadResponse} events. For more information see their documentation.
+	 * or response handling you need to overwrite the default behavior using the {@link XfEditor.editor#fileUploadRequest} and
+	 * {@link XfEditor.editor#fileUploadResponse} events. For more information see their documentation.
 	 *
-	 * To create a `FileLoader` instance, use the {@link CKEDITOR.fileTools.uploadRepository} class.
+	 * To create a `FileLoader` instance, use the {@link XfEditor.fileTools.uploadRepository} class.
 	 *
 	 * Here is a simple `FileLoader` usage example:
 	 *
@@ -241,7 +241,7 @@
 	 *			for ( var i = 0; i < evt.data.dataTransfer.getFilesCount(); i++ ) {
 	 *				var file = evt.data.dataTransfer.getFile( i );
 	 *
-	 *				if ( CKEDITOR.fileTools.isTypeSupported( file, /image\/png/ ) ) {
+	 *				if ( XfEditor.fileTools.isTypeSupported( file, /image\/png/ ) ) {
 	 *					var loader = editor.uploadRepository.create( file );
 	 *
 	 *					loader.on( 'update', function() {
@@ -262,15 +262,15 @@
 	 * Note that `FileLoader` uses the native file API which is supported **since Internet Explorer 10**.
 	 *
 	 * @since 4.5.0
-	 * @class CKEDITOR.fileTools.fileLoader
-	 * @mixins CKEDITOR.event
+	 * @class XfEditor.fileTools.fileLoader
+	 * @mixins XfEditor.event
 	 * @constructor Creates an instance of the class and sets initial values for all properties.
-	 * @param {CKEDITOR.editor} editor The editor instance. Used only to get language data.
+	 * @param {XfEditor.editor} editor The editor instance. Used only to get language data.
 	 * @param {Blob/String} fileOrData A [blob object](https://developer.mozilla.org/en/docs/Web/API/Blob) or a data
 	 * string encoded with Base64.
 	 * @param {String} [fileName] The file name. If not set and the second parameter is a file, then its name will be used.
 	 * If not set and the second parameter is a Base64 data string, then the file name will be created based on
-	 * the {@link CKEDITOR.config#fileTools_defaultFileName} option.
+	 * the {@link XfEditor.config#fileTools_defaultFileName} option.
 	 */
 	function FileLoader( editor, fileOrData, fileName ) {
 		var mimeParts,
@@ -349,7 +349,7 @@
 
 	/**
 	 * The name of the file. If there is no file name, it is created by using the
-	 * {@link CKEDITOR.config#fileTools_defaultFileName} option.
+	 * {@link XfEditor.config#fileTools_defaultFileName} option.
 	 *
 	 * @readonly
 	 * @property {String} fileName
@@ -381,7 +381,7 @@
 	 * All data received in the response from the server. If the server returns additional data, it will be available
 	 * in this property.
 	 *
-	 * It contains all data set in the {@link CKEDITOR.editor#fileUploadResponse} event listener.
+	 * It contains all data set in the {@link XfEditor.editor#fileUploadResponse} event listener.
 	 *
 	 * @readonly
 	 * @property {Object} responseData
@@ -441,7 +441,7 @@
 	 */
 
 	/**
-	 * If `FileLoader` was created using {@link CKEDITOR.fileTools.uploadRepository},
+	 * If `FileLoader` was created using {@link XfEditor.fileTools.uploadRepository},
 	 * it gets an identifier which is stored in this property.
 	 *
 	 * @readonly
@@ -474,7 +474,7 @@
 		 *
 		 * @param {String} url The upload URL.
 		 * @param {Object} [additionalRequestParameters] Additional parameters that would be passed to
-	 	 * the {@link CKEDITOR.editor#fileUploadRequest} event.
+	 	 * the {@link XfEditor.editor#fileUploadRequest} event.
 		 */
 		loadAndUpload: function( url, additionalRequestParameters ) {
 			var loader = this;
@@ -551,7 +551,7 @@
 		 *
 		 * @param {String} url The upload URL.
 		 * @param {Object} [additionalRequestParameters] Additional data that would be passed to
-	 	 * the {@link CKEDITOR.editor#fileUploadRequest} event.
+	 	 * the {@link XfEditor.editor#fileUploadRequest} event.
 		 */
 		upload: function( url, additionalRequestParameters ) {
 			var requestData = additionalRequestParameters || {};
@@ -760,8 +760,8 @@
 		 */
 	};
 
-	CKEDITOR.event.implementOn( UploadRepository.prototype );
-	CKEDITOR.event.implementOn( FileLoader.prototype );
+	XfEditor.event.implementOn( UploadRepository.prototype );
+	XfEditor.event.implementOn( FileLoader.prototype );
 
 	var base64HeaderRegExp = /^data:(\S*?);base64,/;
 
@@ -799,37 +799,37 @@
 	//
 
 	// Two plugins extend this object.
-	if ( !CKEDITOR.fileTools ) {
+	if ( !XfEditor.fileTools ) {
 		/**
 		 * Helpers to load and upload a file.
 		 *
 		 * @since 4.5.0
 		 * @singleton
-		 * @class CKEDITOR.fileTools
+		 * @class XfEditor.fileTools
 		 */
-		CKEDITOR.fileTools = {};
+		XfEditor.fileTools = {};
 	}
 
-	CKEDITOR.tools.extend( CKEDITOR.fileTools, {
+	XfEditor.tools.extend( XfEditor.fileTools, {
 		uploadRepository: UploadRepository,
 		fileLoader: FileLoader,
 
 		/**
-		 * Gets the upload URL from the {@link CKEDITOR.config configuration}. Because of backward compatibility
+		 * Gets the upload URL from the {@link XfEditor.config configuration}. Because of backward compatibility
 		 * the URL can be set using multiple configuration options.
 		 *
 		 * If the `type` is defined, then four configuration options will be checked in the following order
 		 * (examples for `type='image'`):
 		 *
-		 * * `[type]UploadUrl`, e.g. {@link CKEDITOR.config#imageUploadUrl},
-		 * * {@link CKEDITOR.config#uploadUrl},
-		 * * `filebrowser[uppercased type]uploadUrl`, e.g. {@link CKEDITOR.config#filebrowserImageUploadUrl},
-		 * * {@link CKEDITOR.config#filebrowserUploadUrl}.
+		 * * `[type]UploadUrl`, e.g. {@link XfEditor.config#imageUploadUrl},
+		 * * {@link XfEditor.config#uploadUrl},
+		 * * `filebrowser[uppercased type]uploadUrl`, e.g. {@link XfEditor.config#filebrowserImageUploadUrl},
+		 * * {@link XfEditor.config#filebrowserUploadUrl}.
 		 *
 		 * If the `type` is not defined, two configuration options will be checked:
 		 *
-		 * * {@link CKEDITOR.config#uploadUrl},
-		 * * {@link CKEDITOR.config#filebrowserUploadUrl}.
+		 * * {@link XfEditor.config#uploadUrl},
+		 * * {@link XfEditor.config#filebrowserUploadUrl}.
 		 *
 		 * `filebrowser[type]uploadUrl` and `filebrowserUploadUrl` are checked for backward compatibility with the
 		 * `filebrowser` plugin.
@@ -841,7 +841,7 @@
 		 * @returns {String/null} Upload URL or `null` if none of the configuration options were defined.
 		 */
 		getUploadUrl: function( config, type ) {
-			var capitalize = CKEDITOR.tools.capitalize;
+			var capitalize = XfEditor.tools.capitalize;
 
 			if ( type && config[ type + 'UploadUrl' ] ) {
 				return config[ type + 'UploadUrl' ];
@@ -859,8 +859,8 @@
 		/**
 		 * Checks if the MIME type of the given file is supported.
 		 *
-		 * 		CKEDITOR.fileTools.isTypeSupported( { type: 'image/png' }, /image\/(png|jpeg)/ ); // true
-		 * 		CKEDITOR.fileTools.isTypeSupported( { type: 'image/png' }, /image\/(gif|jpeg)/ ); // false
+		 * 		XfEditor.fileTools.isTypeSupported( { type: 'image/png' }, /image\/(png|jpeg)/ ); // true
+		 * 		XfEditor.fileTools.isTypeSupported( { type: 'image/png' }, /image\/(gif|jpeg)/ ); // false
 		 *
 		 * @param {Blob} file The file to check.
 		 * @param {RegExp} supportedTypes A regular expression to check the MIME type of the file.
@@ -894,7 +894,7 @@
  *
  * @since 4.5.0
  * @cfg {String} [uploadUrl='']
- * @member CKEDITOR.config
+ * @member XfEditor.config
  */
 
 /**
@@ -910,14 +910,14 @@
  *
  * @since 4.5.3
  * @cfg {String} [fileTools_defaultFileName='']
- * @member CKEDITOR.config
+ * @member XfEditor.config
  */
 
 /**
- * Allows to add extra headers for every request made using the {@link CKEDITOR.fileTools} API.
+ * Allows to add extra headers for every request made using the {@link XfEditor.fileTools} API.
  *
  * Note that headers can still be customized per a single request, using the
- * [`fileUploadRequest`](https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_editor.html#event-fileUploadRequest)
+ * [`fileUploadRequest`](https://ckeditor.com/docs/ckeditor4/latest/api/XfEditor_editor.html#event-fileUploadRequest)
  * event.
  *
  *		config.fileTools_requestHeaders = {
@@ -927,5 +927,5 @@
  *
  * @since 4.9.0
  * @cfg {Object} [fileTools_requestHeaders]
- * @member CKEDITOR.config
+ * @member XfEditor.config
  */

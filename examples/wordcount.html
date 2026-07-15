@@ -39,7 +39,7 @@
         <tr><td><code>maxCharCount</code></td><td>-1</td><td>最大字符数限制，-1 表示无限制。</td></tr>
         <tr><td><code>filter</code></td><td>null</td><td>计数前的 HTML 过滤规则（htmlParser.filter）。</td></tr>
     </table>
-    <pre class="xf-code">CKEDITOR.replace('editor', {
+    <pre class="xf-code">XfEditor.replace('editor', {
     extraPlugins: 'wordcount',
     wordcount: { showWordCount: true, showCharCount: true, maxCharCount: 2000 }
 });</pre>
@@ -48,7 +48,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 // 基础能力由 config.full.js 统一提供；此处叠加 wordcount 插件与自定义字数配置。
-    XF.init('editor', {
+    XfEditor.init('editor', {
         height: 320,
         extraPlugins: 'wordcount',
         wordcount: {

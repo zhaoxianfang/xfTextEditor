@@ -85,7 +85,7 @@
     </div>
 
     <h2>五、前端配置示例</h2>
-    <pre class="xf-code">CKEDITOR.replace('editorPhp', {
+    <pre class="xf-code">XfEditor.replace('editorPhp', {
     language: 'zh-cn',
     extraPlugins: 'uploadfile,image2,divarea,filetools',
     // 指向本项目提供的 PHP 示例接口（相对路径）
@@ -108,7 +108,7 @@
 document.addEventListener('DOMContentLoaded', function () {
 // 实时演示：图片/文件上传直接请求本项目提供的 PHP 接口
     // 基础能力由 config.full.js 统一提供；此处叠加上传插件并指向本地 PHP 接口。
-    XF.init('editorPhp', {
+    XfEditor.init('editorPhp', {
         height: 360,
         extraPlugins: 'uploadfile,image2,filetools',
         filebrowserImageUploadUrl: '../php/upload_image.php',

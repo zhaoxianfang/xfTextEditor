@@ -2,7 +2,7 @@
 Copyright (c) 2003-2020, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 */
-CKEDITOR.plugins.setLang( 'image', 'ko', {
+XfEditor.plugins.setLang( 'image', 'ko', {
 	alt: '대체 문자열',
 	border: '테두리',
 	btnUpload: '서버로 전송',

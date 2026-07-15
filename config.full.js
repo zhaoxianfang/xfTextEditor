@@ -9,7 +9,7 @@
  *   - 全部第三方扩展插件与 xfTextEditor 自研插件（xfeffects / stickytoolbar / xfpreview）
  *   - 样式集、文字 / 段落特效工具栏分组、上传地址、字数统计、自动保存等
  * 示例页只需 <script defer src="config.full.js"> 即可复用本配置，
- * 再由 examples/js/xf.js 的 XF.init() 叠加页面级覆写，避免重复声明与插件丢失。
+ * 再由 examples/js/xf.js 的 XfEditor.init() 叠加页面级覆写，避免重复声明与插件丢失。
  */
 
 // 获取页面 CSRF Token 的辅助函数。
@@ -20,7 +20,7 @@ function getCsrfToken() {
     return meta ? meta.getAttribute('content') : null;
 }
 
-CKEDITOR.editorConfig = function( config ) {
+XfEditor.editorConfig = function( config ) {
     /* ===================== 基础与语言 ===================== */
     config.language = 'zh-cn';
     config.width = '100%';
@@ -84,7 +84,7 @@ CKEDITOR.editorConfig = function( config ) {
     config.allowedContent = true;          // 不过滤 span / div 等自定义特效标签
     // divarea 模式下不会自动注入 contents.css，这里写入 config.contentsCss，
     // 使「编辑区」与「生成网页」样式一致（特效样式由 xfeffects 通过 editor.addCss 注入，二者互补）。
-    config.contentsCss = [ CKEDITOR.getUrl('contents.css') ];
+    config.contentsCss = [ XfEditor.getUrl('contents.css') ];
     config.editorplaceholder = '请在此输入内容,提示：拖动文件到编辑器内可以进行上传';
 
     /* ===================== 自定义样式集（下拉「样式」） ===================== */
@@ -134,7 +134,7 @@ CKEDITOR.editorConfig = function( config ) {
 
     /* ===================== 自动保存 ===================== */
     config.autosave = {
-        // 注意：CKEDITOR.editorConfig 作用域内并不存在 editor 对象，旧版写法会抛 ReferenceError；
+        // 注意：XfEditor.editorConfig 作用域内并不存在 editor 对象，旧版写法会抛 ReferenceError；
         // 这里改用 window.location.pathname 作为稳定且唯一的键。
         // 注意：键名必须与插件读取的 config.SaveKey（大写 K）一致，
         // 否则显式指定的键会被忽略、回退到默认空键。

@@ -11,8 +11,8 @@ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 	<title>Toolbar Configurator</title>
 	<script src="../../ckeditor.js"></script>
 	<script>
-		if ( CKEDITOR.env.ie && CKEDITOR.env.version < 9 )
-			CKEDITOR.tools.enableHtml5Elements( document );
+		if ( XfEditor.env.ie && XfEditor.env.version < 9 )
+			XfEditor.tools.enableHtml5Elements( document );
 	</script>
 	<link rel="stylesheet" href="lib/codemirror/codemirror.css">
 	<link rel="stylesheet" href="lib/codemirror/show-hint.css">
@@ -105,7 +105,7 @@ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 				<div class="grid-container grid-container-nested">
 					<div class="basic">
 						<div class="grid-width-50">
-							<p>Arrange <a href="https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_config.html#cfg-toolbarGroups">toolbar groups</a>, toggle <a href="https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_config.html#cfg-removeButtons">button visibility</a> according to your needs and get your toolbar configuration.</p>
+							<p>Arrange <a href="https://ckeditor.com/docs/ckeditor4/latest/api/XfEditor_config.html#cfg-toolbarGroups">toolbar groups</a>, toggle <a href="https://ckeditor.com/docs/ckeditor4/latest/api/XfEditor_config.html#cfg-removeButtons">button visibility</a> according to your needs and get your toolbar configuration.</p>
 							<p>You can replace the content of the <a href="../../config.js"><code>config.js</code></a> file with the generated configuration. If you already set some configuration options you will need to merge both configurations.</p>
 						</div>
 						<div class="grid-width-50">
@@ -115,7 +115,7 @@ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 					</div>
 					<div class="advanced" style="display: none;">
 						<div class="grid-width-50">
-							<p>With this code editor you can edit your <a href="https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_config.html#cfg-toolbar">toolbar configuration</a> live.</p>
+							<p>With this code editor you can edit your <a href="https://ckeditor.com/docs/ckeditor4/latest/api/XfEditor_config.html#cfg-toolbar">toolbar configuration</a> live.</p>
 							<p>You can replace the content of the <a href="../../config.js"><code>config.js</code></a> file with the generated configuration. If you already set some configuration options you will need to merge both configurations.</p>
 						</div>
 						<div class="grid-width-50">
@@ -157,13 +157,13 @@ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 		'use strict';
 
 		var mode = ( window.location.hash.substr( 1 ) === 'advanced' ) ? 'advanced' : 'basic',
-			configuratorSection = CKEDITOR.document.findOne( 'main > .grid-container.configurator' ),
-			basicInstruction = CKEDITOR.document.findOne( '#help-content .basic' ),
-			advancedInstruction = CKEDITOR.document.findOne( '#help-content .advanced' ),
+			configuratorSection = XfEditor.document.findOne( 'main > .grid-container.configurator' ),
+			basicInstruction = XfEditor.document.findOne( '#help-content .basic' ),
+			advancedInstruction = XfEditor.document.findOne( '#help-content .advanced' ),
 
 			// Configurator mode switcher.
-			modeSwitchBasic = CKEDITOR.document.getById( 'radio-basic' ),
-			modeSwitchAdvanced = CKEDITOR.document.getById( 'radio-advanced' );
+			modeSwitchBasic = XfEditor.document.getById( 'radio-basic' ),
+			modeSwitchAdvanced = XfEditor.document.getById( 'radio-advanced' );
 
 		// Initial setup
 		function updateSwitcher() {
@@ -176,7 +176,7 @@ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 
 		updateSwitcher();
 
-		CKEDITOR.document.getWindow().on( 'hashchange', function( e ) {
+		XfEditor.document.getWindow().on( 'hashchange', function( e ) {
 			var hash = window.location.hash.substr( 1 );
 			if ( !( hash === 'advanced' || hash === 'basic' ) ) {
 				return;
@@ -185,7 +185,7 @@ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 			onToolbarsDone( mode );
 		} );
 
-		CKEDITOR.document.getWindow().on( 'resize', function() {
+		XfEditor.document.getWindow().on( 'resize', function() {
 			updateToolbar( ( mode === 'basic' ? toolbarModifier : toolbarTextModifier )[ 'editorInstance' ] );
 		} );
 
@@ -237,7 +237,7 @@ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 		toolbarModifier.init( onToolbarInit );
 		toolbarModifier.onRefresh = onRefresh;
 
-		CKEDITOR.document.getById( 'toolbarModifierWrapper' ).append( toolbarModifier.mainContainer );
+		XfEditor.document.getById( 'toolbarModifierWrapper' ).append( toolbarModifier.mainContainer );
 
 		var toolbarTextModifier = new ToolbarConfigurator.ToolbarTextModifier( 'editor-advanced' );
 		toolbarTextModifier.init( onToolbarInit );
@@ -247,7 +247,7 @@ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 			if ( ++done === 2 ) {
 				onToolbarsDone();
 
-				positionSticky.watch( CKEDITOR.document.findOne( '.toolbar' ), function() {
+				positionSticky.watch( XfEditor.document.findOne( '.toolbar' ), function() {
 					return mode === 'advanced';
 				} );
 			}
@@ -263,12 +263,12 @@ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 			updateSwitcher();
 
 			setTimeout( function() {
-				CKEDITOR.document.findOne( '.editors-container' ).addClass( 'active' );
-				CKEDITOR.document.findOne( '#toolbarModifierWrapper' ).addClass( 'active' );
+				XfEditor.document.findOne( '.editors-container' ).addClass( 'active' );
+				XfEditor.document.findOne( '#toolbarModifierWrapper' ).addClass( 'active' );
 			}, 200 );
 		}
 
-		CKEDITOR.document.getById( 'toolbarModifierWrapper' ).append( toolbarTextModifier.mainContainer );
+		XfEditor.document.getById( 'toolbarModifierWrapper' ).append( toolbarTextModifier.mainContainer );
 
 		function toogleModeSwitch( onElement, offElement, onModifier, offModifier ) {
 			onElement.addClass( 'fancy-button-active' );
@@ -314,8 +314,8 @@ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 		// Will make elements behave like they were styled with position:sticky.
 		var positionSticky = {
 			// Store object: {
-			// 		element: CKEDITOR.dom.element, // Element which will float.
-			// 		placeholder: CKEDITOR.dom.element, // Placeholder which is place to prevent page bounce.
+			// 		element: XfEditor.dom.element, // Element which will float.
+			// 		placeholder: XfEditor.dom.element, // Placeholder which is place to prevent page bounce.
 			// 		isFixed: boolean // Whether element float now.
 			// }
 			watched: [],
@@ -325,7 +325,7 @@ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 			staticContainer: null,
 
 			init: function() {
-				var element = CKEDITOR.dom.element.createFromHtml(
+				var element = XfEditor.dom.element.createFromHtml(
 					'<div class="staticContainer">' +
 						'<div class="grid-container" >' +
 							'<div class="grid-width-100">' +
@@ -336,13 +336,13 @@ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 
 				this.staticContainer = element.findOne( '.inner' );
 
-				CKEDITOR.document.getBody().append( element );
+				XfEditor.document.getBody().append( element );
 			},
 
 			watch: function( element, preventFunc ) {
 				this.watched.push( {
 					element: element,
-					placeholder: new CKEDITOR.dom.element( 'div' ),
+					placeholder: new XfEditor.dom.element( 'div' ),
 					isFixed: false,
 					preventFunc: preventFunc
 				} );
@@ -373,7 +373,7 @@ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 
 					element.element.removeStyle( 'margin' );
 
-					this.active.splice( CKEDITOR.tools.indexOf( this.active, element ), 1 );
+					this.active.splice( XfEditor.tools.indexOf( this.active, element ), 1 );
 
 				} else {
 					// Fixing.
@@ -412,20 +412,20 @@ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 
 		positionSticky.init();
 
-		CKEDITOR.document.getWindow().on( 'scroll',
-			CKEDITOR.tools.eventsBuffer( 100, positionSticky.checkAll, positionSticky ).input
+		XfEditor.document.getWindow().on( 'scroll',
+			XfEditor.tools.eventsBuffer( 100, positionSticky.checkAll, positionSticky ).input
 		);
 
 		// Make the toolbar sticky.
-		positionSticky.watch( CKEDITOR.document.findOne( '.editors-container' ) );
+		positionSticky.watch( XfEditor.document.findOne( '.editors-container' ) );
 
 		// Help button and help-content.
 		( function() {
-			var helpButton = CKEDITOR.document.getById( 'help' ),
-				helpContent = CKEDITOR.document.getById( 'help-content' );
+			var helpButton = XfEditor.document.getById( 'help' ),
+				helpContent = XfEditor.document.getById( 'help-content' );
 
 			// Don't show help button on IE8 because it's unsupported by Pico Modal.
-			if ( CKEDITOR.env.ie && CKEDITOR.env.version == 8 ) {
+			if ( XfEditor.env.ie && XfEditor.env.version == 8 ) {
 				helpButton.hide();
 			} else {
 				// Display help modal when the button is clicked.
@@ -436,7 +436,7 @@ For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 
 						afterCreate: function( modal ) {
 							// Enable modal content button to close the modal.
-							new CKEDITOR.dom.element( modal.modalElem() ).findOne( '.help-content-close' ).once( 'click', modal.close );
+							new XfEditor.dom.element( modal.modalElem() ).findOne( '.help-content-close' ).once( 'click', modal.close );
 						}
 					} ).show();
 				} );

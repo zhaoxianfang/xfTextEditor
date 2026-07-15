@@ -2,7 +2,7 @@
  * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
-CKEDITOR.plugins.setLang( 'filetools', 'hu', {
+XfEditor.plugins.setLang( 'filetools', 'hu', {
 	loadError: 'Hiba történt a fájl olvasása közben.',
 	networkError: 'Hálózati hiba történt a fájl feltöltése közben.',
 	httpError404: 'HTTP hiba történt a fájl feltöltése alatt (404: A fájl nem található).',

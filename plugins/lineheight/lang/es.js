@@ -1,3 +1,3 @@
-CKEDITOR.plugins.setLang('lineheight','es', {
+XfEditor.plugins.setLang('lineheight','es', {
     title: 'Altura de Línea'
 } );

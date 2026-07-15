@@ -22,7 +22,7 @@ function rgbToHex(a) {
 }
 var isHandlingData;
 // Register the plugin within the editor.
-CKEDITOR.plugins.add("yaqr", {
+XfEditor.plugins.add("yaqr", {
     requires: "widget",
     lang: "zh-cn", // %REMOVE_LINE_CORE%
     // Register the icons.
@@ -45,7 +45,7 @@ CKEDITOR.plugins.add("yaqr", {
             borderColor: "#000000",
             correctionLevel: "Q"
         };
-        var config = CKEDITOR.tools.extend(defaultConfig, editor.config.yaqr || {}, true);
+        var config = XfEditor.tools.extend(defaultConfig, editor.config.yaqr || {}, true);
         editor.config.defQrUrl = config.defQrUrl;
         editor.config.targetBlank = config.defTargetBlank;
         editor.config.defQRSize = config.defQRSize;
@@ -61,14 +61,14 @@ CKEDITOR.plugins.add("yaqr", {
         	targetStr = "_blank";
         };
         var jsScripts = [];
-        //jsScripts.push(CKEDITOR.getUrl(CKEDITOR.plugins.getPath("yaqr") + "3rdParty/qrcode.js"));
-        jsScripts.push(CKEDITOR.getUrl(CKEDITOR.plugins.getPath("yaqr") + "3rdParty/qrcode-min.js"));
-        CKEDITOR.scriptLoader.queue(jsScripts, function (completed, failed) {
+        //jsScripts.push(XfEditor.getUrl(XfEditor.plugins.getPath("yaqr") + "3rdParty/qrcode.js"));
+        jsScripts.push(XfEditor.getUrl(XfEditor.plugins.getPath("yaqr") + "3rdParty/qrcode-min.js"));
+        XfEditor.scriptLoader.queue(jsScripts, function (completed, failed) {
             //alert( 'Number of scripts loaded: ' + completed.length );
             //alert( 'Number of failures: ' + failed.length );
         });
-//        CKEDITOR.dialog.add("yaqr", this.path + "dialogs/yaqr.js");
-        CKEDITOR.dialog.add("yaqr", this.path + "dialogs/yaqr-min.js");
+//        XfEditor.dialog.add("yaqr", this.path + "dialogs/yaqr.js");
+        XfEditor.dialog.add("yaqr", this.path + "dialogs/yaqr-min.js");
         // Register the yaqr widget.
         editor.widgets.add("yaqr", {
             allowedContent: "a(!yaqr)[href,data-*]; img[id,data-*,src,alt]{width,border}",
@@ -112,7 +112,7 @@ CKEDITOR.plugins.add("yaqr", {
             dialog: "yaqr",
             // Check the elements that need to be converted to widgets.
             //
-            // Note: The "element" argument is an instance of http://docs.ckeditor.com/#!/api/CKEDITOR.htmlParser.element
+            // Note: The "element" argument is an instance of http://docs.ckeditor.com/#!/api/XfEditor.htmlParser.element
             // so it is not a real DOM element yet. This is caused by the fact that upcasting is performed
             // during data processing which is done on DOM represented by JavaScript objects.
             upcast: function (element) {

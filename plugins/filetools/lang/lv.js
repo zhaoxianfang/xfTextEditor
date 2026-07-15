@@ -2,7 +2,7 @@
  * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
-CKEDITOR.plugins.setLang( 'filetools', 'lv', {
+XfEditor.plugins.setLang( 'filetools', 'lv', {
 	loadError: 'Radās kļūda nolasot failu.',
 	networkError: 'Radās tīkla kļūda, kamēr tika ielādēts fails.',
 	httpError404: 'Ielādējot failu, radās HTTP kļūda (404: Fails nav atrasts)',

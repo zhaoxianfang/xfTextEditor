@@ -2,7 +2,7 @@
 var js = {
   ace: 'ace.js',
   aceExtWhitespace: 'ext-whitespace.js',
-  pbSyntaxHighlighter: CKEDITOR.plugins.getPath('pbckcode') + 'dialogs/PBSyntaxHighlighter.js'
+  pbSyntaxHighlighter: XfEditor.plugins.getPath('pbckcode') + 'dialogs/PBSyntaxHighlighter.js'
 };
 
 var commandName = 'pbckcode';
@@ -10,7 +10,7 @@ var commandName = 'pbckcode';
 /**
  * Plugin definition
  */
-CKEDITOR.plugins.add('pbckcode', {
+XfEditor.plugins.add('pbckcode', {
   icons: 'pbckcode',
   hidpi: true,
   lang: ['zh-cn'],
@@ -82,19 +82,19 @@ CKEDITOR.plugins.add('pbckcode', {
       // 断网环境下代码块编辑功能将完全失效，违背「100% 离线可用」要求。
       // 现已将 Ace 1.2.6 全部资源（ace.js、ext-whitespace.js、mode-*、theme-*）
       // 下载到插件本地目录 lib/ace/，此处改为相对插件路径，确保离线可用。
-      js: CKEDITOR.plugins.getPath('pbckcode') + 'lib/ace/'
+      js: XfEditor.plugins.getPath('pbckcode') + 'lib/ace/'
     };
 
     // merge user settings with default settings
     // 注意：用 {} 作为目标避免污染 DEFAULT_SETTINGS 原型对象；
     // 采用浅合并（不使用 deep 标记），这样用户配置（如 modes / js）
     // 会整体替换默认值，而不是把数组逐项合并产生畸形列表。
-    editor.settings = CKEDITOR.tools.extend({}, DEFAULT_SETTINGS, editor.config.pbckcode);
+    editor.settings = XfEditor.tools.extend({}, DEFAULT_SETTINGS, editor.config.pbckcode);
     editor.settings.js = normalizeJsUrl(editor.settings.js);
 
     // load CSS for the dialog
     editor.on('instanceReady', function() {
-      CKEDITOR.document.appendStyleSheet(this.path + 'dialogs/style.css');
+      XfEditor.document.appendStyleSheet(this.path + 'dialogs/style.css');
     }.bind(this));
 
     // add the button in the toolbar
@@ -105,7 +105,7 @@ CKEDITOR.plugins.add('pbckcode', {
     });
 
     // link the button to the command
-    editor.addCommand(commandName, new CKEDITOR.dialogCommand('pbckcodeDialog', {
+    editor.addCommand(commandName, new XfEditor.dialogCommand('pbckcodeDialog', {
         allowedContent: 'pre[*]{*}(*)'
       })
     );
@@ -114,7 +114,7 @@ CKEDITOR.plugins.add('pbckcode', {
     editor.getCommand(commandName).disable();
 
     // add the plugin dialog element to the plugin
-    CKEDITOR.dialog.add('pbckcodeDialog', this.path + 'dialogs/pbckcode.js');
+    XfEditor.dialog.add('pbckcodeDialog', this.path + 'dialogs/pbckcode.js');
 
     // add the context menu
     if (editor.contextMenu) {
@@ -128,7 +128,7 @@ CKEDITOR.plugins.add('pbckcode', {
 
       editor.contextMenu.addListener(function(element) {
         if (element.getAscendant('pre', true)) {
-          return {pbckcodeItem: CKEDITOR.TRISTATE_OFF};
+          return {pbckcodeItem: XfEditor.TRISTATE_OFF};
         }
       });
     }
@@ -140,11 +140,11 @@ CKEDITOR.plugins.add('pbckcode', {
 
     // Load the required js files
     // enable the button when loaded
-    CKEDITOR.scriptLoader.load(scripts, function() {
+    XfEditor.scriptLoader.load(scripts, function() {
       editor.getCommand(commandName).enable();
 
       // need ace to be loaded
-      CKEDITOR.scriptLoader.load([
+      XfEditor.scriptLoader.load([
         getScriptUrl(editor.settings.js, js.aceExtWhitespace)
       ]);
     });
@@ -157,9 +157,9 @@ CKEDITOR.plugins.add('pbckcode', {
         aceEditor.resize();
       }
     };
-    CKEDITOR.dialog.on('resize', resizeHandler);
+    XfEditor.dialog.on('resize', resizeHandler);
     editor.on('destroy', function() {
-      CKEDITOR.dialog.removeListener('resize', resizeHandler);
+      XfEditor.dialog.removeListener('resize', resizeHandler);
     });
   }
 });

@@ -2,7 +2,7 @@
  Copyright (c) 2003-2013, CKSource - Frederico Knabben. All rights reserved.
  For licensing, see LICENSE.html or http://ckeditor.com/license
  */
-CKEDITOR.plugins.setLang('wordcount', 'uk', {
+XfEditor.plugins.setLang('wordcount', 'uk', {
     WordCount: 'Слів:',
     WordCountRemaining: 'Слів залишилося',
     CharCount: 'Символів:',

@@ -36,7 +36,7 @@
         <tr><td><code>chart_colors</code></td><td>Array</td><td>自定义调色板（十六进制颜色数组）。</td></tr>
         <tr><td><code>chart_configBar</code> 等</td><td>Object</td><td>对应 Chart.js 各类型图表的配置对象（Bar/Line/Pie/Doughnut/PolarArea）。</td></tr>
     </table>
-    <pre class="xf-code">CKEDITOR.replace('editor', {
+    <pre class="xf-code">XfEditor.replace('editor', {
     extraPlugins: 'chart',
     chart_maxItems: 10,
     chart_height: 400,
@@ -47,7 +47,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 // 基础能力由 config.full.js 统一提供；此处叠加 chart 插件与自定义工具栏。
-    XF.init('editor', {
+    XfEditor.init('editor', {
         height: 360,
         extraPlugins: 'chart',
         toolbar: [ { name: 'insert', items: [ 'Chart' ] }, '/', { name: 'xfstyles', items: [ 'xfTexFx', 'xfBlockFx', 'xfEditEffect' ] } ],

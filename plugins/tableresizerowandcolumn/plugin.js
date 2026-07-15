@@ -4,12 +4,12 @@
  */
 
 ( function() {
-	var pxUnit = CKEDITOR.tools.cssLength,
-		needsIEHacks = CKEDITOR.env.ie && ( CKEDITOR.env.ie7Compat || CKEDITOR.env.quirks );
+	var pxUnit = XfEditor.tools.cssLength,
+		needsIEHacks = XfEditor.env.ie && ( XfEditor.env.ie7Compat || XfEditor.env.quirks );
 	
 	function getHeight( el ) {
 
-		return CKEDITOR.env.ie ? el.$.clientHeight : parseInt( el.getComputedStyle( 'height' ), 10 );
+		return XfEditor.env.ie ? el.$.clientHeight : parseInt( el.getComputedStyle( 'height' ), 10 );
 	}
 
 	function getBorderHeight( element, side ) {
@@ -32,7 +32,7 @@
 	}
 	
 	function getWidth( el ) {
-		return CKEDITOR.env.ie ? el.$.clientWidth : parseInt( el.getComputedStyle( 'width' ), 10 );
+		return XfEditor.env.ie ? el.$.clientWidth : parseInt( el.getComputedStyle( 'width' ), 10 );
 	}
 
 	function getBorderWidth( element, side ) {
@@ -80,7 +80,7 @@
 		
 		function setPillarDimensions( nativeTableElement ) {
 			if ( nativeTableElement ) {
-				var tableElement = new CKEDITOR.dom.element( nativeTableElement );
+				var tableElement = new XfEditor.dom.element( nativeTableElement );
 				pillarWidth += tableElement.$.offsetWidth;
 
 				if ( !pillarPosition ) {
@@ -105,7 +105,7 @@
 				var len;
 				for ( var j = 0, len = $tr.cells.length; j < len; j++ ) {
 				
-					var td = new CKEDITOR.dom.element( $tr.cells[ j ] );
+					var td = new XfEditor.dom.element( $tr.cells[ j ] );
 
 					pillars.push( {
 							table: table,
@@ -138,7 +138,7 @@
 		// Sets pillar height and position based on given table element (head, body, footer).
 		function setPillarDimensions( nativeTableElement ) {
 			if ( nativeTableElement ) {
-				var tableElement = new CKEDITOR.dom.element( nativeTableElement );
+				var tableElement = new XfEditor.dom.element( nativeTableElement );
 				pillarHeight += tableElement.$.offsetHeight;
 
 				if ( !pillarPosition ) {
@@ -157,8 +157,8 @@
 			for ( var i = 0, len = $tr.cells.length; i < len; i++ ) {
 				// Both the current cell and the successive one will be used in the
 				// pillar size calculation.
-				var td = new CKEDITOR.dom.element( $tr.cells[ i ] ),
-					nextTd = $tr.cells[ i + 1 ] && new CKEDITOR.dom.element( $tr.cells[ i + 1 ] );
+				var td = new XfEditor.dom.element( $tr.cells[ i ] ),
+					nextTd = $tr.cells[ i + 1 ] && new XfEditor.dom.element( $tr.cells[ i + 1 ] );
 
 				pillarIndex += td.$.colSpan || 1;
 
@@ -255,7 +255,7 @@
 			// and the boundaries of this resizing shift.
 
 			var columnIndex = pillar.index,
-				map = CKEDITOR.tools.buildTableMap( pillar.table ),
+				map = XfEditor.tools.buildTableMap( pillar.table ),
 				leftColumnCells = [],
 				rightColumnCells = [],
 				leftMinSize = Number.MAX_VALUE,
@@ -267,8 +267,8 @@
 					leftCell = row[ columnIndex + ( rtl ? 1 : 0 ) ],
 					rightCell = row[ columnIndex + ( rtl ? 0 : 1 ) ];
 
-				leftCell = leftCell && new CKEDITOR.dom.element( leftCell );
-				rightCell = rightCell && new CKEDITOR.dom.element( rightCell );
+				leftCell = leftCell && new XfEditor.dom.element( leftCell );
+				rightCell = rightCell && new XfEditor.dom.element( rightCell );
 
 				if ( !leftCell || !rightCell || !leftCell.equals( rightCell ) ) {
 					leftCell && ( leftMinSize = Math.min( leftMinSize, getWidth( leftCell ) ) );
@@ -325,7 +325,7 @@
 					table = pillar.table;
 
 				// Defer the resizing to avoid any interference among cells.
-				CKEDITOR.tools.setTimeout( function( leftCell, leftOldWidth, rightCell, rightOldWidth, tableWidth, sizeShift ) {
+				XfEditor.tools.setTimeout( function( leftCell, leftOldWidth, rightCell, rightOldWidth, tableWidth, sizeShift ) {
 					// 1px is the minimum valid width (http://dev.ckeditor.com/ticket/11626).
 					leftCell && leftCell.setStyle( 'width', pxUnit( Math.max( leftOldWidth + sizeShift, 1 ) ) );
 					rightCell && rightCell.setStyle( 'width', pxUnit( Math.max( rightOldWidth - sizeShift, 1 ) ) );
@@ -370,7 +370,7 @@
 
 		document = editor.document;
 
-		resizer = CKEDITOR.dom.element.createFromHtml( '<div data-cke-temp=1 contenteditable=false unselectable=on ' +
+		resizer = XfEditor.dom.element.createFromHtml( '<div data-cke-temp=1 contenteditable=false unselectable=on ' +
 			'style="position:absolute;cursor:col-resize;filter:alpha(opacity=0);opacity:0;' +
 				'padding:0;background-color:#004;background-image:none;border:0px none;z-index:10"></div>', document );
 
@@ -471,7 +471,7 @@
 			// and the boundaries of this resizing shift.
 			
 			var rowIndex = pillar.index,
-				map = CKEDITOR.tools.buildTableMap( pillar.table ),
+				map = XfEditor.tools.buildTableMap( pillar.table ),
 				leftColumnCells = [],
 				leftMinSize = Number.MAX_VALUE,
 				rightMinSize = leftMinSize,
@@ -482,7 +482,7 @@
 				for( var j = 0; j < row.length; j++){
 					leftCell = row[ j ];
 
-					leftCell = leftCell && new CKEDITOR.dom.element( leftCell );
+					leftCell = leftCell && new XfEditor.dom.element( leftCell );
 					
 					if ( leftCell !== undefined && leftCell !== null) {
 						leftCell && ( leftMinSize = Math.min( leftMinSize, getHeight( leftCell ) ) );
@@ -537,7 +537,7 @@
 					table = pillar.table;
 
 				// Defer the resizing to avoid any interference among cells.
-				CKEDITOR.tools.setTimeout( function( leftCell, leftOldWidth, tableWidth, sizeShift ) {
+				XfEditor.tools.setTimeout( function( leftCell, leftOldWidth, tableWidth, sizeShift ) {
 					// 1px is the minimum valid width (http://dev.ckeditor.com/ticket/11626).
 					leftCell && leftCell.setStyle( 'height', pxUnit( Math.max( leftOldWidth + direction, 1 ) ) );
 					
@@ -584,7 +584,7 @@
 
 		document = editor.document;
 
-		resizer = CKEDITOR.dom.element.createFromHtml( '<div id="resizer" data-cke-temp=1 contenteditable=false unselectable=on ' +
+		resizer = XfEditor.dom.element.createFromHtml( '<div id="resizer" data-cke-temp=1 contenteditable=false unselectable=on ' +
 			'style="position:absolute;cursor:row-resize;filter:alpha(opacity=0);opacity:0;' +
 				'padding:0;background-color:#004;background-image:none;border:0px none;z-index:10"></div>', document );
 
@@ -669,7 +669,7 @@
 			if ( !target.is( 'table' ) )
 				return;
 
-			var dest = new CKEDITOR.dom.element( evt.data.$.relatedTarget || evt.data.$.toElement );
+			var dest = new XfEditor.dom.element( evt.data.$.relatedTarget || evt.data.$.toElement );
 			while ( dest && dest.$ && !dest.equals( target ) && !dest.is( 'body' ) )
 				dest = dest.getParent();
 			if ( !dest || dest.equals( target ) )
@@ -680,7 +680,7 @@
 		evt.removeListener();
 	}
 
-	CKEDITOR.plugins.add( 'tableresizerowandcolumn', {
+	XfEditor.plugins.add( 'tableresizerowandcolumn', {
 		requires: 'tabletools',
 
 		init: function( editor ) {
@@ -697,7 +697,7 @@
 
 					// FF may return document and IE8 some UFO (object with no nodeType property...)
 					// instead of an element (http://dev.ckeditor.com/ticket/11823).
-					if ( target.type != CKEDITOR.NODE_ELEMENT )
+					if ( target.type != XfEditor.NODE_ELEMENT )
 						return;
 
 					var pageX = evt.getPageOffset().x;

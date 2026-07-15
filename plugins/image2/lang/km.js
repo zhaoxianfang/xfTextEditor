@@ -2,7 +2,7 @@
 Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 */
-CKEDITOR.plugins.setLang( 'image2', 'km', {
+XfEditor.plugins.setLang( 'image2', 'km', {
 	alt: 'អត្ថបទជំនួស',
 	btnUpload: 'បញ្ជូនទៅកាន់ម៉ាស៊ីនផ្តល់សេវា',
 	captioned: 'រូប​ដែល​មាន​ចំណង​ជើង',

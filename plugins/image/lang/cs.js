@@ -2,7 +2,7 @@
 Copyright (c) 2003-2020, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 */
-CKEDITOR.plugins.setLang( 'image', 'cs', {
+XfEditor.plugins.setLang( 'image', 'cs', {
 	alt: 'Alternativní text',
 	border: 'Okraje',
 	btnUpload: 'Odeslat na server',

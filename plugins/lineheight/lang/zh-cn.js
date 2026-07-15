@@ -1,3 +1,3 @@
-CKEDITOR.plugins.setLang('lineheight','zh-cn', {
+XfEditor.plugins.setLang('lineheight','zh-cn', {
     title: '行高'
 } );

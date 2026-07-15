@@ -2,7 +2,7 @@
  * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
-CKEDITOR.plugins.setLang( 'filetools', 'ro', {
+XfEditor.plugins.setLang( 'filetools', 'ro', {
 	loadError: 'Eroare în timpul citirii fișierului.',
 	networkError: 'Eroare de rețea în timpul încărcării fișierului.',
 	httpError404: 'Eroare HTTP în timpul încărcării fișierului (404: Fișier negăsit).',

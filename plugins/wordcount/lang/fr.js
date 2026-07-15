@@ -1,6 +1,6 @@
 ﻿// French Translation by Nicolas M. et Pierre-Luc Auclair
 
-CKEDITOR.plugins.setLang('wordcount', 'fr', {
+XfEditor.plugins.setLang('wordcount', 'fr', {
     WordCount: 'Mots :',
     CharCount: 'Caractères :',
     CharCountWithHTML: 'Caractères (incluant HTML) :',

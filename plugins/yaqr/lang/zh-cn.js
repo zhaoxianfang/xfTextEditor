@@ -2,7 +2,7 @@
 Copyright (c) 2003-2017, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.md or http://ckeditor.com/license
 */
-CKEDITOR.plugins.setLang( 'yaqr', 'zh-cn', {
+XfEditor.plugins.setLang( 'yaqr', 'zh-cn', {
 	createQr: '创建二维码',
 	preview: '预览',
 	badQRmsg: '不能为空!!',

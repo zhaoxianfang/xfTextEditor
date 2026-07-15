@@ -9,19 +9,19 @@
 
 'use strict';
 
-CKEDITOR.dialog.add( 'image2', function( editor ) {
+XfEditor.dialog.add( 'image2', function( editor ) {
 
 	// RegExp: 123, 123px, empty string ""
 	var regexGetSizeOrEmpty = /(^\s*(\d+)(px)?\s*$)|^$/i,
 
-		lockButtonId = CKEDITOR.tools.getNextId(),
-		resetButtonId = CKEDITOR.tools.getNextId(),
+		lockButtonId = XfEditor.tools.getNextId(),
+		resetButtonId = XfEditor.tools.getNextId(),
 
 		lang = editor.lang.image2,
 		commonLang = editor.lang.common,
 
 		lockResetStyle = 'margin-top:18px;width:40px;height:20px;',
-		lockResetHtml = new CKEDITOR.template(
+		lockResetHtml = new XfEditor.template(
 			'<div>' +
 				'<a href="javascript:void(0)" tabindex="-1" title="' + lang.lockRatio + '" class="cke_btn_locked" id="{lockButtonId}" role="checkbox">' +
 					'<span class="cke_icon"></span>' +
@@ -36,7 +36,7 @@ CKEDITOR.dialog.add( 'image2', function( editor ) {
 				resetButtonId: resetButtonId
 			} ),
 
-		helpers = CKEDITOR.plugins.image2,
+		helpers = XfEditor.plugins.image2,
 
 		// Editor instance configuration.
 		config = editor.config,
@@ -330,9 +330,9 @@ CKEDITOR.dialog.add( 'image2', function( editor ) {
 		lockButton.setAttribute( 'aria-checked', lockRatio );
 
 		// Ratio button hc presentation - WHITE SQUARE / BLACK SQUARE
-		if ( CKEDITOR.env.hc ) {
+		if ( XfEditor.env.hc ) {
 			var icon = lockButton.getChild( 0 );
-			icon.setHtml( lockRatio ? CKEDITOR.env.ie ? '\u25A0' : '\u25A3' : CKEDITOR.env.ie ? '\u25A1' : '\u25A2' );
+			icon.setHtml( lockRatio ? XfEditor.env.ie ? '\u25A0' : '\u25A3' : XfEditor.env.ie ? '\u25A1' : '\u25A2' );
 		}
 	}
 
@@ -356,7 +356,7 @@ CKEDITOR.dialog.add( 'image2', function( editor ) {
 				commit: function( widget ) {
 					widget.setData( 'src', this.getValue() );
 				},
-				validate: CKEDITOR.dialog.validate.notEmpty( lang.urlMissing )
+				validate: XfEditor.dialog.validate.notEmpty( lang.urlMissing )
 			}
 		];
 
@@ -433,7 +433,7 @@ CKEDITOR.dialog.add( 'image2', function( editor ) {
 						commit: function( widget ) {
 							widget.setData( 'alt', this.getValue() );
 						},
-						validate: editor.config.image2_altRequired === true ? CKEDITOR.dialog.validate.notEmpty( lang.altMissing ) : null
+						validate: editor.config.image2_altRequired === true ? XfEditor.dialog.validate.notEmpty( lang.altMissing ) : null
 					},
 					{
 						type: 'hbox',

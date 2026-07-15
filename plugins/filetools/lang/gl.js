@@ -2,7 +2,7 @@
  * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
-CKEDITOR.plugins.setLang( 'filetools', 'gl', {
+XfEditor.plugins.setLang( 'filetools', 'gl', {
 	loadError: 'Produciuse un erro durante a lectura do ficheiro.',
 	networkError: 'Produciuse un erro na rede durante o envío do ficheiro.',
 	httpError404: 'Produciuse un erro HTTP durante o envío do ficheiro (404: Ficheiro non atopado).',

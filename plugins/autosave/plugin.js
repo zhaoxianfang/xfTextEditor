@@ -5,11 +5,11 @@
 
 (function() {
     if (!supportsLocalStorage()) {
-        CKEDITOR.plugins.add("autosave", {}); //register a dummy plugin to pass CKEditor plugin initialization process
+        XfEditor.plugins.add("autosave", {}); //register a dummy plugin to pass CKEditor plugin initialization process
         return;
     }
 
-    CKEDITOR.plugins.add("autosave",
+    XfEditor.plugins.add("autosave",
         {
             lang: "bg,ca,cs,de,en,es,eu,fr,it,ja,nl,pl,pt-br,ru,sk,sv,uk,zh,zh-cn", // %REMOVE_LINE_CORE%
             requires: "notification",
@@ -34,8 +34,8 @@
                     SaveKeyIgnoreParams: ""
                 };
 
-                // Extend CKEDITOR config and lang  - config also available at loadPlugin()
-                var config = CKEDITOR.tools.extend(defaultConfig, editor.config.autosave || {}, true);
+                // Extend XfEditor config and lang  - config also available at loadPlugin()
+                var config = XfEditor.tools.extend(defaultConfig, editor.config.autosave || {}, true);
 
                 if (!config.SaveKey.length) {
                     // Prepare temp vars for constructing local storage SaveKey name
@@ -44,7 +44,7 @@
                         : window.location.href;
 
                     if (config.SaveKeyIgnoreParams.length) {
-                        CKEDITOR.tools.array.forEach(config.SaveKeyIgnoreParams,
+                        XfEditor.tools.array.forEach(config.SaveKeyIgnoreParams,
                             function() {
                                 saveKeyUrl = RemoveUrlParam(this, null, saveKeyUrl);
                             });
@@ -58,8 +58,8 @@
                         editor[config.SaveKeyAttribute];
                 }
 
-                CKEDITOR.document.appendStyleSheet(
-                    CKEDITOR.getUrl(CKEDITOR.plugins.getPath("autosave") + "css/autosave.min.css"));
+                XfEditor.document.appendStyleSheet(
+                    XfEditor.getUrl(XfEditor.plugins.getPath("autosave") + "css/autosave.min.css"));
 
                 editor.addCommand("removeAutoSaveStorage",
                     {
@@ -89,13 +89,13 @@
                 editor.on("instanceReady",
                     function() {
                         if (typeof requirejs === "function") {
-                            requirejs([CKEDITOR.getUrl(CKEDITOR.plugins.getPath("autosave") + "js/extensions.min.js")],
+                            requirejs([XfEditor.getUrl(XfEditor.plugins.getPath("autosave") + "js/extensions.min.js")],
                                 function() {
                                     loadPlugin(editor, config);
                                 });
                         } else {
-                            CKEDITOR.scriptLoader.load(
-                                CKEDITOR.getUrl(CKEDITOR.plugins.getPath("autosave") + "js/extensions.min.js"),
+                            XfEditor.scriptLoader.load(
+                                XfEditor.getUrl(XfEditor.plugins.getPath("autosave") + "js/extensions.min.js"),
                                 function() {
                                     loadPlugin(editor, config);
                                 });
@@ -144,7 +144,7 @@
         }
 
         var xfClickHandlers = [];
-        CKEDITOR.tools.array.forEach(CKEDITOR.document.find(config.saveDetectionSelectors).toArray(),
+        XfEditor.tools.array.forEach(XfEditor.document.find(config.saveDetectionSelectors).toArray(),
             function(el) {
                 var clickHandler = function() {
                     RemoveStorage(config.SaveKey, editorInstance);
@@ -239,7 +239,7 @@
     }
 
     function GenerateAutoSaveDialog(editorInstance, config, autoSaveKey) {
-        CKEDITOR.dialog.add("autosaveDialog",
+        XfEditor.dialog.add("autosaveDialog",
             function() {
                 return {
                     title: editorInstance.lang.autosave.title,
@@ -389,7 +389,7 @@
         }
 
         if (quotaExceeded) {
-            var notificationError = new CKEDITOR.plugins.notification(editorInstance,
+            var notificationError = new XfEditor.plugins.notification(editorInstance,
                 { message: editorInstance.lang.autosave.localStorageFull, type: "warning" });
             notificationError.show();
         } else {
@@ -413,7 +413,7 @@
                         2000);
                 }
             } else if (messageType == "notification") {
-                var notification = new CKEDITOR.plugins.notification(editorInstance,
+                var notification = new XfEditor.plugins.notification(editorInstance,
                     { message: editorInstance.lang.autosave.autoSaveMessage, type: "success" });
                 notification.show();
             }

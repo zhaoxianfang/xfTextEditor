@@ -1,4 +1,4 @@
-CKEDITOR.plugins.setLang('wordcount', 'pt', {
+XfEditor.plugins.setLang('wordcount', 'pt', {
     WordCount: 'Palavras:',
     CharCount: 'Caracteres:',
     CharCountWithHTML: 'Carateres (incluindo HTML):',

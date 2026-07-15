@@ -1,6 +1,6 @@
 ( function() {
 	function addCombo( editor, comboName, styleType, lang, entries, defaultLabel, styleDefinition, order ) {
-		var config = editor.config,style = new CKEDITOR.style( styleDefinition );		
+		var config = editor.config,style = new XfEditor.style( styleDefinition );		
 		var names = entries.split( ';' ),values = [];		
 		var styles = {}, onSelectionChange;
 		for ( var i = 0; i < names.length; i++ ) {
@@ -9,7 +9,7 @@
 				parts = parts.split( '/' );
 				var vars = {},name = names[ i ] = parts[ 0 ];
 				vars[ styleType ] = values[ i ] = parts[ 1 ] || name;
-				styles[ name ] = new CKEDITOR.style( styleDefinition, vars );
+				styles[ name ] = new XfEditor.style( styleDefinition, vars );
 				styles[ name ]._.definition.name = name;
 			} else
 				names.splice( i--, 1 );
@@ -25,7 +25,7 @@
 			allowedContent: 'p div h1 h2 h3 h4 h5 h6 li td th blockquote pre{line-height}',
 			requiredContent: 'p{line-height}',
 			panel: {
-				css: [ CKEDITOR.skin.getPath( 'editor' ) ].concat( config.contentsCss ),
+				css: [ XfEditor.skin.getPath( 'editor' ) ].concat( config.contentsCss ),
 				multiSelect: false,
 				attributes: { 'aria-label': editor.lang.lineheight.title }
 			},
@@ -86,7 +86,7 @@
 			refresh: function() {
 				var path = editor.elementPath();
 				if ( !path || !( path.block || path.blockLimit ) )
-					this.setState( CKEDITOR.TRISTATE_DISABLED );
+					this.setState( XfEditor.TRISTATE_DISABLED );
 			}
 		} );
 	}
@@ -102,7 +102,7 @@
 			iterator.enlargeBr = true;
 			var block;
 			while ( ( block = iterator.getNextParagraph() ) ) {
-				if ( block && CKEDITOR.tools.indexOf( seen, block.$ ) === -1 ) {
+				if ( block && XfEditor.tools.indexOf( seen, block.$ ) === -1 ) {
 					seen.push( block.$ );
 					blocks.push( block );
 				}
@@ -117,7 +117,7 @@
 		}
 		return blocks;
 	}
-	CKEDITOR.plugins.add( 'lineheight', {
+	XfEditor.plugins.add( 'lineheight', {
 		requires: 'richcombo',
 		lang: 'ar,de,en,es,fr,ko,pt,zh-cn',
 		init: function( editor ) {
@@ -126,13 +126,13 @@
 		}
 	} );
 } )();
-// CKEDITOR.config.line_height = '1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;32;33;34;35;36;37;38;39;40;41;42;43;44;45;46;47;48;49;50;51;52;53;54;55;56;57;58;59;60;61;62;63;64;65;66;67;68;69;70;71;72';
-// CKEDITOR.config.line_height ='normal;0;0.1em;0.3em;0.5em;1em;1.5em;1.75em;2em;3em;4em;5em;6em';  
+// XfEditor.config.line_height = '1;2;3;4;5;6;7;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;32;33;34;35;36;37;38;39;40;41;42;43;44;45;46;47;48;49;50;51;52;53;54;55;56;57;58;59;60;61;62;63;64;65;66;67;68;69;70;71;72';
+// XfEditor.config.line_height ='normal;0;0.1em;0.3em;0.5em;1em;1.5em;1.75em;2em;3em;4em;5em;6em';  
 // 行高可选值：保留换行相关的常用值，按「倍数 → em → 百分比」分组排序，便于用户选择。
-CKEDITOR.config.line_height ='normal;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1;1.2;1.4;1.5;1.6;1.8;2;2.5;3;0.3em;0.5em;0.6em;0.7em;0.8em;0.9em;1em;1.2em;1.5em;1.75em;2em;2.5em;3em;0.3rem;0.5rem;0.6rem;0.7rem;0.8rem;0.9rem;1rem;1.5rem;2rem;50%;60%;70%;80%;90%;100%;120%;150%;200%';
-CKEDITOR.config.lineHeight_style = {
+XfEditor.config.line_height ='normal;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1;1.2;1.4;1.5;1.6;1.8;2;2.5;3;0.3em;0.5em;0.6em;0.7em;0.8em;0.9em;1em;1.2em;1.5em;1.75em;2em;2.5em;3em;0.3rem;0.5rem;0.6rem;0.7rem;0.8rem;0.9rem;1rem;1.5rem;2rem;50%;60%;70%;80%;90%;100%;120%;150%;200%';
+XfEditor.config.lineHeight_style = {
 	element: 'span',
-	type: CKEDITOR.STYLE_INLINE,
+	type: XfEditor.STYLE_INLINE,
 	styles: { 'line-height': '#(size)' },
 		overrides: [ {
 			// 关键修复：原先错误地写成 element: 'line-height'（line-height 并不是元素标签），

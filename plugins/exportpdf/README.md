@@ -16,10 +16,10 @@ If this feature is used without authorization, the resulting documents will be w
 
 ### Using with official CKEditor 4 presets
 
-Starting with CKEditor 4 version `4.15.0`, **Export to PDF** plugin is included in `standard-all`, `full` and `full-all` official presets. The `full` and `full-all` presets have the plugin active by default while for `standard-all` it needs to be enabled with the [`config.extraPlugins`](https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_config.html#cfg-extraPlugins) configuration option:
+Starting with CKEditor 4 version `4.15.0`, **Export to PDF** plugin is included in `standard-all`, `full` and `full-all` official presets. The `full` and `full-all` presets have the plugin active by default while for `standard-all` it needs to be enabled with the [`config.extraPlugins`](https://ckeditor.com/docs/ckeditor4/latest/api/XfEditor_config.html#cfg-extraPlugins) configuration option:
 
 ```js
-CKEDITOR.replace( 'editor', {
+XfEditor.replace( 'editor', {
     extraPlugins: 'exportpdf'
 } );
 ```
@@ -32,16 +32,16 @@ To instal the plugin via npm, simply run:
 npm i ckeditor4-plugin-exportpdf
 ```
 
-Then add the plugin to your CKEditor 4 instance with the [`addExternal()` method](https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_plugins.html#method-addExternal):
+Then add the plugin to your CKEditor 4 instance with the [`addExternal()` method](https://ckeditor.com/docs/ckeditor4/latest/api/XfEditor_plugins.html#method-addExternal):
 
 ```js
-CKEDITOR.plugins.addExternal( 'exportpdf', './node_modules/ckeditor4-plugin-exportpdf/' );
+XfEditor.plugins.addExternal( 'exportpdf', './node_modules/ckeditor4-plugin-exportpdf/' );
 ```
 
-If you prefer not to link to the `node_modules` folder directly, you may simply copy the entire `./node_modules/ckeditor4-plugin-exportpdf/` directory as `ckeditor/plugins/exportpdf/` and add it with the [`config.extraPlugins`](https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_config.html#cfg-extraPlugins) configuration option:
+If you prefer not to link to the `node_modules` folder directly, you may simply copy the entire `./node_modules/ckeditor4-plugin-exportpdf/` directory as `ckeditor/plugins/exportpdf/` and add it with the [`config.extraPlugins`](https://ckeditor.com/docs/ckeditor4/latest/api/XfEditor_config.html#cfg-extraPlugins) configuration option:
 
 ```js
-CKEDITOR.replace( 'editor', {
+XfEditor.replace( 'editor', {
     extraPlugins: 'exportpdf'
 } );
 ```
@@ -57,10 +57,10 @@ Refer to [Export to PDF installation documentation](https://ckeditor.com/docs/ck
 
 ### Setting up a license key
 
-If you have a commercial license for **Export to PDF** plugin, [exportPdf_tokenUrl](https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_config.html#cfg-exportPdf_tokenUrl) configuration option should be set to remove watermark from generated documents:
+If you have a commercial license for **Export to PDF** plugin, [exportPdf_tokenUrl](https://ckeditor.com/docs/ckeditor4/latest/api/XfEditor_config.html#cfg-exportPdf_tokenUrl) configuration option should be set to remove watermark from generated documents:
 
 ```js
-CKEDITOR.replace( 'editor', {
+XfEditor.replace( 'editor', {
 	exportPdf_tokenUrl: 'https://example.com/cs-token-endpoint'
 } );
 ```

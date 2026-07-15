@@ -16,7 +16,7 @@ View [live demo](http://wwalc.github.io/chart/).
 3. Add the `Chart` button to the toolbar if it will not appear automatically.
 
 <pre>
-CKEDITOR.replace( 'editor1', {
+XfEditor.replace( 'editor1', {
     extraPlugins: 'chart'
 } );
 </pre>

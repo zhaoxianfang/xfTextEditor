@@ -19,9 +19,9 @@
 <script>
 	exportPdfUtils.initManualTest();
 
-	CKEDITOR.replace( 'editor1', exportPdfUtils.getDefaultConfig( 'manual' ) );
+	XfEditor.replace( 'editor1', exportPdfUtils.getDefaultConfig( 'manual' ) );
 
-	CKEDITOR.replace( 'editor2', exportPdfUtils.getDefaultConfig( 'manual', {
+	XfEditor.replace( 'editor2', exportPdfUtils.getDefaultConfig( 'manual', {
 		exportPdf_options: {
 			format: 'A6'
 		}

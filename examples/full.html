@@ -209,7 +209,7 @@ console.log(greet('世界'));</pre>
     <div class="xf-tip">
         下方内容由上方编辑器<strong>实时生成</strong>，并内联「基础排版 + 特效」样式后独立呈现——
         即把编辑器内容变成「自包含 HTML」，可脱离任何外部文件直接展示、复制或下载。
-        这与 <code class="xf-inline">XF.getStandaloneCss()</code> 及导出 API 产出的效果完全一致。
+        这与 <code class="xf-inline">XfEditor.getStandaloneCss()</code> 及导出 API 产出的效果完全一致。
     </div>
     <div class="xf-grid">
         <a href="#" id="xf-preview-btn"><span class="title">刷新预览</span><span class="desc">将当前编辑器内容渲染到下方预览框</span></a>
@@ -239,7 +239,7 @@ console.log(greet('世界'));</pre>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 // 全功能初始化：基础能力由 config.full.js 统一提供，此处仅设置高度与就绪回调。
-    XF.init('editorFull', {
+    XfEditor.init('editorFull', {
         height: 620,
         on: {
             instanceReady: function () {
@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function renderPreview() {
         var frame = document.getElementById('xf-preview');
         if (!frame) return;
-        var html = XF.getHtml('editorFull', { standalone: true });
+        var html = XfEditor.getHtml('editorFull', { standalone: true });
         frame.srcdoc = html;
     }
 
@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 内容变化时同步刷新预览（防抖）
     var t;
-    CKEDITOR.on('instanceReady', function (evt) {
+    XfEditor.on('instanceReady', function (evt) {
         evt.editor.on('change', function () {
             clearTimeout(t);
             t = setTimeout(renderPreview, 400);
@@ -273,16 +273,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     bind('xf-preview-btn', renderPreview);
     bind('xf-copy-btn', function () {
-        var html = XF.getHtml('editorFull', { standalone: true });
-        // 复用 XF.copyText：自动兼容非安全上下文 / 旧浏览器（剪贴板 API 不可用时回退）
-        XF.copyText(html);
+        var html = XfEditor.getHtml('editorFull', { standalone: true });
+        // 复用 XfEditor.copyText：自动兼容非安全上下文 / 旧浏览器（剪贴板 API 不可用时回退）
+        XfEditor.copyText(html);
     });
     bind('xf-download-btn', function () {
-        XF.downloadHtml('editorFull', 'xf-content.html');
+        XfEditor.downloadHtml('editorFull', 'xf-content.html');
     });
     bind('xf-newwin-btn', function () {
         // 优先新窗口，失败（弹窗拦截 / 跨域沙箱）则自动回退到同源模态预览
-        XF.openPreview('editorFull', 'xfTextEditor 内容预览');
+        XfEditor.openPreview('editorFull', 'xfTextEditor 内容预览');
     });
 });
 </script>

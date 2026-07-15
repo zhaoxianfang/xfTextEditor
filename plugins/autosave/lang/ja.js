@@ -2,7 +2,7 @@
 Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
-CKEDITOR.plugins.setLang('autosave', 'ja', {
+XfEditor.plugins.setLang('autosave', 'ja', {
     dateFormat: 'LLL',
     autoSaveMessage: '自動保存されました',
     loadSavedContent: '投稿途中だった内容があります（{0}）。現在保存されている投稿と比較しますか？',

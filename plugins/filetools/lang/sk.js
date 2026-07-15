@@ -2,7 +2,7 @@
  * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
-CKEDITOR.plugins.setLang( 'filetools', 'sk', {
+XfEditor.plugins.setLang( 'filetools', 'sk', {
 	loadError: 'Počas čítania súboru nastala chyba.',
 	networkError: 'Počas nahrávania súboru nastala chyba siete.',
 	httpError404: 'Počas nahrávania súboru nastala HTTP chyba (404: Súbor nebol nájdený).',

@@ -37,7 +37,7 @@
         <tr><td><code>tabSize</code></td><td>4</td><td>缩进空格数。</td></tr>
         <tr><td><code>highlightActiveLine</code></td><td>true</td><td>是否高亮当前行。</td></tr>
     </table>
-    <pre class="xf-code">CKEDITOR.replace('editor', {
+    <pre class="xf-code">XfEditor.replace('editor', {
     extraPlugins: 'pbckcode',
     pbckcode: { theme: 'monokai', tabSize: 2 }
 });</pre>
@@ -47,7 +47,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 // 基础能力由 config.full.js 统一提供；此处叠加 pbckcode 插件与自定义工具栏。
-    XF.init('editor', {
+    XfEditor.init('editor', {
         height: 320,
         extraPlugins: 'pbckcode',
         toolbar: [ { name: 'tools', items: [ 'pbckcode' ] }, '/', { name: 'xfstyles', items: [ 'xfTexFx', 'xfBlockFx', 'xfEditEffect' ] } ],

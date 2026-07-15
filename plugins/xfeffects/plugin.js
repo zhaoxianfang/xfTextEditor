@@ -16,7 +16,7 @@
 
     /* =====================================================================
        特效样式（单一来源）：编辑器内通过 editor.addCss 注入；
-       同时该字符串挂到 CKEDITOR.tools.xfEffectsCss，供 xfpreview 复用，
+       同时该字符串挂到 XfEditor.tools.xfEffectsCss，供 xfpreview 复用，
        保证「编辑区」与「预览页」展示完全一致。
        ===================================================================== */
     var EFFECT_CSS = [
@@ -145,7 +145,7 @@
     ].join( '\n' );
 
     /* 把特效样式暴露给 xfpreview 插件复用（编辑区与预览页展示一致） */
-    CKEDITOR.tools.xfEffectsCss = EFFECT_CSS;
+    XfEditor.tools.xfEffectsCss = EFFECT_CSS;
 
     /* =====================================================================
        双击 / 工具栏「再次编辑效果」所需的识别规则与工具函数
@@ -157,9 +157,9 @@
 
     /**
      * 从给定 DOM 元素（或当前选区）向上查找最近的效果根元素。
-     * @param {CKEDITOR.editor} editor
-     * @param {CKEDITOR.dom.element} [fromEl] 触发源元素（如双击事件中的元素）
-     * @returns {CKEDITOR.dom.element|null}
+     * @param {XfEditor.editor} editor
+     * @param {XfEditor.dom.element} [fromEl] 触发源元素（如双击事件中的元素）
+     * @returns {XfEditor.dom.element|null}
      */
     function xfFindEffect( editor, fromEl ) {
         var el = fromEl || null;
@@ -167,18 +167,18 @@
             var sel = editor.getSelection();
             if ( sel && sel.getRanges().length ) {
                 var sc = sel.getRanges()[ 0 ].startContainer;
-                el = ( sc && sc.type === CKEDITOR.NODE_TEXT ) ? sc.getParent() : sc;
+                el = ( sc && sc.type === XfEditor.NODE_TEXT ) ? sc.getParent() : sc;
             }
         }
         if ( !el ) return null;
         return el.getAscendant( function( n ) {
-            if ( n.type !== CKEDITOR.NODE_ELEMENT ) return false;
+            if ( n.type !== XfEditor.NODE_ELEMENT ) return false;
             var c = n.getAttribute ? n.getAttribute( 'class' ) : null;
             return !!c && ( BLOCK_EFFECT_RE.test( c ) || TEXT_EFFECT_RE.test( c ) );
         }, true );
     }
 
-    CKEDITOR.plugins.add( 'xfeffects', {
+    XfEditor.plugins.add( 'xfeffects', {
         init: function( editor ) {
             /* 把特效样式注入编辑器文档：兼容 iframe 与 divarea 两种模式。
                在 contentDom（编辑文档就绪）时注入，避免 init 阶段 editor.document
@@ -211,12 +211,12 @@
 
             /* 让 HTML5 details / summary 被 CKEditor 数据处理器正确识别并保留，
                否则折叠内容在 getData / setData 往返时会被过滤丢失 */
-            if ( CKEDITOR.dtd ) {
-                CKEDITOR.dtd.$block[ 'details' ] = 1;
-                CKEDITOR.dtd.$block[ 'summary' ] = 1;
-                CKEDITOR.dtd.details = { summary: 1, div: 1, p: 1, h1: 1, h2: 1, h3: 1,
+            if ( XfEditor.dtd ) {
+                XfEditor.dtd.$block[ 'details' ] = 1;
+                XfEditor.dtd.$block[ 'summary' ] = 1;
+                XfEditor.dtd.details = { summary: 1, div: 1, p: 1, h1: 1, h2: 1, h3: 1,
                     h4: 1, ul: 1, ol: 1, blockquote: 1, table: 1, a: 1, span: 1, img: 1 };
-                CKEDITOR.dtd.summary = { p: 1, span: 1, strong: 1, em: 1, a: 1, br: 1 };
+                XfEditor.dtd.summary = { p: 1, span: 1, strong: 1, em: 1, a: 1, br: 1 };
             }
 
             /* ---------- 文字特效定义（选中文字后点击应用 / 再次点击取消） ---------- */
@@ -302,7 +302,7 @@
                 title: '文字特效（选中文字后点击应用，再次点击取消）',
                 toolbar: 'xfstyles,10',
                 panel: {
-                    css: [ CKEDITOR.skin.getPath( 'editor' ) ].concat( editor.config.contentsCss || [] ),
+                    css: [ XfEditor.skin.getPath( 'editor' ) ].concat( editor.config.contentsCss || [] ),
                     multiSelect: false,
                     attributes: { 'aria-label': '文字特效' }
                 },
@@ -313,7 +313,7 @@
                     }
                 },
                 onClick: function( value ) {
-                    var style = new CKEDITOR.style( { element: 'span', attributes: { 'class': value } } );
+                    var style = new XfEditor.style( { element: 'span', attributes: { 'class': value } } );
                     editor.focus();
                     if ( style.checkActive( editor.elementPath(), editor ) ) {
                         editor.removeStyle( style );
@@ -329,7 +329,7 @@
                 title: '段落特效（有选区则包裹选区，无选区则插入模板）',
                 toolbar: 'xfstyles,20',
                 panel: {
-                    css: [ CKEDITOR.skin.getPath( 'editor' ) ].concat( editor.config.contentsCss || [] ),
+                    css: [ XfEditor.skin.getPath( 'editor' ) ].concat( editor.config.contentsCss || [] ),
                     multiSelect: false,
                     attributes: { 'aria-label': '段落特效' }
                 },
@@ -383,7 +383,7 @@
              */
             function applyBlockWrap( editor, def ) {
                 editor.focus();
-                var style = new CKEDITOR.style( { element: def.element, attributes: { 'class': def.cls } } );
+                var style = new XfEditor.style( { element: def.element, attributes: { 'class': def.cls } } );
                 var sel = editor.getSelection();
                 var range = sel && sel.getRanges().length ? sel.getRanges()[ 0 ] : null;
                 var collapsed = !range || range.collapsed;
@@ -394,7 +394,7 @@
                         editor.applyStyle( style );
                     }
                 } else {
-                    var el = CKEDITOR.dom.element.createFromHtml( def.tmpl, editor.document );
+                    var el = XfEditor.dom.element.createFromHtml( def.tmpl, editor.document );
                     editor.insertElement( el );
                     try { var r = editor.createRange(); r.moveToElementEditStart( el ); r.select(); } catch ( e ) { /* 忽略 */ }
                 }
@@ -405,7 +405,7 @@
              */
             function insertBlock( editor, html ) {
                 editor.focus();
-                var el = CKEDITOR.dom.element.createFromHtml( html, editor.document );
+                var el = XfEditor.dom.element.createFromHtml( html, editor.document );
                 editor.insertElement( el );
                 try { var r = editor.createRange(); r.moveToElementEditStart( el ); r.select(); } catch ( e ) { /* 忽略 */ }
             }
@@ -417,7 +417,7 @@
             TEXT_EFFECT_OPTIONS.unshift( [ '无（清除文字特效）', '' ] );
 
             /* 块级效果编辑对话框：可修改内部 HTML 与提示框变体 */
-            CKEDITOR.dialog.add( 'xfBlockEdit', function( editor ) {
+            XfEditor.dialog.add( 'xfBlockEdit', function( editor ) {
                 return {
                     title: '编辑效果',
                     minWidth: 540,
@@ -464,7 +464,7 @@
             } );
 
             /* 文字特效编辑对话框：可重新选择 / 清除文字特效 */
-            CKEDITOR.dialog.add( 'xfTexEdit', function( editor ) {
+            XfEditor.dialog.add( 'xfTexEdit', function( editor ) {
                 return {
                     title: '编辑文字特效',
                     minWidth: 380,

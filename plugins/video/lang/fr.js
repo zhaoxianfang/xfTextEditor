@@ -1,4 +1,4 @@
-CKEDITOR.plugins.setLang('video', 'fr', {
+XfEditor.plugins.setLang('video', 'fr', {
   button: 'Vidéo',
   title: 'Propriétés de la vidéo',
   emptySrc: 'L’URL doit être indiquée.',

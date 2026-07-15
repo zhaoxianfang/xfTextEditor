@@ -2,7 +2,7 @@
  * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
-CKEDITOR.plugins.setLang( 'filetools', 'pl', {
+XfEditor.plugins.setLang( 'filetools', 'pl', {
 	loadError: 'Błąd podczas odczytu pliku.',
 	networkError: 'W trakcie wysyłania pliku pojawił się błąd sieciowy.',
 	httpError404: 'Błąd HTTP w trakcie wysyłania pliku (404: Nie znaleziono pliku).',

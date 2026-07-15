@@ -2,7 +2,7 @@
  * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
-CKEDITOR.plugins.setLang( 'filetools', 'sv', {
+XfEditor.plugins.setLang( 'filetools', 'sv', {
 	loadError: 'Fel uppstod vid filläsning',
 	networkError: 'Nätverksfel uppstod vid filuppladdning.',
 	httpError404: 'HTTP-fel uppstod vid filuppladdning (404: Fil hittades inte).',

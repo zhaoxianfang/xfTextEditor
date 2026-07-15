@@ -8,9 +8,9 @@
 <script>
 	exportPdfUtils.initManualTest();
 
-	CKEDITOR.replace( 'editor1', exportPdfUtils.getDefaultConfig( 'manual' ) );
+	XfEditor.replace( 'editor1', exportPdfUtils.getDefaultConfig( 'manual' ) );
 
-	var editor2 = CKEDITOR.replace( 'editor2', exportPdfUtils.getDefaultConfig( 'manual' ) );
+	var editor2 = XfEditor.replace( 'editor2', exportPdfUtils.getDefaultConfig( 'manual' ) );
 
 	editor2.on( 'exportPdf', function( evt ) {
 		evt.data.html = '';

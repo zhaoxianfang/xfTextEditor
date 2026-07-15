@@ -2,7 +2,7 @@
  * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
-CKEDITOR.plugins.setLang( 'filetools', 'bg', {
+XfEditor.plugins.setLang( 'filetools', 'bg', {
 	loadError: 'Възникна грешка при четене на файла.',
 	networkError: 'Възникна мрежова грешка при качването на файла.',
 	httpError404: 'Възникна HTTP грешка при качване на файла (404: Файлът не е намерен).',

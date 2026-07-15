@@ -1,4 +1,4 @@
-CKEDITOR.plugins.setLang("pbckcode", "en",
+XfEditor.plugins.setLang("pbckcode", "en",
   {
     title: 'PBCKCODE',
     addCode: 'Add code',

@@ -2,7 +2,7 @@
  * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
-CKEDITOR.plugins.setLang( 'filetools', 'nb', {
+XfEditor.plugins.setLang( 'filetools', 'nb', {
 	loadError: 'Feil oppsto under filinnlesing.',
 	networkError: 'Nettverksfeil oppsto under filopplasting.',
 	httpError404: 'HTTP-feil oppsto under filopplasting (404: Fant ikke filen).',

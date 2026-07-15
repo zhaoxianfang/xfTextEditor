@@ -24,20 +24,20 @@ The first stable release of the CKEditor 4 WYSIWYG Editor Export to PDF plugin. 
 
 New Features:
 
-*   Introduced access control mechanism. The plugin now can be configured with additional [exportPdf_tokenUrl](https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_config.html#cfg-exportPdf_tokenUrl) option to allow commercial use.
+*   Introduced access control mechanism. The plugin now can be configured with additional [exportPdf_tokenUrl](https://ckeditor.com/docs/ckeditor4/latest/api/XfEditor_config.html#cfg-exportPdf_tokenUrl) option to allow commercial use.
 
 ## ckeditor4-plugin-exportpdf 0.1.2
 
 Other Changes:
 
-*   Improved [plugin API documentation](https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_config.html#cfg-exportPdf_fileName).
+*   Improved [plugin API documentation](https://ckeditor.com/docs/ckeditor4/latest/api/XfEditor_config.html#cfg-exportPdf_fileName).
 *   Updated Export to PDF plugin npm readme to link to the [official plugin documentation](https://ckeditor.com/docs/ckeditor4/latest/features/exporttopdf.html).
 
 ## ckeditor4-plugin-exportpdf 0.1.1
 
 Other Changes:
 
-*   Renamed the Export to PDF plugin button from `exportPdf` to `ExportPdf`. The `ExportPdf` name should now be used while setting up a custom toolbar with the [CKEDITOR.config.toolbar](https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_config.html#cfg-toolbar) configuration option.
+*   Renamed the Export to PDF plugin button from `exportPdf` to `ExportPdf`. The `ExportPdf` name should now be used while setting up a custom toolbar with the [XfEditor.config.toolbar](https://ckeditor.com/docs/ckeditor4/latest/api/XfEditor_config.html#cfg-toolbar) configuration option.
 
 ## ckeditor4-plugin-exportpdf 0.1.0
 

@@ -2,7 +2,7 @@
 Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 */
-CKEDITOR.plugins.setLang( 'image2', 'zh-cn', {
+XfEditor.plugins.setLang( 'image2', 'zh-cn', {
 	alt: '替换文本',
 	btnUpload: '上传到服务器',
 	captioned: '带标题图像',

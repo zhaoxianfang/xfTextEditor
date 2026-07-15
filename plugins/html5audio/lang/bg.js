@@ -1,4 +1,4 @@
-CKEDITOR.plugins.setLang( 'html5audio', 'bg', {
+XfEditor.plugins.setLang( 'html5audio', 'bg', {
     button: 'Вмъква HTML5 аудио',
     title: 'HTML5 аудио',
     infoLabel: 'Аудио',

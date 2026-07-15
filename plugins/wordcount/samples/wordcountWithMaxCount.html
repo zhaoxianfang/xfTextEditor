@@ -15,7 +15,7 @@ For licensing, see LICENSE.md or http://ckeditor.com/license
     <meta name="ckeditor-sample-description" content="Counts the words an shows the word count in the footer of the editor.">
 	<meta name="ckeditor-sample-isnew" content="1">
 	<script>
-		CKEDITOR.disableAutoInline = true;
+		XfEditor.disableAutoInline = true;
 	</script>
 </head>
 <body>
@@ -28,10 +28,10 @@ For licensing, see LICENSE.md or http://ckeditor.com/license
             WordCount Plugin for CKEditor that counts the words an shows the word count in the footer of the editor.</a>.
 		</p>
 		<p>
-			In order to use the new plugin, include it in the <code><a class="samples" href="http://docs.ckeditor.com/#!/api/CKEDITOR.config-cfg-extraPlugins">config.extraPlugins</a></code> configuration setting.
+			In order to use the new plugin, include it in the <code><a class="samples" href="http://docs.ckeditor.com/#!/api/XfEditor.config-cfg-extraPlugins">config.extraPlugins</a></code> configuration setting.
 		</p>
 <pre class="samples">
-CKEDITOR.replace( '<em>textarea_id</em>', {
+XfEditor.replace( '<em>textarea_id</em>', {
 	<strong>extraPlugins: 'wordcount', 
                 maxWordCount: 4,
 	        maxCharCount: 10,
@@ -66,7 +66,7 @@ CKEDITOR.replace( '<em>textarea_id</em>', {
     <div id="informationparagraphs"></div>
 	<script>
 
-	    CKEDITOR.replace('editor1', {
+	    XfEditor.replace('editor1', {
 	        extraPlugins: 'wordcount',
 	        wordcount: {
 	            showWordCount: true, 

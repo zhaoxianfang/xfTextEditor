@@ -8,7 +8,7 @@
 ( function() {
 
 	var template = '<img alt="" src="" />',
-		templateBlock = new CKEDITOR.template(
+		templateBlock = new XfEditor.template(
 			'<figure class="{captionedClass}">' +
 				template +
 				'<figcaption>{captionPlaceholder}</figcaption>' +
@@ -16,7 +16,7 @@
 		alignmentsObj = { left: 0, center: 1, right: 2 },
 		regexPercent = /^\s*(\d+\%)\s*$/i;
 
-	CKEDITOR.plugins.add( 'image2', {
+	XfEditor.plugins.add( 'image2', {
 		// jscs:disable maximumLineLength
 		lang: 'af,ar,az,bg,bn,bs,ca,cs,cy,da,de,de-ch,el,en,en-au,en-ca,en-gb,eo,es,es-mx,et,eu,fa,fi,fo,fr,fr-ca,gl,gu,he,hi,hr,hu,id,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,oc,pl,pt,pt-br,ro,ru,si,sk,sl,sq,sr,sr-latn,sv,th,tr,tt,ug,uk,vi,zh,zh-cn', // %REMOVE_LINE_CORE%
 		// jscs:enable maximumLineLength
@@ -25,7 +25,7 @@
 		hidpi: true,
 
 		onLoad: function() {
-			CKEDITOR.addCss(
+			XfEditor.addCss(
 			'.cke_image_nocaption{' +
 				// This is to remove unwanted space so resize
 				// wrapper is displayed property.
@@ -116,7 +116,7 @@
 				} );
 			}
 
-			CKEDITOR.dialog.add( 'image2', this.path + 'dialogs/image2.js' );
+			XfEditor.dialog.add( 'image2', this.path + 'dialogs/image2.js' );
 		},
 
 		afterInit: function( editor ) {
@@ -222,7 +222,7 @@
 	// 		│      │</wrapper>                              │                                        │
 	// 		└──────┴────────────────────────────────────────┴────────────────────────────────────────┘
 	//
-	// @param {CKEDITOR.editor}
+	// @param {XfEditor.editor}
 	// @returns {Object}
 	function widgetDef( editor ) {
 		var alignClasses = editor.config.image2_alignClasses,
@@ -255,8 +255,8 @@
 				// Once widget was re-created, it may become an inline element without
 				// block wrapper (i.e. when unaligned, end not captioned). Let's do some
 				// sort of autoparagraphing here (https://dev.ckeditor.com/ticket/10853).
-				if ( this.widget.inline && !( new CKEDITOR.dom.elementPath( this.widget.wrapper, editable ).block ) ) {
-					var block = doc.createElement( editor.activeEnterMode == CKEDITOR.ENTER_P ? 'p' : 'div' );
+				if ( this.widget.inline && !( new XfEditor.dom.elementPath( this.widget.wrapper, editable ).block ) ) {
+					var block = doc.createElement( editor.activeEnterMode == XfEditor.ENTER_P ? 'p' : 'div' );
 					block.replace( this.widget.wrapper );
 					this.widget.wrapper.move( block );
 				}
@@ -365,11 +365,11 @@
 					setDimensions( this );
 
 				// Cache current data.
-				this.oldData = CKEDITOR.tools.extend( {}, this.data );
+				this.oldData = XfEditor.tools.extend( {}, this.data );
 			},
 
 			init: function() {
-				var helpers = CKEDITOR.plugins.image2,
+				var helpers = XfEditor.plugins.image2,
 					image = this.parts.image,
 					data = {
 						hasCaption: !!this.parts.caption,
@@ -426,7 +426,7 @@
 					// they might appear in link dialog.
 					var advanced = data.link.advanced;
 					if ( advanced && advanced.advCSSClasses ) {
-						advanced.advCSSClasses = CKEDITOR.tools.trim( advanced.advCSSClasses.replace( /cke_\S+/, '' ) );
+						advanced.advCSSClasses = XfEditor.tools.trim( advanced.advCSSClasses.replace( /cke_\S+/, '' ) );
 					}
 				}
 
@@ -446,36 +446,36 @@
 
 				// Add widget editing option to its context menu.
 				this.on( 'contextMenu', function( evt ) {
-					evt.data.image = CKEDITOR.TRISTATE_OFF;
+					evt.data.image = XfEditor.TRISTATE_OFF;
 
 					// Integrate context menu items for link.
 					// Note that widget may be wrapped in a link, which
 					// does not belong to that widget (https://dev.ckeditor.com/ticket/11814).
 					if ( this.parts.link || this.wrapper.getAscendant( 'a' ) )
-						evt.data.link = evt.data.unlink = CKEDITOR.TRISTATE_OFF;
+						evt.data.link = evt.data.unlink = XfEditor.TRISTATE_OFF;
 				} );
 			},
 
 			// Overrides default method to handle internal mutability of Image2.
-			// @see CKEDITOR.plugins.widget#addClass
+			// @see XfEditor.plugins.widget#addClass
 			addClass: function( className ) {
 				getStyleableElement( this ).addClass( className );
 			},
 
 			// Overrides default method to handle internal mutability of Image2.
-			// @see CKEDITOR.plugins.widget#hasClass
+			// @see XfEditor.plugins.widget#hasClass
 			hasClass: function( className ) {
 				return getStyleableElement( this ).hasClass( className );
 			},
 
 			// Overrides default method to handle internal mutability of Image2.
-			// @see CKEDITOR.plugins.widget#removeClass
+			// @see XfEditor.plugins.widget#removeClass
 			removeClass: function( className ) {
 				getStyleableElement( this ).removeClass( className );
 			},
 
 			// Overrides default method to handle internal mutability of Image2.
-			// @see CKEDITOR.plugins.widget#getClasses
+			// @see XfEditor.plugins.widget#getClasses
 			getClasses: ( function() {
 				var classRegex = new RegExp( '^(' + [].concat( captionedClass, alignClasses ).join( '|' ) + ')$' );
 
@@ -510,7 +510,7 @@
 	 * @class
 	 * @singleton
 	 */
-	CKEDITOR.plugins.image2 = {
+	XfEditor.plugins.image2 = {
 		stateShifter: function( editor ) {
 			// Tag name used for centering non-captioned widgets.
 			var doc = editor.document,
@@ -578,7 +578,7 @@
 					// There was no caption, but the caption is to be added.
 					if ( newValue ) {
 						// Create new <figure> from widget template.
-						var figure = CKEDITOR.dom.element.createFromHtml( templateBlock.output( {
+						var figure = XfEditor.dom.element.createFromHtml( templateBlock.output( {
 							captionedClass: captionedClass,
 							captionPlaceholder: editor.lang.image2.captionPlaceholder
 						} ), doc );
@@ -630,9 +630,9 @@
 								newEl = wrapInLink( img, shift.newData.link );
 
 							// Set and remove all attributes associated with this state.
-							var attributes = CKEDITOR.plugins.image2.getLinkAttributesGetter()( editor, newValue );
+							var attributes = XfEditor.plugins.image2.getLinkAttributesGetter()( editor, newValue );
 
-							if ( !CKEDITOR.tools.isEmpty( attributes.set ) )
+							if ( !XfEditor.tools.isEmpty( attributes.set ) )
 								( newEl || link ).setAttributes( attributes.set );
 
 							if ( attributes.removed.length )
@@ -656,7 +656,7 @@
 				// There's no gentle way to center inline element with CSS, so create p/div
 				// that wraps widget contents and does the trick either with style or class.
 				var center = doc.createElement(
-					editor.activeEnterMode == CKEDITOR.ENTER_P ? 'p' : 'div', attribsAndStyles );
+					editor.activeEnterMode == XfEditor.ENTER_P ? 'p' : 'div', attribsAndStyles );
 
 				// Replace element with centering wrapper.
 				replaceSafely( center, element );
@@ -676,9 +676,9 @@
 			// Wraps <img/> -> <a><img/></a>.
 			// Returns reference to <a>.
 			//
-			// @param {CKEDITOR.dom.element} img
+			// @param {XfEditor.dom.element} img
 			// @param {Object} linkData
-			// @returns {CKEDITOR.dom.element}
+			// @returns {XfEditor.dom.element}
 			function wrapInLink( img, linkData ) {
 				var link = doc.createElement( 'a', {
 					attributes: {
@@ -695,8 +695,8 @@
 			// De-wraps <a><img/></a> -> <img/>.
 			// Returns the reference to <img/>
 			//
-			// @param {CKEDITOR.dom.element} link
-			// @returns {CKEDITOR.dom.element}
+			// @param {XfEditor.dom.element} link
+			// @returns {XfEditor.dom.element}
 			function unwrapFromLink( link ) {
 				var img = link.findOne( 'img' );
 
@@ -709,7 +709,7 @@
 				if ( replaced.getParent() ) {
 					var range = editor.createRange();
 
-					range.moveToPosition( replaced, CKEDITOR.POSITION_BEFORE_START );
+					range.moveToPosition( replaced, XfEditor.POSITION_BEFORE_START );
 
 					// Remove old element. Do it before insertion to avoid a case when
 					// element is moved from 'replaced' element before it, what creates
@@ -752,7 +752,7 @@
 		 * Checks whether the current image ratio matches the natural one
 		 * by comparing dimensions.
 		 *
-		 * @param {CKEDITOR.dom.element} image
+		 * @param {XfEditor.dom.element} image
 		 * @returns {Boolean}
 		 */
 		checkHasNaturalRatio: function( image ) {
@@ -772,7 +772,7 @@
 		 * it uses natural(Width|Height). For old ones (IE8) it creates
 		 * a new image and reads the dimensions.
 		 *
-		 * @param {CKEDITOR.dom.element} image
+		 * @param {XfEditor.dom.element} image
 		 * @returns {Object}
 		 */
 		getNatural: function( image ) {
@@ -798,13 +798,13 @@
 
 		/**
 		 * Returns an attribute getter function. Default getter comes from the Link plugin
-		 * and is documented by {@link CKEDITOR.plugins.link#getLinkAttributes}.
+		 * and is documented by {@link XfEditor.plugins.link#getLinkAttributes}.
 		 *
 		 * **Note:** It is possible to override this method and use a custom getter e.g.
 		 * in the absence of the Link plugin.
 		 *
 		 * **Note:** If a custom getter is used, a data model format it produces
-		 * must be compatible with {@link CKEDITOR.plugins.link#getLinkAttributes}.
+		 * must be compatible with {@link XfEditor.plugins.link#getLinkAttributes}.
 		 *
 		 * **Note:** A custom getter must understand the data model format produced by
 		 * {@link #getLinkAttributesParser} to work correctly.
@@ -814,12 +814,12 @@
 		 */
 		getLinkAttributesGetter: function() {
 			// https://dev.ckeditor.com/ticket/13885
-			return CKEDITOR.plugins.link.getLinkAttributes;
+			return XfEditor.plugins.link.getLinkAttributes;
 		},
 
 		/**
 		 * Returns an attribute parser function. Default parser comes from the Link plugin
-		 * and is documented by {@link CKEDITOR.plugins.link#parseLinkAttributes}.
+		 * and is documented by {@link XfEditor.plugins.link#parseLinkAttributes}.
 		 *
 		 * **Note:** It is possible to override this method and use a custom parser e.g.
 		 * in the absence of the Link plugin.
@@ -828,7 +828,7 @@
 		 * must be compatible with {@link #getLinkAttributesGetter}.
 		 *
 		 * **Note:** If a custom parser is used, it should be compatible with the
-		 * {@link CKEDITOR.plugins.link#parseLinkAttributes} data model format. Otherwise the
+		 * {@link XfEditor.plugins.link#parseLinkAttributes} data model format. Otherwise the
 		 * Link plugin dialog may not be populated correctly with parsed data. However
 		 * as long as Enhanced Image is **not** used with the Link plugin dialog, any custom data model
 		 * will work, being stored as an internal property of Enhanced Image widget's data only.
@@ -838,7 +838,7 @@
 		 */
 		getLinkAttributesParser: function() {
 			// https://dev.ckeditor.com/ticket/13885
-			return CKEDITOR.plugins.link.parseLinkAttributes;
+			return XfEditor.plugins.link.parseLinkAttributes;
 		}
 	};
 
@@ -890,13 +890,13 @@
 	// Returns a function that creates widgets from all <img> and
 	// <figure class="{config.image2_captionedClass}"> elements.
 	//
-	// @param {CKEDITOR.editor} editor
+	// @param {XfEditor.editor} editor
 	// @returns {Function}
 	function upcastWidgetElement( editor ) {
 		var isCenterWrapper = centerWrapperChecker( editor ),
 			captionedClass = editor.config.image2_captionedClass;
 
-		// @param {CKEDITOR.htmlParser.element} el
+		// @param {XfEditor.htmlParser.element} el
 		// @param {Object} data
 		return function( el, data ) {
 			var dimensions = { width: 1, height: 1 },
@@ -942,7 +942,7 @@
 			else if ( name == 'figure' && el.hasClass( captionedClass ) ) {
 				image = el.find( function( child ) {
 					return child.name === 'img' &&
-						CKEDITOR.tools.array.indexOf( [ 'figure', 'a' ], child.parent.name ) !== -1;
+						XfEditor.tools.array.indexOf( [ 'figure', 'a' ], child.parent.name ) !== -1;
 				}, true )[ 0 ];
 
 				// Upcast linked image like <a><img/></a>.
@@ -969,11 +969,11 @@
 	// Returns a function which transforms the widget to the external format
 	// according to the current configuration.
 	//
-	// @param {CKEDITOR.editor}
+	// @param {XfEditor.editor}
 	function downcastWidgetElement( editor ) {
 		var alignClasses = editor.config.image2_alignClasses;
 
-		// @param {CKEDITOR.htmlParser.element} el
+		// @param {XfEditor.htmlParser.element} el
 		return function( el ) {
 			// In case of <a><img/></a>, <img/> is the element to hold
 			// inline styles or classes (image2_alignClasses).
@@ -991,7 +991,7 @@
 			}
 
 			if ( align && align != 'none' ) {
-				var styles = CKEDITOR.tools.parseCssText( attrs.style || '' );
+				var styles = XfEditor.tools.parseCssText( attrs.style || '' );
 
 				// When the widget is captioned (<figure>) and internally centering is done
 				// with widget's wrapper style/class, in the external data representation,
@@ -1006,7 +1006,7 @@
 				// 	</div>
 				//
 				if ( align == 'center' && el.name == 'figure' ) {
-					el = el.wrapWith( new CKEDITOR.htmlParser.element( 'div',
+					el = el.wrapWith( new XfEditor.htmlParser.element( 'div',
 						alignClasses ? { 'class': alignClasses[ 1 ] } : { style: 'text-align:center' } ) );
 				}
 
@@ -1019,8 +1019,8 @@
 				}
 
 				// Update element styles.
-				if ( !alignClasses && !CKEDITOR.tools.isEmpty( styles ) )
-					attrs.style = CKEDITOR.tools.writeCssText( styles );
+				if ( !alignClasses && !XfEditor.tools.isEmpty( styles ) )
+					attrs.style = XfEditor.tools.writeCssText( styles );
 			}
 
 			return el;
@@ -1029,7 +1029,7 @@
 
 	// Returns a function that checks if an element is a centering wrapper.
 	//
-	// @param {CKEDITOR.editor} editor
+	// @param {XfEditor.editor} editor
 	// @returns {Function}
 	function centerWrapperChecker( editor ) {
 		var captionedClass = editor.config.image2_captionedClass,
@@ -1072,7 +1072,7 @@
 					// is ENTER_(BR|DIV).
 					//   <div style="text-align:center"><img /></div>
 					//   <div style="text-align:center"><a><img /></a></div>
-					if ( editor.enterMode == CKEDITOR.ENTER_P )
+					if ( editor.enterMode == XfEditor.ENTER_P )
 						return false;
 
 					// Regardless of enterMode, a child which is not <figure> must be
@@ -1085,7 +1085,7 @@
 			// Centering wrapper got to be... centering. If image2_alignClasses are defined,
 			// check for centering class. Otherwise, check the style.
 			if ( alignClasses ? el.hasClass( alignClasses[ 1 ] ) :
-					CKEDITOR.tools.parseCssText( el.attributes.style || '', true )[ 'text-align' ] == 'center' )
+					XfEditor.tools.parseCssText( el.attributes.style || '', true )[ 'text-align' ] == 'center' )
 				return true;
 
 			return false;
@@ -1094,7 +1094,7 @@
 
 	// Checks whether element is <img/> or <a><img/></a>.
 	//
-	// @param {CKEDITOR.htmlParser.element}
+	// @param {XfEditor.htmlParser.element}
 	function isLinkedOrStandaloneImage( el ) {
 		if ( el.name == 'img' )
 			return true;
@@ -1106,7 +1106,7 @@
 
 	// Sets width and height of the widget image according to current widget data.
 	//
-	// @param {CKEDITOR.plugins.widget} widget
+	// @param {XfEditor.plugins.widget} widget
 	function setDimensions( widget ) {
 		var data = widget.data,
 			dimensions = { width: data.width, height: data.height },
@@ -1122,7 +1122,7 @@
 
 	// Defines all features related to drag-driven image resizing.
 	//
-	// @param {CKEDITOR.plugins.widget} widget
+	// @param {XfEditor.plugins.widget} widget
 	function setupResizer( widget ) {
 		var editor = widget.editor,
 			editable = editor.editable(),
@@ -1133,7 +1133,7 @@
 
 		resizer.addClass( 'cke_image_resizer' );
 		resizer.setAttribute( 'title', editor.lang.image2.resizer );
-		resizer.append( new CKEDITOR.dom.text( '\u200b', doc ) );
+		resizer.append( new XfEditor.dom.text( '\u200b', doc ) );
 
 		// Inline widgets don't need a resizer wrapper as an image spans the entire widget.
 		if ( !widget.inline ) {
@@ -1208,7 +1208,7 @@
 			// Attaches an event to a global document if inline editor.
 			// Additionally, if classic (`iframe`-based) editor, also attaches the same event to `iframe`'s document.
 			function attachToDocuments( name, callback, collection ) {
-				var globalDoc = CKEDITOR.document,
+				var globalDoc = XfEditor.document,
 					listeners = [];
 
 				if ( !doc.equals( globalDoc ) )
@@ -1359,8 +1359,8 @@
 					return null;
 				}
 
-				maxSize = CKEDITOR.tools.copy( maxSize );
-				natural = CKEDITOR.plugins.image2.getNatural( image );
+				maxSize = XfEditor.tools.copy( maxSize );
+				natural = XfEditor.plugins.image2.getNatural( image );
 
 				maxSize.width = Math.max( maxSize.width === 'natural' ? natural.width : maxSize.width, min.width );
 				maxSize.height = Math.max( maxSize.height === 'natural' ? natural.height : maxSize.height, min.width );
@@ -1383,7 +1383,7 @@
 
 	// Integrates widget alignment setting with justify
 	// plugin's commands (execution and refreshment).
-	// @param {CKEDITOR.editor} editor
+	// @param {XfEditor.editor} editor
 	// @param {String} value 'left', 'right', 'center' or 'block'
 	function alignCommandIntegrator( editor ) {
 		var execCallbacks = [],
@@ -1434,13 +1434,13 @@
 
 				// Don't allow justify commands when widget alignment is disabled (https://dev.ckeditor.com/ticket/11004).
 				if ( !enabled )
-					this.setState( CKEDITOR.TRISTATE_DISABLED );
+					this.setState( XfEditor.TRISTATE_DISABLED );
 				else {
 					this.setState(
 						( widget.data.align == value ) ? (
-							CKEDITOR.TRISTATE_ON
+							XfEditor.TRISTATE_ON
 						) : (
-							( value in allowed ) ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
+							( value in allowed ) ? XfEditor.TRISTATE_OFF : XfEditor.TRISTATE_DISABLED
 						)
 					);
 				}
@@ -1455,7 +1455,7 @@
 		if ( !editor.plugins.link )
 			return;
 
-		var listener = CKEDITOR.on( 'dialogDefinition', function( evt ) {
+		var listener = XfEditor.on( 'dialogDefinition', function( evt ) {
 			var dialog = evt.data;
 
 			if ( dialog.name == 'link' ) {
@@ -1539,7 +1539,7 @@
 			// Note that widget may be wrapped in a link, which
 			// does not belong to that widget (https://dev.ckeditor.com/ticket/11814).
 			this.setState( widget.data.link || widget.wrapper.getAscendant( 'a' ) ?
-				CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED );
+				XfEditor.TRISTATE_OFF : XfEditor.TRISTATE_DISABLED );
 
 			evt.cancel();
 		} );
@@ -1548,8 +1548,8 @@
 	// Returns the focused widget, if of the type specific for this plugin.
 	// If no widget is focused, `null` is returned.
 	//
-	// @param {CKEDITOR.editor}
-	// @returns {CKEDITOR.plugins.widget}
+	// @param {XfEditor.editor}
+	// @returns {XfEditor.plugins.widget}
 	function getFocusedWidget( editor ) {
 		var widget = editor.widgets.focused;
 
@@ -1563,7 +1563,7 @@
 	// on configurations like config#image2_alignClasses or
 	// config#image2_captionedClass.
 	//
-	// @param {CKEDITOR.editor}
+	// @param {XfEditor.editor}
 	// @returns {Object}
 	function getWidgetAllowedContent( editor ) {
 		var alignClasses = editor.config.image2_alignClasses,
@@ -1609,7 +1609,7 @@
 	// all the possible cases since requiredContent supports a single
 	// tag only.
 	//
-	// @param {CKEDITOR.editor}
+	// @param {XfEditor.editor}
 	// @returns {Object}
 	function getWidgetFeatures( editor ) {
 		var alignClasses = editor.config.image2_alignClasses,
@@ -1632,9 +1632,9 @@
 	// Returns element which is styled, considering current
 	// state of the widget.
 	//
-	// @see CKEDITOR.plugins.widget#applyStyle
-	// @param {CKEDITOR.plugins.widget} widget
-	// @returns {CKEDITOR.dom.element}
+	// @see XfEditor.plugins.widget#applyStyle
+	// @param {XfEditor.plugins.widget} widget
+	// @returns {XfEditor.dom.element}
 	function getStyleableElement( widget ) {
 		return widget.data.hasCaption ? widget.element : widget.parts.image;
 	}
@@ -1650,9 +1650,9 @@
  *		config.image2_captionedClass = 'captionedImage';
  *
  * @cfg {String} [image2_captionedClass='image']
- * @member CKEDITOR.config
+ * @member XfEditor.config
  */
-CKEDITOR.config.image2_captionedClass = 'image';
+XfEditor.config.image2_captionedClass = 'image';
 
 /**
  * Determines whether dimension inputs should be automatically filled when the image URL changes in the Enhanced Image
@@ -1665,7 +1665,7 @@ CKEDITOR.config.image2_captionedClass = 'image';
  *
  * @since 4.5.0
  * @cfg {Boolean} [image2_prefillDimensions=true]
- * @member CKEDITOR.config
+ * @member XfEditor.config
  */
 
 /**
@@ -1678,7 +1678,7 @@ CKEDITOR.config.image2_captionedClass = 'image';
  *
  * @since 4.5.0
  * @cfg {Boolean} [image2_disableResizer=false]
- * @member CKEDITOR.config
+ * @member XfEditor.config
  */
 
 /**
@@ -1703,7 +1703,7 @@ CKEDITOR.config.image2_captionedClass = 'image';
  * must be supplied to the editor:
  *
  * * For {@glink guide/dev_framed classic editor} it can be done by defining additional
- * styles in the {@link CKEDITOR.config#contentsCss stylesheets loaded by the editor}. The same
+ * styles in the {@link XfEditor.config#contentsCss stylesheets loaded by the editor}. The same
  * styles must be provided on the target page where the content will be loaded.
  * * For {@glink guide/dev_inline inline editor} the styles can be defined directly
  * with `<style> ... <style>` or `<link href="..." rel="stylesheet">`, i.e. within the `<head>`
@@ -1736,7 +1736,7 @@ CKEDITOR.config.image2_captionedClass = 'image';
  *
  * @since 4.4.0
  * @cfg {String[]} [image2_alignClasses=null]
- * @member CKEDITOR.config
+ * @member XfEditor.config
  */
 
 /**
@@ -1749,7 +1749,7 @@ CKEDITOR.config.image2_captionedClass = 'image';
  *
  * @since 4.6.0
  * @cfg {Boolean} [image2_altRequired=false]
- * @member CKEDITOR.config
+ * @member XfEditor.config
  */
 
 /**
@@ -1779,5 +1779,5 @@ CKEDITOR.config.image2_captionedClass = 'image';
  *
  * @since 4.12.0
  * @cfg {Object.<String, Number/String>} [image2_maxSize]
- * @member CKEDITOR.config
+ * @member XfEditor.config
  */

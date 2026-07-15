@@ -146,7 +146,7 @@ function handleCLClick(myRadio) {
     domPreviewImgAdv.src = img;
 }
 // Our dialog definition.
-CKEDITOR.dialog.add('yaqr', function(editor) {
+XfEditor.dialog.add('yaqr', function(editor) {
     return {
         // Basic properties of the dialog window: title, minimum size.
         title: editor.lang.yaqr.qrProp,
@@ -196,7 +196,7 @@ CKEDITOR.dialog.add('yaqr', function(editor) {
                     	label : editor.lang.yaqr.targetText,
                     	'default' : 'checked',
 //                    	onClick : function() {
-//                    		// this = CKEDITOR.ui.dialog.checkbox
+//                    		// this = XfEditor.ui.dialog.checkbox
 //                    		alert( 'Checked: ' + this.getValue() );
 //                    	},
 	                    setup: function(widget) {
@@ -217,7 +217,7 @@ CKEDITOR.dialog.add('yaqr', function(editor) {
                     //                        label: 'Reset QR to Local Page URL',
                     //                        title: 'My title',
                     //                        onClick: function() {
-                    //                            // this = CKEDITOR.ui.dialog.button
+                    //                            // this = XfEditor.ui.dialog.button
                     //                            //alert( 'Clicked: ' + this.id );
                     //                            var qrStr = window.location.href;
                     //                            var elt = document.getElementById('cke_qstring');
@@ -231,7 +231,7 @@ CKEDITOR.dialog.add('yaqr', function(editor) {
                         id: 'qrSize',
                         label: editor.lang.yaqr.qrSizeLabel,
                         // Validation checking whether the field is not empty.
-                        validate: CKEDITOR.dialog.validate.notEmpty(editor.lang.yaqr.qrSizeLabel + " " + editor.lang.yaqr.badQRmsg),
+                        validate: XfEditor.dialog.validate.notEmpty(editor.lang.yaqr.qrSizeLabel + " " + editor.lang.yaqr.badQRmsg),
                         // Called by the main setupContent method call on dialog initialization.
                         setup: function(widget) {
                             this.setValue(clean_css_value(widget.data['QRSize']));

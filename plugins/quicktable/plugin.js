@@ -1,4 +1,4 @@
-﻿CKEDITOR.plugins.add( 'quicktable', {
+XfEditor.plugins.add( 'quicktable', {
 	requires: 'table,panelbutton,floatpanel',
 	lang: 'af,ar,bg,bn,bs,ca,cs,cy,da,de,el,en,en-au,en-ca,en-gb,eo,es,et,eu,fa,fi,fo,fr,fr-ca,gl,gu,he,hi,hr,hu,id,is,it,ja,ka,km,ko,ku,lt,lv,mk,mn,ms,nb,nl,no,pl,pt,pt-br,ro,ru,si,sk,sl,sq,sr,sr-latn,sv,th,tr,ug,uk,vi,zh,zh-cn', // %REMOVE_LINE_CORE%
 	afterInit: function( editor ) {
@@ -16,7 +16,7 @@
 			quickPreviewBackground = conf.qtPreviewBackground || '#e5e5e5';
 			
 		function makeElement( name ) {
-			return new CKEDITOR.dom.element( name, editor.document );
+			return new XfEditor.dom.element( name, editor.document );
 		}
 
 		function insertTable( rowCount, columnCount ) {
@@ -46,7 +46,7 @@
 		function renderQuickTable(panel) {
 			var output = [];
 
-			var clickFn = CKEDITOR.tools.addFunction( function( i, j ) {
+			var clickFn = XfEditor.tools.addFunction( function( i, j ) {
 				insertTable( parseInt( i, 10 ) + 1, parseInt( j, 10 ) + 1 );
 				panel.hide();
 			} );
@@ -58,7 +58,7 @@
 				output.push( '<tr>' );
 				for ( var j = 0; j < quickColumns; j++ ) {
 					output.push( '<td style="border: ' + quickPreviewBorder + ';width:'+quickPreviewSize+';height:'+quickPreviewSize+';" data-i="' + i + '" data-j="' + j + '"' +
-						' onclick="CKEDITOR.tools.callFunction(', clickFn, ',\'', i, '\',\'', j, '\'); return false;"' +
+						' onclick="XfEditor.tools.callFunction(', clickFn, ',\'', i, '\',\'', j, '\'); return false;"' +
 					'></td>' );
 				}
 				output.push('</tr>');
@@ -88,7 +88,7 @@
 			label.setText( rowCount + ' × ' + columnCount + ' ' + editor.lang.table.toolbar );
 		}
 		
-		editor.ui.add( 'Table', CKEDITOR.UI_PANELBUTTON, {
+		editor.ui.add( 'Table', XfEditor.UI_PANELBUTTON, {
 			label: editor.lang.table.toolbar,
 			command: 'table',
 			modes: { wysiwyg: 1 },
@@ -99,7 +99,7 @@
 			table: null,
 
 			panel: {
-				css: CKEDITOR.skin.getPath( 'editor' ),
+				css: XfEditor.skin.getPath( 'editor' ),
 				attributes: { role: 'listbox', 'aria-label': editor.lang.table.toolbar }
 			},
 
@@ -107,19 +107,19 @@
 				block.autoSize = true;
 				block.element.addClass( 'cke_colorblock' );
 
-				var caption = new CKEDITOR.dom.element( 'div' );
+				var caption = new XfEditor.dom.element( 'div' );
 				caption.setStyles( { 'text-align': 'center', 'margin': '3px 0' } );
 				block.element.append( caption );
 				this.caption = caption;
 
-				var tableWrapper = CKEDITOR.dom.element.createFromHtml( renderQuickTable(panel) );
+				var tableWrapper = XfEditor.dom.element.createFromHtml( renderQuickTable(panel) );
 				this.table = this.addEvents(tableWrapper);
 				block.element.append( tableWrapper );
 
 				var moreButton = this.createMoreButton();
 				block.element.append( moreButton );
 
-				CKEDITOR.ui.fire( 'ready', this );
+				XfEditor.ui.fire( 'ready', this );
 				
 				block.keys = this.assignKeys(block.keys);
 			},
@@ -131,7 +131,7 @@
 				keys[ 9 ] = 'next'; // TAB
 				keys[ rtl ? 39 : 37 ] = 'prev'; // ARROW-LEFT
 				keys[ 38 ] = 'prev'; // ARROW-UP
-				keys[ CKEDITOR.SHIFT + 9 ] = 'prev'; // SHIFT + TAB
+				keys[ XfEditor.SHIFT + 9 ] = 'prev'; // SHIFT + TAB
 				keys[ 32 ] = 'click'; // SPACE
 				return keys;
 			},
@@ -194,7 +194,7 @@
 			},
 			
 			createMoreButton: function() {
-				var moreButton = new CKEDITOR.dom.element( 'a' );
+				var moreButton = new XfEditor.dom.element( 'a' );
 				moreButton.setAttributes( {
 					_cke_focus: 1,
 					hidefocus: true,

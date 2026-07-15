@@ -2,7 +2,7 @@
 Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
-CKEDITOR.plugins.setLang('autosave', 'bg', {
+XfEditor.plugins.setLang('autosave', 'bg', {
     dateFormat: 'LLL',
     autoSaveMessage: 'Запазено автоматично',
     loadSavedContent: 'Намерена е автоматично запазена версия на това съдържание от "{0}". Искате ли да сравните версиите на съдържанието и да изберете коя да се зареди? "Отказ" ще премахне по-рано автоматично запазеното съдържание.',

@@ -2,7 +2,7 @@
  * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
-CKEDITOR.plugins.setLang( 'filetools', 'km', {
+XfEditor.plugins.setLang( 'filetools', 'km', {
 	loadError: 'មាន​បញ្ហា​កើតឡើង​ក្នុង​ពេល​អាន​ឯកសារ។',
 	networkError: 'មាន​បញ្ហា​បណ្ដាញ​កើត​ឡើង​ក្នុង​ពេល​ផ្ទុកឡើង​ឯកសារ។',
 	httpError404: 'មាន​បញ្ហា HTTP កើត​ឡើង​ក្នុង​ពេល​ផ្ទុកឡើង​ឯកសារ (404៖ រក​ឯកសារ​មិន​ឃើញ)។',

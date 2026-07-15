@@ -14,7 +14,7 @@
 // TODO IE8 fallback to a table maybe?
 // TODO a11y http://www.w3.org/html/wg/wiki/Correct_Hidden_Attribute_Section_v4
 ( function() {
-	CKEDITOR.plugins.add( 'chart', {
+	XfEditor.plugins.add( 'chart', {
 		// Required plugins
 		requires: 'widget,dialog',
 		// Name of the file in the "icons" folder
@@ -28,7 +28,7 @@
 
 			if ( typeof Chart  === 'undefined' ) {
 				// Chart library is loaded asynchronously, so we can draw anything only once it's loaded.
-				CKEDITOR.scriptLoader.load( CKEDITOR.getUrl( plugin.path + 'lib/chart.min.js' ), function() {
+				XfEditor.scriptLoader.load( XfEditor.getUrl( plugin.path + 'lib/chart.min.js' ), function() {
 					plugin.drawCharts();
 				} );
 			}
@@ -62,7 +62,7 @@
 			// Inject required CSS stylesheet to classic editors because the <iframe> needs it.
 			// Inline editors will ignore this, the developer is supposed to load chart.css directly on a page.
 			// "this.path" is a path to the current plugin.
-			editor.addContentsCss( CKEDITOR.getUrl( plugin.path + 'chart.css' ) );
+			editor.addContentsCss( XfEditor.getUrl( plugin.path + 'chart.css' ) );
 
 			// A little bit of magic to support "Preview" feature in CKEditor (in a popup).
 			// In order to transform downcasted widgets into nice charts we need to:
@@ -78,12 +78,12 @@
 				evt.data.dataValue = evt.data.dataValue.replace( /<\/head>/,
 					'<script>var chartjs_colors_json = ' + colorsJson + ';<\/script>' +
 					'<script>var chartjs_config_json = ' + configJson + ';<\/script>' +
-						'<script src="' + CKEDITOR.getUrl( plugin.path + 'lib/chart.min.js' ) + '"><\/script>' +
-						'<script src="' + CKEDITOR.getUrl( plugin.path + 'widget2chart.js' ) + '"><\/script><\/head>' );
+						'<script src="' + XfEditor.getUrl( plugin.path + 'lib/chart.min.js' ) + '"><\/script>' +
+						'<script src="' + XfEditor.getUrl( plugin.path + 'widget2chart.js' ) + '"><\/script><\/head>' );
 			} );
 
 			// The dialog window to insert / edit a chart.
-			CKEDITOR.dialog.add( 'chart', function( editor ) {
+			XfEditor.dialog.add( 'chart', function( editor ) {
 				var dialog = {
 					title: editor.lang.chart.dialogTitle,
 					minWidth: 200,
@@ -167,7 +167,7 @@
 												},
 												validate: function() {
 													var value = this.getValue(),
-														pass = ( !value || !!( CKEDITOR.dialog.validate.number( value ) && value >= 0 ) );
+														pass = ( !value || !!( XfEditor.dialog.validate.number( value ) && value >= 0 ) );
 
 													if ( !pass ) {
 														alert( editor.lang.common.validateNumberFailed );
@@ -200,7 +200,7 @@
 									width: '50px',
 									validate: function() {
 										var value = this.getValue(),
-											pass = ( !value || !!( CKEDITOR.dialog.validate.number( value ) && value >= 0 ) );
+											pass = ( !value || !!( XfEditor.dialog.validate.number( value ) && value >= 0 ) );
 
 										if ( !pass ) {
 											alert( editor.lang.common.validateNumberFailed );
@@ -315,9 +315,9 @@
 			/* 暴露「图表 → 静态图片」渲染函数，供导出 / 预览把空白 canvas 转为自包含
 			   data:image/png，确保 getHtml / 预览不依赖 Chart.js 即可完整呈现，
 			   且与编辑器内绘制的图表视觉一致。依赖本闭包内的 colors / config 与全局 Chart。 */
-			CKEDITOR.tools.xfChartToImage = function( values, chartType, height ) {
+			XfEditor.tools.xfChartToImage = function( values, chartType, height ) {
 				// 防御：Chart.js 未加载、数据非数组或为空时直接返回 null，避免抛错。
-				if ( typeof Chart === 'undefined' || !CKEDITOR.tools.isArray( values ) || !values.length ) return null;
+				if ( typeof Chart === 'undefined' || !XfEditor.tools.isArray( values ) || !values.length ) return null;
 				var h = height || 300, w = 640;
 				var canvas = document.createElement( 'canvas' );
 				canvas.width = w; canvas.height = h;
@@ -435,10 +435,10 @@
 						// Get rid of it when upcasting.
 						element.setHtml( '' );
 						// Chart.js work on canvas elements, Prepare one.
-						var canvas = new CKEDITOR.htmlParser.element( 'canvas', { height: element.attributes[ 'data-chart-height' ] } );
+						var canvas = new XfEditor.htmlParser.element( 'canvas', { height: element.attributes[ 'data-chart-height' ] } );
 						element.add( canvas );
 						// And make place for a legend.
-						var div = new CKEDITOR.htmlParser.element( 'div', { 'class': 'chartjs-legend' } );
+						var div = new XfEditor.htmlParser.element( 'div', { 'class': 'chartjs-legend' } );
 						element.add( div );
 						return element;
 					}
@@ -462,7 +462,7 @@
 					}
 
 					// Create the downcasted form of a widget (a simple <div>).
-					var el = new CKEDITOR.htmlParser.element( 'div', {
+					var el = new XfEditor.htmlParser.element( 'div', {
 						// We could pass here hardcoded "chartjs" class, but this way we would lose here all the classes applied through the Styles dropdown.
 						// (In case someone defined his own styles for the chart widget)
 						'class': element.attributes['class'],
@@ -470,7 +470,7 @@
 						'data-chart-height': this.data.height,
 						// Feature detection (editor.getSelectedHtml) to check if CKEditor 4.5+ is used.
 						// CKEditor < 4.5 and CKEditor 4.5+ require different code due to https://dev.ckeditor.com/ticket/13105
-						'data-chart-value': editor.getSelectedHtml ? JSON.stringify( data ) : CKEDITOR.tools.htmlEncodeAttr( JSON.stringify( data ) )
+						'data-chart-value': editor.getSelectedHtml ? JSON.stringify( data ) : XfEditor.tools.htmlEncodeAttr( JSON.stringify( data ) )
 					} );
 					return el;
 				}
@@ -486,7 +486,7 @@
  *		config.chart_height = 400;
  *
  * @cfg {Integer} [chart_height=300]
- * @member CKEDITOR.config
+ * @member XfEditor.config
  */
 
 /**
@@ -496,7 +496,7 @@
  *		config.chart_maxItems = 12;
  *
  * @cfg {Integer} [chart_maxItems=12]
- * @member CKEDITOR.config
+ * @member XfEditor.config
  */
 
 /**
@@ -515,40 +515,40 @@
  *		}
  *
  * @cfg {Array} chart_colors
- * @member CKEDITOR.config
+ * @member XfEditor.config
  */
 
 /**
  * Chart.js configuration to use for Bar charts.
  *
  * @cfg {Object} [chart_configBar={ animation: false }]
- * @member CKEDITOR.config
+ * @member XfEditor.config
  */
 
 /**
  * Chart.js configuration to use for Doughnut charts.
  *
  * @cfg {Object} [chart_configDoughnut={ animateRotate: false }]
- * @member CKEDITOR.config
+ * @member XfEditor.config
  */
 
 /**
  * Chart.js configuration to use for Line charts.
  *
  * @cfg {Object} [chart_configLine={ animation: false }]
- * @member CKEDITOR.config
+ * @member XfEditor.config
  */
 
 /**
  * Chart.js configuration to use for Pie charts.
  *
  * @cfg {Object} [chart_configPie={ animateRotate: false }]
- * @member CKEDITOR.config
+ * @member XfEditor.config
  */
 
 /**
  * Chart.js configuration to use for PolarArea charts.
  *
  * @cfg {Object} [chart_configPolarArea={ animateRotate: false }]
- * @member CKEDITOR.config
+ * @member XfEditor.config
  */

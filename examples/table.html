@@ -33,7 +33,7 @@
     </ul>
     <div class="xf-editor-wrap"><textarea id="editor"></textarea></div>
     <h2>相关配置</h2>
-    <pre class="xf-code">CKEDITOR.replace('editor', {
+    <pre class="xf-code">XfEditor.replace('editor', {
     extraPlugins: 'table,quicktable,tableresizerowandcolumn,imageresizerowandcolumn',
     // 表格单元格、表头、边框等样式在对话框中可配置
 });</pre>
@@ -42,7 +42,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 // 基础能力由 config.full.js 统一提供；此处叠加表格增强插件与自定义工具栏。
-    XF.init('editor', {
+    XfEditor.init('editor', {
         height: 360,
         extraPlugins: 'quicktable,tableresizerowandcolumn,imageresizerowandcolumn',
         toolbar: [

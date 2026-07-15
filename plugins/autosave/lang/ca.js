@@ -2,7 +2,7 @@
 Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
-CKEDITOR.plugins.setLang('autosave', 'ca', {
+XfEditor.plugins.setLang('autosave', 'ca', {
     dateFormat: 'LLL',
     autoSaveMessage: 'Auto desat',
     loadSavedContent: 'S\'ha trobat una versió auto-desada d\'aquest contingut de "{0}". Voleu comparar les versions del contingut i escollir quina carregar?',

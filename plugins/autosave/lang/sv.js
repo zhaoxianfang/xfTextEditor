@@ -2,7 +2,7 @@
 Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
-CKEDITOR.plugins.setLang('autosave', 'sv', {
+XfEditor.plugins.setLang('autosave', 'sv', {
     dateFormat: 'LLL',
     autoSaveMessage: 'Autosparat',
     loadSavedContent: 'En autosparad version av det här innehållet (från "{0}") hittades. Vill du öppna en dialogruta för att jämföra, där du även kan välja att läsa in det autosparade innehållet?',

@@ -2,7 +2,7 @@
 Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 */
-CKEDITOR.plugins.setLang( 'image2', 'hi', {
+XfEditor.plugins.setLang( 'image2', 'hi', {
 	alt: 'वैकल्पिक टेक्स्ट',
 	btnUpload: 'इसे सर्वर को भेजें',
 	captioned: 'Captioned image', // MISSING

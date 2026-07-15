@@ -2,7 +2,7 @@
  * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
-CKEDITOR.plugins.setLang( 'filetools', 'zh-cn', {
+XfEditor.plugins.setLang( 'filetools', 'zh-cn', {
 	loadError: '读取文件时发生错误',
 	networkError: '上传文件时发生网络错误',
 	httpError404: '上传文件时发生 HTTP 错误（404：无法找到文件）',

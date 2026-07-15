@@ -31,7 +31,7 @@ Just copy the whole directory (quicktable) in the plugins directory
 ####Configuration:
 
 ```javascript
-	CKEDITOR.replace( 'editor1', {
+	XfEditor.replace( 'editor1', {
 		qtRows: 20, // Count of rows in the quicktable (default: 8)
 		qtColumns: 20, // Count of columns in the quicktable (default: 10)
 		qtBorder: '1', // Border of the inserted table (default: '1')

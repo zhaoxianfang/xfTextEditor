@@ -1,3 +1,3 @@
-CKEDITOR.plugins.setLang('lineheight','ar', {
+XfEditor.plugins.setLang('lineheight','ar', {
     title: 'خط الطول'
 } );

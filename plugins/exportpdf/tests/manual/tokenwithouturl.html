@@ -7,12 +7,12 @@
 <script>
 	exportPdfUtils.initManualTest();
 
-	var editor = CKEDITOR.replace( 'editor', exportPdfUtils.getDefaultConfig( 'manual', {
+	var editor = XfEditor.replace( 'editor', exportPdfUtils.getDefaultConfig( 'manual', {
 		exportPdf_tokenUrl: ''
 	} ) );
 
 	editor.on( 'exportPdf', function( evt ) {
-		var value = CKEDITOR.document.findOne( '#tokenValue' );
+		var value = XfEditor.document.findOne( '#tokenValue' );
 
 		value.setHtml( evt.data.token );
 	}, null, null, 17 );

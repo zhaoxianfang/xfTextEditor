@@ -1,7 +1,7 @@
 ﻿/*
 Its The Persian (Farsi) Language Translate For Iranian By "Mohsen Esmaili"
 */
-CKEDITOR.plugins.setLang('wordcount', 'fa', {
+XfEditor.plugins.setLang('wordcount', 'fa', {
     WordCount: 'لغت:',
     CharCount: 'کاراکتر:',
     CharCountWithHTML: 'کاراکترها (با HTML):',

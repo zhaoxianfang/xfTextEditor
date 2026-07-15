@@ -2,7 +2,7 @@
 Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
-CKEDITOR.plugins.setLang('autosave', 'tr', {
+XfEditor.plugins.setLang('autosave', 'tr', {
     dateFormat: 'LLL',
     autoSaveMessage: 'Otomatik Kaydedildi',
     loadSavedContent: 'Bu içeriğin "{0}" tarihli otomatik kaydedilmiş versiyonu bulundu. İki versiyonu karşılaştırmak ve hangisi yüklenmek istediğinizi belirlemek ister misiniz? İptal tuşuna basılınca otomatik kaydedilen içerik silinir.',

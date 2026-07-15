@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
     xfTextEditor JavaScript API 示例
-    说明：本页面汇总编辑器暴露的全部 JavaScript API（CKEDITOR / editor 实例 / XF 辅助对象），
+    说明：本页面汇总编辑器暴露的全部 JavaScript API（XfEditor / editor 实例 / XfEditor 辅助对象），
           并提供「实时演示 + 事件日志 + 接口参考表」，可边点边看效果。
     所有注释均为中文。
 -->
@@ -41,7 +41,7 @@
             <span>insertHtml / insertText</span>
             <span>execCommand</span>
             <span>事件监听</span>
-            <span>XF 导出辅助</span>
+            <span>XfEditor 导出辅助</span>
         </div>
     </div>
 
@@ -58,8 +58,8 @@
         <a href="javascript:void(0)" id="btn-inserttext"><span class="title">插入文本</span><span class="desc">insertText()</span></a>
         <a href="javascript:void(0)" id="btn-cmd-bold"><span class="title">执行命令</span><span class="desc">execCommand('bold')</span></a>
         <a href="javascript:void(0)" id="btn-focus"><span class="title">聚焦</span><span class="desc">focus()</span></a>
-        <a href="javascript:void(0)" id="btn-preview"><span class="title">导出预览</span><span class="desc">XF 自包含 HTML</span></a>
-        <a href="javascript:void(0)" id="btn-download"><span class="title">下载 .html</span><span class="desc">XF.downloadHtml()</span></a>
+        <a href="javascript:void(0)" id="btn-preview"><span class="title">导出预览</span><span class="desc">XfEditor 自包含 HTML</span></a>
+        <a href="javascript:void(0)" id="btn-download"><span class="title">下载 .html</span><span class="desc">XfEditor.downloadHtml()</span></a>
         <a href="javascript:void(0)" id="btn-destroy"><span class="title">销毁 / 重建</span><span class="desc">destroy() / 重新 init</span></a>
     </div>
 
@@ -67,17 +67,17 @@
     <div class="xf-tip">每次内容变化、编辑器就绪、命令执行都会在下方实时打印，便于理解编辑器生命周期与事件机制。</div>
     <pre id="log" class="xf-code" style="max-height:240px;overflow:auto;background:#0f172a;color:#e2e8f0;"></pre>
 
-    <h2>三、XF 辅助对象方法</h2>
-    <p><code class="xf-inline">XF</code> 为示例页统一的初始化与导出辅助对象（定义于 <code class="xf-inline">examples/js/xf.js</code>）：</p>
+    <h2>三、XfEditor 辅助对象方法</h2>
+    <p><code class="xf-inline">XfEditor</code> 为示例页统一的初始化与导出辅助对象（定义于 <code class="xf-inline">examples/js/xf.js</code>）：</p>
     <table class="xf-params">
         <tr><th>方法</th><th>参数</th><th>返回值</th><th>说明</th></tr>
-        <tr><td><code>XF.init(id, cfg)</code></td><td>id；cfg 覆写配置</td><td>editor</td><td>创建编辑器，自动复用 config.full.js 并合并页面配置（extraPlugins 去重）。</td></tr>
-        <tr><td><code>XF.getHtml(id, opts)</code></td><td>opts.standalone/full/title</td><td>String</td><td>读取内容；standalone 返回内联样式片段，full 返回完整文档。</td></tr>
-        <tr><td><code>XF.exportDocument(id, title)</code></td><td>id；title 可选</td><td>String</td><td>导出完整自包含 HTML 文档字符串（含 &lt;!DOCTYPE html&gt;）。</td></tr>
-        <tr><td><code>XF.downloadHtml(id, filename)</code></td><td>id；filename 可选</td><td>—</td><td>触发浏览器下载为 .html 文件（自包含，离线可用）。</td></tr>
-        <tr><td><code>XF.getStandaloneCss()</code></td><td>—</td><td>String</td><td>仅获取内联样式字符串（基础 + 特效）。</td></tr>
-        <tr><td><code>XF.merge(cfg)</code></td><td>cfg</td><td>Object</td><td>合并全局配置与页面配置，返回最终配置。</td></tr>
-        <tr><td><code>XF.getCsrfToken()</code></td><td>—</td><td>String/Null</td><td>读取页面 csrf-token meta。</td></tr>
+        <tr><td><code>XfEditor.init(id, cfg)</code></td><td>id；cfg 覆写配置</td><td>editor</td><td>创建编辑器，自动复用 config.full.js 并合并页面配置（extraPlugins 去重）。</td></tr>
+        <tr><td><code>XfEditor.getHtml(id, opts)</code></td><td>opts.standalone/full/title</td><td>String</td><td>读取内容；standalone 返回内联样式片段，full 返回完整文档。</td></tr>
+        <tr><td><code>XfEditor.exportDocument(id, title)</code></td><td>id；title 可选</td><td>String</td><td>导出完整自包含 HTML 文档字符串（含 &lt;!DOCTYPE html&gt;）。</td></tr>
+        <tr><td><code>XfEditor.downloadHtml(id, filename)</code></td><td>id；filename 可选</td><td>—</td><td>触发浏览器下载为 .html 文件（自包含，离线可用）。</td></tr>
+        <tr><td><code>XfEditor.getStandaloneCss()</code></td><td>—</td><td>String</td><td>仅获取内联样式字符串（基础 + 特效）。</td></tr>
+        <tr><td><code>XfEditor.merge(cfg)</code></td><td>cfg</td><td>Object</td><td>合并全局配置与页面配置，返回最终配置。</td></tr>
+        <tr><td><code>XfEditor.getCsrfToken()</code></td><td>—</td><td>String/Null</td><td>读取页面 csrf-token meta。</td></tr>
     </table>
 
     <h2>四、编辑器实例（editor）常用方法</h2>
@@ -95,7 +95,7 @@
 
     <h2>五、常用代码示例</h2>
     <div class="xf-code-wrap"><pre class="xf-code">// 取得编辑器实例
-var editor = CKEDITOR.instances.editor;
+var editor = XfEditor.instances.editor;
 
 // 读取 / 写入内容
 editor.getData();
@@ -131,7 +131,7 @@ editor.destroy();</pre></div>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     // 基础能力由 config.full.js 统一提供；API 演示不再重复声明插件。
-    var editor = XF.init('editor', { height: 320 });
+    var editor = XfEditor.init('editor', { height: 320 });
     var destroyed = false;
 
     var logEl = document.getElementById('log');
@@ -179,12 +179,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     bind('btn-preview', function () {
         // 优先新窗口，失败（弹窗拦截 / 跨域沙箱）则自动回退到同源模态预览
-        XF.openPreview('editor', 'API 预览');
-        log('XF.openPreview()：已打开自包含预览');
+        XfEditor.openPreview('editor', 'API 预览');
+        log('XfEditor.openPreview()：已打开自包含预览');
     });
     bind('btn-download', function () {
-        XF.downloadHtml('editor', 'api-content.html');
-        log('XF.downloadHtml()：已触发下载');
+        XfEditor.downloadHtml('editor', 'api-content.html');
+        log('XfEditor.downloadHtml()：已触发下载');
     });
     bind('btn-destroy', function () {
         if (!destroyed) {
@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function () {
             destroyed = true;
             log('destroy()：编辑器已销毁（再次点击重建）');
         } else {
-            editor = XF.init('editor', { height: 320 });
+            editor = XfEditor.init('editor', { height: 320 });
             destroyed = false;
             log('init()：编辑器已重建');
         }

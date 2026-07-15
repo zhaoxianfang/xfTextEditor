@@ -2,7 +2,7 @@
  * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
-CKEDITOR.plugins.setLang( 'filetools', 'es-mx', {
+XfEditor.plugins.setLang( 'filetools', 'es-mx', {
 	loadError: 'Ha ocurrido un error al leer el archivo',
 	networkError: 'Ha ocurrido un error de red durante la carga del archivo.',
 	httpError404: 'Se ha producido un error HTTP durante la subida de archivos (404: archivo no encontrado).',

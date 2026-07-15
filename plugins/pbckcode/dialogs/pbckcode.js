@@ -1,4 +1,4 @@
-CKEDITOR.dialog.add('pbckcodeDialog', function(editor) {
+XfEditor.dialog.add('pbckcodeDialog', function(editor) {
   var tab_sizes = ['1', '2', '4', '8'];
 
   // CKEditor variables
@@ -131,10 +131,10 @@ CKEDITOR.dialog.add('pbckcodeDialog', function(editor) {
       }
       // if there is no pre tag, it is an addition. Therefore, it is an edition
       if (!element || element.getName() !== 'pre') {
-        element = new CKEDITOR.dom.element('pre');
+        element = new XfEditor.dom.element('pre');
 
         if (shighlighter.getTag() !== 'pre') {
-          element.append(new CKEDITOR.dom.element('code'));
+          element.append(new XfEditor.dom.element('code'));
         }
         this.insertMode = true;
       }

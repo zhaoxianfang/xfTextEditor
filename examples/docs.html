@@ -189,7 +189,7 @@
                 <li><strong>文字 / 段落特效</strong>：渐变、发光、描边、提示框、卡片、时间轴、步骤条、进度条、统计数字、双栏、图文混排、折叠内容、按钮、分割线等 30+ 现代化网页效果，<strong>双击可再次编辑</strong>。</li>
                 <li>字数统计、自动保存（防丢稿）。</li>
                 <li>工具栏滚动吸附固定（stickytoolbar）。</li>
-                <li>增强预览 / 自包含 HTML 导出（xfpreview + XF 导出辅助，内联样式，离线可用）。</li>
+                <li>增强预览 / 自包含 HTML 导出（xfpreview + XfEditor 导出辅助，内联样式，离线可用）。</li>
             </ul>
         </div>
 
@@ -206,7 +206,7 @@
             <h3>2.2 创建编辑器（replace 方式）</h3>
             <div class="xf-code-wrap"><pre class="xf-code">&lt;textarea id="editor1"&gt;&lt;/textarea&gt;
 &lt;script&gt;
-    CKEDITOR.replace('editor1', {
+    XfEditor.replace('editor1', {
         language: 'zh-cn',
         height: 400
     });
@@ -215,20 +215,20 @@
             <h3>2.3 内联（inline）方式</h3>
             <div class="xf-code-wrap"><pre class="xf-code">&lt;div id="editor2" contenteditable="true"&gt;可编辑内容&lt;/div&gt;
 &lt;script&gt;
-    CKEDITOR.inline('editor2');
+    XfEditor.inline('editor2');
 &lt;/script&gt;</pre></div>
 
             <h3>2.4 使用配置文件（推荐）</h3>
             <p>编辑器会自动加载根目录下的 <code class="xf-inline">config.js</code>（精简配置）或
                <code class="xf-inline">config.full.js</code>（完整配置）。二者均定义
-               <code class="xf-inline">CKEDITOR.editorConfig</code> 函数，所有配置项（含自研插件
+               <code class="xf-inline">XfEditor.editorConfig</code> 函数，所有配置项（含自研插件
                <code class="xf-inline">xfeffects / stickytoolbar / xfpreview</code>、<code class="xf-inline">stylesSet</code>、
                行高、字号、上传地址、<code class="xf-inline">contentsCss</code> 等）在此函数中<strong>统一设置</strong>。</p>
             <p>项目内所有示例页（<code class="xf-inline">examples/*.html</code>）均通过
                <code class="xf-inline">&lt;script defer src="../config.full.js"&gt;</code> 引入完整配置，并在
-               <code class="xf-inline">js/xf.js</code> 中调用 <code class="xf-inline">XF.init(id, cfg)</code> 创建编辑器。
+               <code class="xf-inline">js/xf.js</code> 中调用 <code class="xf-inline">XfEditor.init(id, cfg)</code> 创建编辑器。
                页面只需声明本页<strong>独有的插件与工具栏</strong>（如 <code class="xf-inline">extraPlugins: 'chart'</code>），
-               <code class="xf-inline">XF.init</code> 会自动复用全局配置并把页面 <code class="xf-inline">extraPlugins</code>
+               <code class="xf-inline">XfEditor.init</code> 会自动复用全局配置并把页面 <code class="xf-inline">extraPlugins</code>
                追加到全局之后（自动去重），<strong>避免重复声明导致自研插件丢失</strong>。这是「把配置抽离到配置文件、示例页统一引用」的统一实践。</p>
             <div class="xf-code-wrap"><pre class="xf-code">&lt;!-- 示例页统一引入配置（defer 避免阻塞渲染） --&gt;
 &lt;script defer src="../ckeditor.js"&gt;&lt;/script&gt;
@@ -237,7 +237,7 @@
 
 &lt;script&gt;
   // 页面只叠加本页独有插件；其余基础能力全部来自 config.full.js
-  XF.init('editor', {
+  XfEditor.init('editor', {
     height: 360,
     extraPlugins: 'chart',
     toolbar: [ { name: 'insert', items: [ 'Chart' ] }, '/',
@@ -751,7 +751,7 @@
             <h4>5.2.15 xfeffects（文字 / 段落 / 布局特效）</h4>
             <ul>
                 <li>按钮：<code class="xf-inline">xfTexFx</code>（文字特效）、<code class="xf-inline">xfBlockFx</code>（段落特效），位于工具栏「xfstyles」分组；<code class="xf-inline">xfEditEffect</code>（编辑效果）按钮用于再次编辑已有特效。</li>
-                <li>实现：所有特效均为「语义化 class + 纯 CSS」，通过 <code class="xf-inline">editor.addCss()</code> 注入编辑器文档，无任何外部依赖，100% 离线可用；样式字符串同时挂到 <code class="xf-inline">CKEDITOR.tools.xfEffectsCss</code> 供预览 / 导出复用。</li>
+                <li>实现：所有特效均为「语义化 class + 纯 CSS」，通过 <code class="xf-inline">editor.addCss()</code> 注入编辑器文档，无任何外部依赖，100% 离线可用；样式字符串同时挂到 <code class="xf-inline">XfEditor.tools.xfEffectsCss</code> 供预览 / 导出复用。</li>
                 <li><strong>再次编辑（双击）</strong>：在编辑区内<strong>双击</strong>任意已插入的文字特效或段落特效，会像双击图片一样弹出对应编辑窗口——文字特效弹出 <code class="xf-inline">xfTexEdit</code> 对话框可重新选择 / 清除特效；段落特效弹出 <code class="xf-inline">xfBlockEdit</code> 对话框可修改内容与提示框变体。也可选中效果后点击工具栏「编辑效果」按钮（命令 <code class="xf-inline">xfEditEffect</code>）触发。</li>
             </ul>
             <p><strong>文字特效（共 14 种，选中文字后点击应用，再次点击取消）：</strong></p>
@@ -786,7 +786,7 @@
             <h4>5.2.17 xfpreview（增强预览 / 自包含导出）</h4>
             <ul>
                 <li>拦截原生 <code class="xf-inline">preview</code> 命令，<strong>默认以页面内同源模态浮层</strong>（iframe srcdoc）渲染当前内容，<strong>绝不新开浏览器标签页 / 跳转到其它窗口</strong>；浮层内提供「新窗口打开」按钮，可在显式用户操作下再开独立窗口，符合浏览器弹出策略。</li>
-                <li>预览页样式<strong>全部内联</strong>，不依赖任何外部 js / css 文件；统一复用 <code class="xf-inline">examples/js/xf.js</code> 中维护的 <code class="xf-inline">XF.getStandaloneCss()</code>（与导出、<code class="xf-inline">getHtml</code> 同一来源），确保预览、导出、编辑器三者展示完全一致。</li>
+                <li>预览页样式<strong>全部内联</strong>，不依赖任何外部 js / css 文件；统一复用 <code class="xf-inline">examples/js/xf.js</code> 中维护的 <code class="xf-inline">XfEditor.getStandaloneCss()</code>（与导出、<code class="xf-inline">getHtml</code> 同一来源），确保预览、导出、编辑器三者展示完全一致。</li>
                 <li><strong>资源完整 / 不丢失</strong>：导出与预览会把图标、图片、音视频等<strong>相对地址自动改写为绝对地址</strong>（CKEditor 自带资源一律基于「当前编辑器运行的域名前缀」计算绝对地址，禁用任何第三方 CDN），因此预览 / 导出的网页中：编辑器支持的图标、表情、排版样式与展示效果（含 xfeffects 特效、图表实时绘制 / 静态化、视频、音频、二维码等）均可<strong>完整、一致</strong>地呈现，不再出现「编辑器里有、预览 / getHtml 里丢」的不对称。</li>
                 <li><strong>跨域 / 弹窗安全</strong>：预览浮层使用同源 srcdoc，相对资源可正常加载，且与编辑器内展示完全一致，彻底避免 <code class="xf-inline">Blocked a frame ... cross-origin</code> 的 SecurityError 与「跳出当前网页 / 跳转到其它窗口」的异常。</li>
                 <li>预览模态浮层顶部工具条提供「打印」「新窗口打开」「下载 HTML」（保存为自包含 .html 文件）「复制 HTML」（生成自包含 HTML，可直接粘贴到任意页面独立呈现）与「关闭」操作。</li>
@@ -843,14 +843,14 @@
 
         <h2 id="api">八、JavaScript API</h2>
         <div class="xf-section">
-            <h3>8.1 全局 CKEDITOR</h3>
-            <div class="xf-code-wrap"><pre class="xf-code">CKEDITOR.replace( elementOrId, config );   // 替换元素创建编辑器
-CKEDITOR.inline( elementOrId, config );     // 内联编辑
-CKEDITOR.appendTo( container, config );     // 追加到容器
-CKEDITOR.instances;                          // 所有编辑器实例集合
-CKEDITOR.on('instanceCreated', fn);          // 实例创建事件
-CKEDITOR.getCsrfToken();                     // 获取 CSRF Token
-CKEDITOR.tools.*;                            // 工具方法集（含 xfEffectsCss）</pre></div>
+            <h3>8.1 全局 XfEditor</h3>
+            <div class="xf-code-wrap"><pre class="xf-code">XfEditor.replace( elementOrId, config );   // 替换元素创建编辑器
+XfEditor.inline( elementOrId, config );     // 内联编辑
+XfEditor.appendTo( container, config );     // 追加到容器
+XfEditor.instances;                          // 所有编辑器实例集合
+XfEditor.on('instanceCreated', fn);          // 实例创建事件
+XfEditor.getCsrfToken();                     // 获取 CSRF Token
+XfEditor.tools.*;                            // 工具方法集（含 xfEffectsCss）</pre></div>
 
             <h3>8.2 编辑器实例（editor）</h3>
             <div class="xf-code-wrap"><pre class="xf-code">editor.getData();                  // 获取 HTML 内容
@@ -864,8 +864,8 @@ editor.execCommand( 'bold' );      // 执行命令
 editor.config;                     // 当前配置
 editor.name;                       // 实例名（即元素 id）</pre></div>
 
-            <h3>8.3 内容导出辅助（XF 全局对象，examples/js/xf.js）</h3>
-            <p><code class="xf-inline">XF</code> 为示例页统一初始化与内容导出辅助对象，核心方法如下。
+            <h3>8.3 内容导出辅助（XfEditor 全局对象，examples/js/xf.js）</h3>
+            <p><code class="xf-inline">XfEditor</code> 为示例页统一初始化与内容导出辅助对象，核心方法如下。
                导出的 HTML 均为<strong>自包含</strong>（内联「基础排版 + 特效」样式），不依赖任何外部
                js / css 文件即可独立呈现，且展示效果与编辑器内完全一致。</p>
             <div class="xf-tip"><strong>资源路径与按需引入：</strong>片段 / 文档中若需引用插件资源（如图表
@@ -875,38 +875,63 @@ editor.name;                       // 实例名（即元素 id）</pre></div>
                对应 JS/CSS，否则不包含任何外部资源。</div>
             <table class="xf-params">
                 <tr><th>方法</th><th>参数</th><th>返回值</th><th>说明</th></tr>
-                <tr><td><code>XF.init(id, cfg)</code></td><td>id: 元素 id；cfg: 覆写配置</td><td>editor</td><td>创建编辑器，自动复用 config.full.js 并合并页面配置（extraPlugins 去重）。</td></tr>
-                <tr><td><code>XF.getHtml(id, opts)</code></td><td>opts.standalone / opts.full / opts.title</td><td>String</td><td>读取内容；standalone 返回内联样式片段（资源地址按当前域名计算、按需引入），full 返回完整文档（同 exportDocument）。</td></tr>
-                <tr><td><code>XF.exportDocument(id, title)</code></td><td>id；title 可选</td><td>String</td><td>导出完整自包含 HTML 文档字符串（含 <code>&lt;!DOCTYPE html&gt;</code>）。</td></tr>
-                <tr><td><code>XF.downloadHtml(id, filename)</code></td><td>id；filename 可选</td><td>—</td><td>触发浏览器下载为 .html 文件（自包含，离线可用）。</td></tr>
-                <tr><td><code>XF.getStandaloneCss()</code></td><td>—</td><td>String</td><td>仅获取内联样式字符串（基础 + 特效）。</td></tr>
-                <tr><td><code>XF.merge(cfg)</code></td><td>cfg</td><td>Object</td><td>合并全局配置与页面配置，返回最终配置（高级用法）。</td></tr>
-                <tr><td><code>XF.getCsrfToken()</code></td><td>—</td><td>String/Null</td><td>读取页面 csrf-token meta。</td></tr>
+                <tr><td><code>XfEditor.init(id, cfg)</code></td><td>id: 元素 id；cfg: 覆写配置</td><td>editor</td><td>创建编辑器，自动复用 config.full.js 并合并页面配置（extraPlugins 去重）。</td></tr>
+                <tr><td><code>XfEditor.getHtml(id, opts)</code></td><td>opts.standalone / opts.full / opts.title</td><td>String</td><td>读取内容；standalone 返回内联样式片段（资源地址按当前域名计算、按需引入），full 返回完整文档（同 exportDocument）。</td></tr>
+                <tr><td><code>XfEditor.exportDocument(id, title)</code></td><td>id；title 可选</td><td>String</td><td>导出完整自包含 HTML 文档字符串（含 <code>&lt;!DOCTYPE html&gt;</code>）。</td></tr>
+                <tr><td><code>XfEditor.downloadHtml(id, filename)</code></td><td>id；filename 可选</td><td>—</td><td>触发浏览器下载为 .html 文件（自包含，离线可用）。</td></tr>
+                <tr><td><code>XfEditor.getStandaloneCss()</code></td><td>—</td><td>String</td><td>仅获取内联样式字符串（基础 + 特效）。</td></tr>
+                <tr><td><code>XfEditor.merge(cfg)</code></td><td>cfg</td><td>Object</td><td>合并全局配置与页面配置，返回最终配置（高级用法）。</td></tr>
+                <tr><td><code>XfEditor.getCsrfToken()</code></td><td>—</td><td>String/Null</td><td>读取页面 csrf-token meta。</td></tr>
+                <tr><td><code>XfEditor.setTheme(theme, opts)</code></td><td>theme: 'dark'/'light'；opts.target / opts.editor</td><td>—</td><td>设置主题；默认作用于 &lt;html&gt; 整页（工具栏/底部/内容区实时切换），opts.target 指定容器、opts.editor 指定编辑器实例。</td></tr>
+                <tr><td><code>XfEditor.getTheme(opts)</code></td><td>opts.target / opts.editor</td><td>String</td><td>读取当前主题：'dark' / 'light'。</td></tr>
             </table>
             <div class="xf-code-wrap"><pre class="xf-code">// 初始化编辑器（复用 config.full.js 配置，页面只叠加本页独有项）
-XF.init('editor', { height: 360, extraPlugins: 'chart' });
+XfEditor.init('editor', { height: 360, extraPlugins: 'chart' });
 
 // 获取内容（普通 HTML 字符串，即 editor.getData()）
-XF.getHtml('editor');
+XfEditor.getHtml('editor');
 
 // 获取「自包含片段」：内联样式 + &lt;div class="xf-standalone"&gt;…&lt;/div&gt;
 // 可直接粘贴到任意页面独立呈现
-XF.getHtml('editor', { standalone: true });
+XfEditor.getHtml('editor', { standalone: true });
 
 // 获取「完整 HTML 文档字符串」（含 &lt;!DOCTYPE html&gt;，可保存为 .html 打开）
-XF.getHtml('editor', { full: true, title: '我的文章' });
+XfEditor.getHtml('editor', { full: true, title: '我的文章' });
 
 // 导出完整自包含文档字符串
-XF.exportDocument('editor', '我的文章');
+XfEditor.exportDocument('editor', '我的文章');
 
 // 触发浏览器下载为 .html 文件（自包含，离线可用）
-XF.downloadHtml('editor', 'my-article.html');
+XfEditor.downloadHtml('editor', 'my-article.html');
 
 // 仅获取内联样式字符串（基础 + 特效）
-XF.getStandaloneCss();</pre></div>
+XfEditor.getStandaloneCss();</pre></div>
+
+            <h4>8.3.1 暗色主题（Dark Theme）</h4>
+            <p>编辑器支持亮 / 暗双主题，且<strong>不影响编辑器之外的宿主页面</strong>。所有暗色样式以
+               「祖先元素含 <code class="xf-inline">data-theme="dark"</code>」为触发条件，切换主题只需设置 / 移除该属性，无需重新加载样式：</p>
+            <ul>
+                <li><strong>内容区</strong>（<code class="xf-inline">contents.css</code>）：作用于 <code class="xf-inline">.cke_editable</code> / <code class="xf-inline">.xf-rich-content</code> / <code class="xf-inline">.xf-standalone</code>；</li>
+                <li><strong>编辑器外壳</strong>（工具栏 <code class="xf-inline">.cke_top</code>、底部状态栏 <code class="xf-inline">.cke_bottom</code>、按钮、下拉、路径条、缩放角、折叠按钮、源码文本域、下拉面板、右键菜单等）：注意 CKEditor 已将皮肤 CSS <strong>内联进 ckeditor.js</strong>，直接修改 <code class="xf-inline">skins/moono-lisa/editor.css</code> 对运行时外壳无效；因此 <code class="xf-inline">XfEditor</code> 会在宿主页面 <code class="xf-inline">&lt;head&gt;</code> 注入一段作用域为 <code class="xf-inline">[data-theme="dark"]</code> 的外壳暗色样式（带 <code class="xf-inline">!important</code>）覆盖内联皮肤，使外壳随主题实时变暗。</li>
+            </ul>
+            <div class="xf-code-wrap"><pre class="xf-code">// 整页（含编辑器工具栏/底部/内容区）切换为暗色：在 &lt;html&gt; 上设置 data-theme="dark"
+XfEditor.setTheme('dark');                 // 等同 &lt;html data-theme="dark"&gt;
+XfEditor.setTheme('light');                // 恢复亮色
+
+// 仅作用于某个 DOM 容器（元素或选择器字符串）
+XfEditor.setTheme('dark', { target: '#wrap' });
+
+// 仅作用于某个编辑器实例（同时给 .cke 外壳容器 + 内容区 / iframe 文档设置）
+XfEditor.setTheme('dark', { editor: editor });
+
+// 读取当前主题
+XfEditor.getTheme();                       // 'dark' | 'light'</pre></div>
+            <div class="xf-tip">宿主页面也可直接书写 <code class="xf-inline">&lt;html lang="zh_CN" data-theme="dark"&gt;</code>，
+               编辑器会自动跟随（工具栏、底部、内容区一并变暗），无需任何 JS 调用。导出 / 预览文档同样支持暗色——
+               传入 <code class="xf-inline">{ theme: 'dark' }</code> 即可使生成的独立 HTML 整页暗色。</div>
             <div class="xf-tip">「自包含」实现要点：基础排版样式集中维护在
-                <code class="xf-inline">XF_BASE_CSS</code>（作用域限定于 <code class="xf-inline">.xf-standalone</code>），
-                特效样式复用 <code class="xf-inline">CKEDITOR.tools.xfEffectsCss</code>（由 xfeffects 注入），
+                <code class="xf-inline">BASE_CSS</code>（作用域限定于 <code class="xf-inline">.xf-standalone</code>），
+                特效样式复用 <code class="xf-inline">XfEditor.tools.xfEffectsCss</code>（由 xfeffects 注入），
                 两者拼接后内联。详见 <code class="xf-inline">examples/export.html</code> 演示页。</div>
 
             <h3>8.4 文件上传（fileTools）</h3>
@@ -993,7 +1018,7 @@ config.filebrowserUploadUrl =
                 <li><strong>启用 divarea</strong>：避免 iframe 带来的额外文档上下文与样式隔离开销。</li>
                 <li><strong>语言包裁剪</strong>：<code class="xf-inline">build-config.js</code> 的 <code class="xf-inline">languages</code> 仅保留 <code>zh-cn</code> 可显著减小体积（当前约 70 种语言）。</li>
                 <li><strong>外部资源本地化 / 禁用 CDN</strong>：pbckcode 的 Ace、chart 的 Chart.js 等均已下载到本地（<code class="xf-inline">plugins/pbckcode/lib/ace/</code>、<code class="xf-inline">plugins/chart/lib/chart.min.js</code>），不依赖任何外网；<code class="xf-inline">getHtml</code> / 导出的内容中若引用这些资源，其地址也统一基于当前域名计算，绝不指向 CDN。</li>
-                <li><strong>延迟加载</strong>：非首屏必需的编辑器可监听用户交互后再 <code class="xf-inline">CKEDITOR.replace</code>。</li>
+                <li><strong>延迟加载</strong>：非首屏必需的编辑器可监听用户交互后再 <code class="xf-inline">XfEditor.replace</code>。</li>
                 <li><strong>大文档优化</strong>：超长文档建议配合 <code class="xf-inline">config.allowedContent</code> 与 ACF 限制，减少 DOM 节点。</li>
             </ul>
         </div>
@@ -1150,10 +1175,10 @@ config.filebrowserUploadUrl =
                 <li>无按钮，启用即生效。页面滚动时工具栏被顶部遮挡则自动 sticky 固定并加阴影，回滚后恢复；自动避让固定头（<code>.xf-header</code>），销毁解绑监听。</li>
             </ul>
 
-            <h4>11.3.14 增强预览 / 自包含导出（xfpreview + XF）</h4>
+            <h4>11.3.14 增强预览 / 自包含导出（xfpreview + XfEditor）</h4>
             <ul>
                 <li>点击工具栏 <code class="xf-inline">Preview</code>（预览）按钮：<strong>默认以页面内同源模态浮层</strong>渲染当前内容（绝不新开标签页 / 跳转到其它窗口）；浮层内可点击「新窗口打开」在显式操作下开独立窗口，并提供打印 / 下载 HTML / 复制自包含 HTML / 关闭；样式与编辑器、导出同源，且相对图标 / 图片等会自动改写为绝对地址，不再出现不对称或跨域 SecurityError。</li>
-                <li>通过 <code>XF.getHtml(id,{standalone:true})</code> 获取内联样式片段、<code>XF.exportDocument(id)</code> 获取完整自包含文档、<code>XF.downloadHtml(id)</code> 下载 .html 文件——三者均内联全部 CSS；图表在导出文档中静态化为内联图片（真正离线可用），在预览 / 片段中按当前域名实时绘制，<strong>资源地址一律基于当前域名计算、禁用 CDN、按需引入</strong>。</li>
+                <li>通过 <code>XfEditor.getHtml(id,{standalone:true})</code> 获取内联样式片段、<code>XfEditor.exportDocument(id)</code> 获取完整自包含文档、<code>XfEditor.downloadHtml(id)</code> 下载 .html 文件——三者均内联全部 CSS；图表在导出文档中静态化为内联图片（真正离线可用），在预览 / 片段中按当前域名实时绘制，<strong>资源地址一律基于当前域名计算、禁用 CDN、按需引入</strong>。</li>
             </ul>
         </div>
 
@@ -1178,7 +1203,7 @@ config.filebrowserUploadUrl =
                 保持 <code class="xf-inline">pasteFromWordIgnoreFontFace=true</code> 与适当的 <code class="xf-inline">pasteFromWordRemoveStyle</code>；必要时启用 <code class="xf-inline">forcePasteAsPlainText</code>。
             </div></details>
             <details class="xf-detail"><summary>Q7：特效样式 / 图表在导出 / 预览页不显示？</summary><div>
-                导出与预览均通过 <code class="xf-inline">XF.getStandaloneCss()</code> 内联「基础 + 特效」样式，且图表会自动转为<strong>内联 data:image/png 静态图片</strong>，因此不依赖任何外部 js / css 即可完整呈现，且与编辑器内一致。请确保页面已加载 <code class="xf-inline">plugins/xfeffects/plugin.js</code>（使 <code class="xf-inline">CKEDITOR.tools.xfEffectsCss</code> 生效）、<code class="xf-inline">plugins/chart/plugin.js</code>（图表静态化依赖 <code class="xf-inline">CKEDITOR.tools.xfChartToImage</code>）与 <code class="xf-inline">js/xf.js</code>。
+                导出与预览均通过 <code class="xf-inline">XfEditor.getStandaloneCss()</code> 内联「基础 + 特效」样式，且图表会自动转为<strong>内联 data:image/png 静态图片</strong>，因此不依赖任何外部 js / css 即可完整呈现，且与编辑器内一致。请确保页面已加载 <code class="xf-inline">plugins/xfeffects/plugin.js</code>（使 <code class="xf-inline">XfEditor.tools.xfEffectsCss</code> 生效）、<code class="xf-inline">plugins/chart/plugin.js</code>（图表静态化依赖 <code class="xf-inline">XfEditor.tools.xfChartToImage</code>）与 <code class="xf-inline">js/xf.js</code>。
             </div></details>
             <details class="xf-detail"><summary>Q8：多语言包体积过大？</summary><div>
                 编辑 <code class="xf-inline">build-config.js</code> 的 <code class="xf-inline">languages</code>，仅保留所需语言后重新构建。

@@ -2,7 +2,7 @@
  * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
-CKEDITOR.plugins.setLang( 'filetools', 'it', {
+XfEditor.plugins.setLang( 'filetools', 'it', {
 	loadError: 'Si è verificato un errore durante la lettura del file.',
 	networkError: 'Si è verificato un errore di rete durante il caricamento del file.',
 	httpError404: 'Si è verificato un errore HTTP durante il caricamento del file (404: file non trovato).',

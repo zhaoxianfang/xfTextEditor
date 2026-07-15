@@ -28,7 +28,7 @@
 
 ## 二、核心特性
 
-1. **三者一致**：编辑器内、纯预览窗口、`XF.getHtml({standalone:true})` 三者的排版与特效展示**完全一致**。
+1. **三者一致**：编辑器内、纯预览窗口、`XfEditor.getHtml({standalone:true})` 三者的排版与特效展示**完全一致**。
 2. **自包含导出与预览**：导出的完整 HTML 在 `<head>` 内联全部 CSS，图表自动转为 `data:image/png` 静态图片，**无需联网即可完整渲染**；`getHtml({standalone})` 片段同样内联全部样式，图表按需在运行时由「当前域名」下的本地 Chart.js 实时绘制（未使用图表时零外部资源）。
 3. **40+ 插件能力**：
    - 文字特效（`xfeffects` 文字组）
@@ -81,7 +81,7 @@ xfTextEditor/
 <!-- 初始化（使用完整配置） -->
 <script src="config.full.js"></script>
 <script>
-    CKEDITOR.replace('editor1', window.XF_CONFIG_FULL);
+    XfEditor.replace('editor1', window.XfEditor_CONFIG_FULL);
 </script>
 ```
 
@@ -97,8 +97,8 @@ xfTextEditor/
 <textarea id="editor"></textarea>
 
 <script>
-    // 初始化并返回 XF 实例
-    var XF = window.XF.init('editor', { /* 选项 */ });
+    // 初始化并返回 XfEditor 实例
+    var XfEditor = window.XfEditor.init('editor', { /* 选项 */ });
 </script>
 ```
 
@@ -106,17 +106,36 @@ xfTextEditor/
 
 ## 五、关键 API
 
-所有 API 通过全局 `XF` 对象暴露（定义于 `examples/js/xf.js`）。
+所有 API 通过全局 `XfEditor` 对象暴露（定义于 `examples/js/xf.js`）。
 
 | 方法 | 说明 |
 | --- | --- |
-| `XF.init(id, opts)` | 初始化编辑器，返回实例 |
-| `XF.getHtml(id, {standalone:true})` | 获取**内联全部 CSS** 的 HTML 片段；资源地址（如图表 Chart.js）按当前域名计算，未用到对应功能则不引入任何外部资源 |
-| `XF.exportDocument(id)` | 获取**完整自包含 HTML 文档**（含 `<!DOCTYPE>` 与内联 `<style>`） |
-| `XF.downloadHtml(id)` | 直接下载导出的 `.html` 文件 |
-| `XF.renderChartsToImages(html)` | 工具方法：把图表 div 转为内联图片 |
-| `XF.renderSelfContained(html)` | 工具方法：生成最终自包含 HTML（图表静态化） |
-| `XF.getStandaloneCss()` | 返回内联样式字符串（基础 + 特效） |
+| `XfEditor.init(id, opts)` | 初始化编辑器，返回实例 |
+| `XfEditor.getHtml(id, {standalone:true})` | 获取**内联全部 CSS** 的 HTML 片段；资源地址（如图表 Chart.js）按当前域名计算，未用到对应功能则不引入任何外部资源 |
+| `XfEditor.exportDocument(id)` | 获取**完整自包含 HTML 文档**（含 `<!DOCTYPE>` 与内联 `<style>`） |
+| `XfEditor.downloadHtml(id)` | 直接下载导出的 `.html` 文件 |
+| `XfEditor.renderChartsToImages(html)` | 工具方法：把图表 div 转为内联图片 |
+| `XfEditor.renderSelfContained(html)` | 工具方法：生成最终自包含 HTML（图表静态化） |
+| `XfEditor.getStandaloneCss()` | 返回内联样式字符串（基础 + 特效） |
+| `XfEditor.setTheme(theme, opts)` | 设置主题：`'dark'` / `'light'`；`opts.target` 指定容器（元素或选择器）、`opts.editor` 指定编辑器实例；默认作用于 `<html>`，整页（含编辑器工具栏 / 底部 / 内容区）实时切换 |
+| `XfEditor.getTheme(opts)` | 读取当前主题：`'dark'` / `'light'`（`opts` 同 `setTheme`） |
+
+### 暗色主题（Dark Theme）
+
+编辑器支持亮 / 暗双主题，且**不影响编辑器之外的宿主页面**。
+
+- **机制**：所有暗色样式以「祖先元素含 `data-theme="dark"`」为触发条件，切换主题只需设置 / 移除该属性，无需重新加载样式：
+  - 内容区（`contents.css`，由 CKEditor 注入到编辑器 iframe / 内容文档）：作用于 `.cke_editable` / `.xf-rich-content` / `.xf-standalone`；
+  - 编辑器外壳（工具栏 `.cke_top`、底部 `.cke_bottom`、按钮、下拉、路径条、缩放角、折叠按钮、源码文本域、下拉面板、右键菜单等）：**注意 CKEditor 已将皮肤 CSS 内联进 `ckeditor.js`**，直接修改 `skins/moono-lisa/editor.css` 对运行时外壳无效；因此 `XfEditor` 会在宿主页面 `<head>` 注入一段作用域为 `[data-theme="dark"]` 的外壳暗色样式（带 `!important`）来覆盖内联皮肤，使外壳随主题实时变暗。
+- **使用**：
+  ```js
+  XfEditor.setTheme('dark');                 // 整页 <html> 切暗色（工具栏/底部/内容区一并变暗）
+  XfEditor.setTheme('light');                // 恢复亮色
+  XfEditor.setTheme('dark', { target: '#wrap' });      // 仅某容器暗色
+  XfEditor.setTheme('dark', { editor: editor });      // 仅某编辑器实例暗色
+  XfEditor.getTheme();                       // 'dark' | 'light'
+  ```
+  宿主页面也可直接书写 `<html lang="zh_CN" data-theme="dark">`，编辑器会自动跟随。
 
 > **资源路径说明（重要）**：`getHtml` / `exportDocument` 返回的 HTML 中所有插件资源地址
 > （如图表 `chart.min.js`、`chart.css`）均通过 `getAssetBaseUrl()` 基于「当前编辑器运行的域名前缀」
@@ -131,8 +150,8 @@ xfTextEditor/
 为保证「编辑器内 = 纯预览 = getHtml」三者完全一致，本项目做了如下设计：
 
 1. **单一样式真相源**：编辑器 iframe 内的样式来自 `contents.css`；
-   预览 / 导出则通过 `XF.getStandaloneCss()` 内联
-   `XF_BASE_CSS`（基础排版）+ `CKEDITOR.tools.xfEffectsCss`（特效，由 `xfeffects` 插件注入），
+   预览 / 导出则通过 `XfEditor.getStandaloneCss()` 内联
+   `BASE_CSS`（基础排版）+ `XfEditor.tools.xfEffectsCss`（特效，由 `xfeffects` 插件注入），
    二者与 `contents.css` 完全对应，杜绝样式漂移。
 2. **图表实时绘制 + 静态兜底**：`chart` 插件在 `getData()` 时输出 `<div class="chartjs">`。
    预览（iframe/srcdoc）与 `getHtml` 片段会在运行时注入「当前域名下的本地 Chart.js +
@@ -202,7 +221,7 @@ config.filebrowserImageUploadUrl = '/upload/image';
 ## 十一、常见问题（FAQ）
 
 - **Q：导出的 HTML 打开后是白板 / 无样式？**
-  请使用 `XF.getHtml(id,{standalone:true})` 或 `XF.exportDocument(id)` 获取内联样式的版本；
+  请使用 `XfEditor.getHtml(id,{standalone:true})` 或 `XfEditor.exportDocument(id)` 获取内联样式的版本；
   直接 `editor.getData()` 仅返回数据 HTML，需自行引入 `contents.css`。
 
 - **Q：预览 / 导出的图表是空白？**
@@ -211,7 +230,7 @@ config.filebrowserImageUploadUrl = '/upload/image';
   资源地址全部基于当前域名计算，不依赖任何 CDN。
 
 - **Q：特效在导出 / 预览页不显示？**
-  确保已加载 `plugins/xfeffects/plugin.js`（使 `CKEDITOR.tools.xfEffectsCss` 生效）。
+  确保已加载 `plugins/xfeffects/plugin.js`（使 `XfEditor.tools.xfEffectsCss` 生效）。
 
 - **Q：图表能在离线环境用吗？**
   可以。`chart` 插件使用本地 `chart.min.js`，且导出时图表已静态化为图片，完全离线可用。

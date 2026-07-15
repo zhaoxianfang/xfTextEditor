@@ -2,7 +2,7 @@
  * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
-CKEDITOR.plugins.setLang( 'filetools', 'ja', {
+XfEditor.plugins.setLang( 'filetools', 'ja', {
 	loadError: 'ファイルの読み込み中にエラーが発生しました。',
 	networkError: 'ファイルのアップロード中にネットワークエラーが発生しました。',
 	httpError404: 'ファイルのアップロード中にHTTPエラーが発生しました。(404: File not found)',

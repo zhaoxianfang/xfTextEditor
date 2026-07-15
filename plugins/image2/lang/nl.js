@@ -2,7 +2,7 @@
 Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 */
-CKEDITOR.plugins.setLang( 'image2', 'nl', {
+XfEditor.plugins.setLang( 'image2', 'nl', {
 	alt: 'Alternatieve tekst',
 	btnUpload: 'Naar server verzenden',
 	captioned: 'Afbeelding met onderschrift',

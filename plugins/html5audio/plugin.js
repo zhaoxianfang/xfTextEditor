@@ -1,4 +1,4 @@
-CKEDITOR.plugins.add( 'html5audio', {
+XfEditor.plugins.add( 'html5audio', {
     requires: 'widget',
     lang: 'bg,ca,de,de-ch,el,en,eu,es,fr,ru,uk,uz,zh-cn,fa,pl',
     icons: 'html5audio',
@@ -66,7 +66,7 @@ CKEDITOR.plugins.add( 'html5audio', {
                     // and there isn't a child (the audio element)
                     if ( !audioElement ) {
                         // Create a new <audio> element.
-                        audioElement = new CKEDITOR.dom.element( 'audio' );
+                        audioElement = new XfEditor.dom.element( 'audio' );
                         // Set the controls attribute.
                         audioElement.setAttribute( 'controls', 'controls' );
                         // Append it to the container of the plugin.
@@ -129,11 +129,11 @@ CKEDITOR.plugins.add( 'html5audio', {
                 if ( audioElement &&
                      audioElement.hasClass &&
                      audioElement.hasClass( 'ckeditor-html5-audio' ) ) {
-                    return { html5audioPropertiesItem: CKEDITOR.TRISTATE_OFF };
+                    return { html5audioPropertiesItem: XfEditor.TRISTATE_OFF };
                 }
             });
         }
 
-        CKEDITOR.dialog.add( 'html5audio', this.path + 'dialogs/html5audio.js' );
+        XfEditor.dialog.add( 'html5audio', this.path + 'dialogs/html5audio.js' );
     }
 } );

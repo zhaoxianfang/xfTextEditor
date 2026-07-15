@@ -8,13 +8,13 @@
  *		mode using a DIV element.
  */
 
-CKEDITOR.plugins.add( 'divarea', {
+XfEditor.plugins.add( 'divarea', {
 	afterInit: function( editor ) {
 		// Add the "wysiwyg" mode.
 		// Do that in the afterInit function, so it'll eventually overwrite
 		// the mode defined by the wysiwygarea plugin.
 		editor.addMode( 'wysiwyg', function( callback ) {
-			var editingBlock = CKEDITOR.dom.element.createFromHtml(
+			var editingBlock = XfEditor.dom.element.createFromHtml(
 					'<div class="cke_wysiwyg_div cke_reset cke_enable_context_menu" hidefocus="true"></div>'
 				);
 
@@ -23,7 +23,7 @@ CKEDITOR.plugins.add( 'divarea', {
 
 			editingBlock = editor.editable( editingBlock );
 
-			editingBlock.detach = CKEDITOR.tools.override( editingBlock.detach,
+			editingBlock.detach = XfEditor.tools.override( editingBlock.detach,
 				function( org ) {
 					return function() {
 						org.apply( this, arguments );

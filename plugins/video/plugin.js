@@ -4,28 +4,28 @@
  * http://www.absyx.fr
  */
 
-CKEDITOR.tools.createImageData = function(dimensions) {
+XfEditor.tools.createImageData = function(dimensions) {
   return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="' + dimensions.width + '" height="' + dimensions.height + '"></svg>');
 };
 
-CKEDITOR.plugins.add('video', {
+XfEditor.plugins.add('video', {
   requires: 'dialog,fakeobjects',
   lang: 'zh-cn',
   icons: 'video',
   hidpi: true,
   onLoad: function() {
-    var url = CKEDITOR.getUrl(this.path + 'images/placeholder.png');
-    CKEDITOR.addCss('img.cke-video{background:#f8f8f8 url(' + url + ') center center no-repeat;outline:1px solid #ccc;outline-offset:-1px;min-width:192px;min-height:108px;max-width:100%;width:auto!important;height:auto!important;}');
+    var url = XfEditor.getUrl(this.path + 'images/placeholder.png');
+    XfEditor.addCss('img.cke-video{background:#f8f8f8 url(' + url + ') center center no-repeat;outline:1px solid #ccc;outline-offset:-1px;min-width:192px;min-height:108px;max-width:100%;width:auto!important;height:auto!important;}');
   },
   init: function(editor) {
-    editor.addCommand('video', new CKEDITOR.dialogCommand('video', {
+    editor.addCommand('video', new XfEditor.dialogCommand('video', {
       allowedContent: 'video[autoplay,controls,height,loop,muted,preload,!src,width]'
     }));
     editor.ui.addButton('Video', {
       label: editor.lang.video.button,
       command: 'video'
     });
-    CKEDITOR.dialog.add('video', this.path + 'dialogs/video.js');
+    XfEditor.dialog.add('video', this.path + 'dialogs/video.js');
     editor.on('doubleclick', function(e) {
       var element = e.data.element;
       if (element && element.is('img') && !element.isReadOnly() && element.data('cke-real-element-type') == 'video') {
@@ -45,13 +45,13 @@ CKEDITOR.plugins.add('video', {
     if (editor.contextMenu) {
       editor.contextMenu.addListener(function(element) {
         if (element && element.is('img') && !element.isReadOnly() && element.data('cke-real-element-type') == 'video') {
-          return {video: CKEDITOR.TRISTATE_OFF};
+          return {video: XfEditor.TRISTATE_OFF};
         }
       });
     }
     editor.filter.addElementCallback(function(element) {
       if (element.name == 'cke:video') {
-        return CKEDITOR.FILTER_SKIP_TREE;
+        return XfEditor.FILTER_SKIP_TREE;
       }
     });
     editor.lang.fakeobjects.video = editor.lang.video.button;
@@ -68,9 +68,9 @@ CKEDITOR.plugins.add('video', {
       dataFilter.addRules({
         elements: {
           'cke:video': function(element) {
-            var attributes = CKEDITOR.tools.extend({}, element.attributes);
+            var attributes = XfEditor.tools.extend({}, element.attributes);
             element = editor.createFakeParserElement(element, 'cke-video', 'video', false);
-            element.attributes.src = CKEDITOR.tools.createImageData(attributes);
+            element.attributes.src = XfEditor.tools.createImageData(attributes);
             return element;
           }
         }

@@ -1,4 +1,4 @@
-CKEDITOR.plugins.setLang("pbckcode", "zh-cn",
+XfEditor.plugins.setLang("pbckcode", "zh-cn",
   {
     title: '代码编辑器',
     addCode: '添加代码',

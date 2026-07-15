@@ -6,7 +6,7 @@ function getCsrfToken() {
     const meta = document.querySelector('meta[name="csrf-token"]');
     return meta ? meta.getAttribute('content') : null;
 }
-CKEDITOR.editorConfig = function( config ) {
+XfEditor.editorConfig = function( config ) {
     // Define changes to default configuration here. For example:
     config.language = 'zh-cn';
     // config.uiColor = '#AADC6E';
@@ -113,7 +113,7 @@ CKEDITOR.editorConfig = function( config ) {
     // divarea 模式下不会自动注入 contents.css，这里把编辑器内容基础排版样式
     // 写入 config.contentsCss，使「编辑区」与「生成网页」样式一致（特效样式由
     // xfeffects 插件通过 editor.addCss 注入，二者互补）。
-    config.contentsCss = [ CKEDITOR.getUrl('contents.css') ];
+    config.contentsCss = [ XfEditor.getUrl('contents.css') ];
 
     config.editorplaceholder = '请在此输入内容,提示：拖动文件到编辑器内可以进行上传';
     // chart 图表 显示条数

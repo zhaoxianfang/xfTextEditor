@@ -2,7 +2,7 @@
 Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 */
-CKEDITOR.plugins.setLang( 'image2', 'sr-latn', {
+XfEditor.plugins.setLang( 'image2', 'sr-latn', {
 	alt: 'Alternativni tekst',
 	btnUpload: 'Pošalji na server',
 	captioned: 'Slika sa natpisom',

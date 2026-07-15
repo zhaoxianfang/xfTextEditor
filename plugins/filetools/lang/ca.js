@@ -2,7 +2,7 @@
  * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
-CKEDITOR.plugins.setLang( 'filetools', 'ca', {
+XfEditor.plugins.setLang( 'filetools', 'ca', {
 	loadError: 'S\'ha produït un error durant la lectura del fitxer.',
 	networkError: 'S\'ha produït un error de xarxa durant la càrrega del fitxer.',
 	httpError404: 'S\'ha produït un error HTTP durant la càrrega del fitxer (404: Fitxer no trobat).',

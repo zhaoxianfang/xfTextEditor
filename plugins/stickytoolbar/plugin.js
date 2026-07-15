@@ -8,7 +8,7 @@
 ( function() {
     'use strict';
 
-    CKEDITOR.plugins.add( 'stickytoolbar', {
+    XfEditor.plugins.add( 'stickytoolbar', {
         init: function( editor ) {
             editor.on( 'instanceReady', function() {
                 var container = editor.container;           // 最外层 .cke 容器

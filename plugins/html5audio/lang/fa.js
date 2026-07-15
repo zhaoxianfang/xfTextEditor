@@ -1,4 +1,4 @@
-CKEDITOR.plugins.setLang( 'html5audio', 'fa', {
+XfEditor.plugins.setLang( 'html5audio', 'fa', {
     button: 'اضافه کردن فایل صوتی',
     title: 'اضافه کردن فایل صوتی به شکل HTML5',
     infoLabel: 'اطلاعات فایل صوتی',

@@ -2,7 +2,7 @@
  * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
-CKEDITOR.plugins.setLang( 'filetools', 'ko', {
+XfEditor.plugins.setLang( 'filetools', 'ko', {
 	loadError: '파일을 읽는 중 오류가 발생했습니다.',
 	networkError: '파일 업로드 중 네트워크 오류가 발생했습니다.',
 	httpError404: '파일 업로드중 HTTP 오류가 발생했습니다 (404: 파일 찾을수 없음).',

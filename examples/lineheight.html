@@ -32,7 +32,7 @@
         <tr><th>配置项</th><th>说明</th></tr>
         <tr><td><code>line_height</code></td><td>行高可选值列表，用分号分隔，如 <code>normal;1em;1.5em;2em</code>。</td></tr>
     </table>
-    <pre class="xf-code">CKEDITOR.replace('editor', {
+    <pre class="xf-code">XfEditor.replace('editor', {
     extraPlugins: 'lineheight',
     line_height: 'normal;0px;5px;10px;1em;1.5em;2em;3em'
 });</pre>
@@ -42,7 +42,7 @@
 document.addEventListener('DOMContentLoaded', function () {
 // 基础能力由 config.full.js 统一提供（已含 lineheight 与丰富行高集合）；
     // 此处叠加本页特定的行高可选值做演示。
-    XF.init('editor', {
+    XfEditor.init('editor', {
         height: 300,
         extraPlugins: 'lineheight',
         line_height: 'normal;0px;5px;10px;0.5em;1em;1.5em;2em;3em;4em'

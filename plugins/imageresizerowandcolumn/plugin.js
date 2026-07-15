@@ -1,20 +1,20 @@
-﻿/**
+/**
  * @license Copyright (c) 2003-2017, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or http://ckeditor.com/license
  */
 
 ( function() {
-    var pxUnit = CKEDITOR.tools.cssLength,
-        needsIEHacks = CKEDITOR.env.ie && ( CKEDITOR.env.ie7Compat || CKEDITOR.env.quirks );
+    var pxUnit = XfEditor.tools.cssLength,
+        needsIEHacks = XfEditor.env.ie && ( XfEditor.env.ie7Compat || XfEditor.env.quirks );
 
     function getWidth( el ) {
 
-        return CKEDITOR.env.ie ? el.$.clientWidth : parseInt( el.$.width, 10 );
+        return XfEditor.env.ie ? el.$.clientWidth : parseInt( el.$.width, 10 );
     }
 
     function getHeight( el ) {
 
-        return CKEDITOR.env.ie ? el.$.clientHeight : parseInt( el.$.height, 10 );
+        return XfEditor.env.ie ? el.$.clientHeight : parseInt( el.$.height, 10 );
     }
 
     function buildImgRowPillars(img){
@@ -153,7 +153,7 @@
                 var leftCell = leftSideCells[ i ];
 
                 // Defer the resizing to avoid any interference among cells.
-                CKEDITOR.tools.setTimeout( function( leftCell, leftOldWidth ) {
+                XfEditor.tools.setTimeout( function( leftCell, leftOldWidth ) {
                     // 1px is the minimum valid width (http://dev.ckeditor.com/ticket/11626).
 
                      leftCell && leftCell.setStyle( 'width', pxUnit( Math.max( leftOldWidth + direction, 1 ) ) );
@@ -197,7 +197,7 @@
 
         document = editor.document;
 
-        resizer = CKEDITOR.dom.element.createFromHtml( '<div data-cke-temp=1 contenteditable=false unselectable=on ' +
+        resizer = XfEditor.dom.element.createFromHtml( '<div data-cke-temp=1 contenteditable=false unselectable=on ' +
             'style="position:absolute;cursor:col-resize;filter:alpha(opacity=0);opacity:0;' +
             'padding:0;background-color:#004;background-image:none;border:0px none;z-index:10"></div>', document );
 
@@ -341,7 +341,7 @@
                 // 属于从表格缩放复制残留的死代码，会在非严格模式下创建隐式全局变量 table，
                 // 且对图片缩放毫无作用，故删除。
                 // Defer the resizing to avoid any interference among cells.
-                CKEDITOR.tools.setTimeout( function( leftCell, leftOldHeight ) {
+                XfEditor.tools.setTimeout( function( leftCell, leftOldHeight ) {
                     // 1px is the minimum valid height (http://dev.ckeditor.com/ticket/11626).
                     leftCell && leftCell.setStyle( 'height', pxUnit( Math.max( leftOldHeight + direction, 1 ) ) );
 
@@ -382,7 +382,7 @@
 
         document = editor.document;
 
-        resizer = CKEDITOR.dom.element.createFromHtml( '<div id="resizer" data-cke-temp=1 contenteditable=false unselectable=on ' +
+        resizer = XfEditor.dom.element.createFromHtml( '<div id="resizer" data-cke-temp=1 contenteditable=false unselectable=on ' +
             'style="position:absolute;cursor:row-resize;filter:alpha(opacity=0);opacity:0;' +
             'padding:0;background-color:#004;background-image:none;border:0px none;z-index:10"></div>', document );
 
@@ -467,7 +467,7 @@
             if ( !target.is( 'table' ) )
                 return;
 
-            var dest = new CKEDITOR.dom.element( evt.data.$.relatedTarget || evt.data.$.toElement );
+            var dest = new XfEditor.dom.element( evt.data.$.relatedTarget || evt.data.$.toElement );
             while ( dest && dest.$ && !dest.equals( target ) && !dest.is( 'body' ) )
                 dest = dest.getParent();
             if ( !dest || dest.equals( target ) )
@@ -478,7 +478,7 @@
         evt.removeListener();
     }
 
-    CKEDITOR.plugins.add( 'imageresizerowandcolumn', {
+    XfEditor.plugins.add( 'imageresizerowandcolumn', {
 
         init: function( editor ) {
             editor.on( 'contentDom', function() {
@@ -494,7 +494,7 @@
 
                     // FF may return document and IE8 some UFO (object with no nodeType property...)
                     // instead of an element (http://dev.ckeditor.com/ticket/11823).
-                    if ( target.type != CKEDITOR.NODE_ELEMENT )
+                    if ( target.type != XfEditor.NODE_ELEMENT )
                         return;
 
                     var pageX = evt.getPageOffset().x;

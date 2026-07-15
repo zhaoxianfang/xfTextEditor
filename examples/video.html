@@ -29,7 +29,7 @@
        支持设置 URL、宽高、自动播放、循环、静音、预加载等属性。</p>
     <div class="xf-editor-wrap"><textarea id="editor"></textarea></div>
     <h2>配置</h2>
-    <pre class="xf-code">CKEDITOR.replace('editor', {
+    <pre class="xf-code">XfEditor.replace('editor', {
     extraPlugins: 'video,fakeobjects',
     toolbar: [ [ 'Video' ] ]   // 仅显示视频按钮做演示
 });</pre>
@@ -43,7 +43,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 // 基础能力由 config.full.js 统一提供；此处叠加 video 插件与自定义工具栏。
-    XF.init('editor', {
+    XfEditor.init('editor', {
         height: 320,
         extraPlugins: 'video,fakeobjects',
         toolbar: [ { name: 'insert', items: [ 'Video' ] }, '/', { name: 'xfstyles', items: [ 'xfTexFx', 'xfBlockFx', 'xfEditEffect' ] } ]

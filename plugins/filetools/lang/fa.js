@@ -2,7 +2,7 @@
  * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
-CKEDITOR.plugins.setLang( 'filetools', 'fa', {
+XfEditor.plugins.setLang( 'filetools', 'fa', {
 	loadError: 'هنگام خواندن فایل، خطایی رخ داد.',
 	networkError: 'هنگام آپلود فایل خطای شبکه رخ داد.',
 	httpError404: 'هنگام آپلود فایل خطای HTTP رخ داد (404: فایل یافت نشد).',

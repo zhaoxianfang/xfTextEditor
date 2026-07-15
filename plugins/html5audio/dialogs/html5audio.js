@@ -1,4 +1,4 @@
-CKEDITOR.dialog.add( 'html5audio', function( editor ) {
+XfEditor.dialog.add( 'html5audio', function( editor ) {
     return {
         title: editor.lang.html5audio.title,
         minWidth: 500,
@@ -18,7 +18,7 @@ CKEDITOR.dialog.add( 'html5audio', function( editor ) {
                         id: 'url',
                         label: editor.lang.common.url,
                         required: true,
-                        validate: CKEDITOR.dialog.validate.notEmpty( editor.lang.html5audio.urlMissing ),
+                        validate: XfEditor.dialog.validate.notEmpty( editor.lang.html5audio.urlMissing ),
                         setup: function( widget ) {
                             this.setValue( widget.data.src );
                         },

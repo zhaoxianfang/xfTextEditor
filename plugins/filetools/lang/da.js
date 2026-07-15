@@ -2,7 +2,7 @@
  * @license Copyright (c) 2003-2021, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
-CKEDITOR.plugins.setLang( 'filetools', 'da', {
+XfEditor.plugins.setLang( 'filetools', 'da', {
 	loadError: 'Der skete en fejl ved indlæsningen af filen.',
 	networkError: 'Der skete en netværks fejl under uploadingen.',
 	httpError404: 'Der skete en HTTP fejl under uploadingen (404: File not found).',

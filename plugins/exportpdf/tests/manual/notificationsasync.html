@@ -9,7 +9,7 @@
 <script>
 	exportPdfUtils.initManualTest();
 
-	var editor1 = CKEDITOR.replace( 'editor1', exportPdfUtils.getDefaultConfig( 'manual' ) );
+	var editor1 = XfEditor.replace( 'editor1', exportPdfUtils.getDefaultConfig( 'manual' ) );
 
 	editor1.on( 'exportPdf', function( evt ) {
 		if ( !evt.data.asyncDone ) {
@@ -26,7 +26,7 @@
 		}
 	}, null, null, 1 );
 
-	var editor2 = CKEDITOR.replace( 'editor2', exportPdfUtils.getDefaultConfig( 'manual' ) );
+	var editor2 = XfEditor.replace( 'editor2', exportPdfUtils.getDefaultConfig( 'manual' ) );
 
 	editor2.on( 'exportPdf', function( evt ) {
 		if ( !evt.data.asyncDone ) {

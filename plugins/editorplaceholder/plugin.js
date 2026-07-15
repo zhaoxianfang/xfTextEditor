@@ -7,13 +7,13 @@
  * @fileOverview Simple CKEditor 4 plugin that adds placeholder text to the editor.
  */
 ( function() {
-	CKEDITOR.plugins.add( 'editorplaceholder', {
+	XfEditor.plugins.add( 'editorplaceholder', {
 		isSupportedEnvironment: function() {
-			return !CKEDITOR.env.ie || CKEDITOR.env.version >= 9;
+			return !XfEditor.env.ie || XfEditor.env.version >= 9;
 		},
 
 		onLoad: function() {
-			CKEDITOR.addCss( CKEDITOR.plugins.editorplaceholder.styles );
+			XfEditor.addCss( XfEditor.plugins.editorplaceholder.styles );
 		},
 
 		init: function( editor ) {
@@ -37,11 +37,11 @@
 	 * Namespace providing the configuration for the Editor Placeholder plugin.
 	 *
 	 * @singleton
-	 * @class CKEDITOR.plugins.editorplaceholder
+	 * @class XfEditor.plugins.editorplaceholder
 	 * @since 4.15.0
-	 * @member CKEDITOR.plugins
+	 * @member XfEditor.plugins
 	 */
-	CKEDITOR.plugins.editorplaceholder = {
+	XfEditor.plugins.editorplaceholder = {
 		/**
 		 * Styles that would be applied to the editor by the placeholder text when visible.
 		 *
@@ -59,7 +59,7 @@
 	};
 
 	function bindPlaceholderEvents( editor, events ) {
-		CKEDITOR.tools.array.forEach( events, function( event ) {
+		XfEditor.tools.array.forEach( events, function( event ) {
 			editor.on( event, togglePlaceholder, null, { editor: editor } );
 		} );
 	}
@@ -112,7 +112,7 @@
 	 *
 	 * @cfg {String} [editorplaceholder='']
 	 * @since 4.15.0
-	 * @member CKEDITOR.config
+	 * @member XfEditor.config
 	 */
-	CKEDITOR.config.editorplaceholder = '';
+	XfEditor.config.editorplaceholder = '';
 }() );

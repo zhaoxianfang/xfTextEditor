@@ -151,10 +151,12 @@ XfEditor.plugins.add('pbckcode', {
 
     // ACE 编辑器随对话框尺寸变化自适应。把 resize 监听挂到全局 dialog 事件，
     // 但必须在编辑器销毁时移除，否则会泄漏，并导致多编辑器实例互相干扰。
-    var resizeHandler = function(evt) {
-      var aceEditor = evt.editor && evt.editor.aceEditor;
-      if (aceEditor !== undefined) {
-        aceEditor.resize();
+    // 关键修复：必须检查「本闭包编辑器实例」的 aceEditor，而非 evt.editor。
+    // 因为 XfEditor.dialog 的 resize 是全局事件，所有编辑器的 handler 都会收到；
+    // 若用 evt.editor，当编辑器 A 的对话框 resize 时，编辑器 B 的 handler 也会误 resize A 的 ace。
+    var resizeHandler = function() {
+      if (editor.aceEditor) {
+        editor.aceEditor.resize();
       }
     };
     XfEditor.dialog.on('resize', resizeHandler);

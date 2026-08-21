@@ -24,15 +24,18 @@ XfEditor.dialog.add('pbckcodeDialog', function(editor) {
             items: editor.settings.modes,
             'default': editor.settings.modes[0][1],
             setup: function(element) {
-              if (element) {
-                element = element.getAscendant('pre', true);
-                this.setValue(element.getAttribute('data-pbcklang'));
+              var pre = element && element.getAscendant('pre', true);
+              if (pre) {
+                // 属性可能不存在（用户在源码模式手写的 <pre>），
+                // 此时不能把 null 塞进 select，否则下拉框显示空白项。
+                var lang = pre.getAttribute('data-pbcklang');
+                this.setValue(lang || editor.settings.modes[0][1]);
               }
             },
             commit: function(element) {
-              if (element) {
-                element = element.getAscendant('pre', true);
-                element.setAttribute('data-pbcklang', this.getValue());
+              var pre = element && element.getAscendant('pre', true);
+              if (pre) {
+                pre.setAttribute('data-pbcklang', this.getValue());
               }
             },
             onChange: function() {
@@ -47,15 +50,17 @@ XfEditor.dialog.add('pbckcodeDialog', function(editor) {
             items: tab_sizes,
             'default': editor.settings.tab_size,
             setup: function(element) {
-              if (element) {
-                element = element.getAscendant('pre', true);
-                this.setValue(element.getAttribute('data-pbcktabsize'));
+              var pre = element && element.getAscendant('pre', true);
+              if (pre) {
+                // 同上：缺失时回退到配置的默认缩进值，避免 select 值为 null。
+                var size = pre.getAttribute('data-pbcktabsize');
+                this.setValue(size || String(editor.settings.tab_size));
               }
             },
             commit: function(element) {
-              if (element) {
-                element = element.getAscendant('pre', true);
-                element.setAttribute('data-pbcktabsize', this.getValue());
+              var pre = element && element.getAscendant('pre', true);
+              if (pre) {
+                pre.setAttribute('data-pbcktabsize', this.getValue());
               }
             },
             onChange: function(element) {
@@ -140,7 +145,18 @@ XfEditor.dialog.add('pbckcodeDialog', function(editor) {
       }
       else {
         if (shighlighter.getTag() !== 'pre') {
-          element = element.getChild(0);
+          // 用 findOne 而不是 getChild(0)：<pre> 里可能直接是文本节点
+          // （例如用户在源码模式手写 <pre>code</pre>，或首个子节点是换行文本），
+          // 此时 getChild(0) 返回文本节点，后续 setAttribute 会抛异常。
+          var codeEl = element.findOne(shighlighter.getTag());
+          if (!codeEl) {
+            // 缺失高亮标签时补建一个，保持结构一致。
+            codeEl = new XfEditor.dom.element(shighlighter.getTag());
+            codeEl.setText(element.getText());
+            element.setHtml('');
+            element.append(codeEl);
+          }
+          element = codeEl;
         }
         this.insertMode = false;
       }
@@ -175,7 +191,9 @@ XfEditor.dialog.add('pbckcodeDialog', function(editor) {
       this.commitContent(element);
 
       // set the full class to the code tag
-      shighlighter.setCls(pre.getAttribute('data-pbcklang') + ' ' + editor.settings.cls);
+      // data-pbcklang 缺失时会拼出 "null xxx" 这种脏 class，做一次兜底。
+      var lang = pre.getAttribute('data-pbcklang') || editor.settings.modes[0][1];
+      shighlighter.setCls(lang + ' ' + editor.settings.cls);
 
       element.setAttribute('class', shighlighter.getCls());
 

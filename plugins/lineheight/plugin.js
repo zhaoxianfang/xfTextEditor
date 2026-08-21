@@ -1,6 +1,6 @@
 ( function() {
 	function addCombo( editor, comboName, styleType, lang, entries, defaultLabel, styleDefinition, order ) {
-		var config = editor.config,style = new XfEditor.style( styleDefinition );		
+		var config = editor.config;
 		var names = entries.split( ';' ),values = [];		
 		var styles = {}, onSelectionChange;
 		for ( var i = 0; i < names.length; i++ ) {

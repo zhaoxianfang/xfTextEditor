@@ -8,27 +8,41 @@ var PBSyntaxHighlighter = (function() {
    * @param {String} sh The SyntaxHighlighter
    */
   function PBSyntaxHighlighter(sh) {
+    var preset;
+
     switch (sh) {
       case "HIGHLIGHT" :
-        this.sh = HIGHLIGHT;
+        preset = HIGHLIGHT;
         break;
       case "PRETTIFY" :
-        this.sh = PRETTIFY;
+        preset = PRETTIFY;
         break;
       case "PRISM" :
-        this.sh = PRISM;
+        preset = PRISM;
         break;
       case "SYNTAX_HIGHLIGHTER" :
-        this.sh = SYNTAX_HIGHLIGHTER;
+        preset = SYNTAX_HIGHLIGHTER;
         break;
       default :
-        this.sh = {
+        preset = {
           _type: "DEFAULT",
           _cls: "",
           _tag: 'pre'
         };
         break;
     }
+
+    // 关键：HIGHLIGHT / PRETTIFY / PRISM / SYNTAX_HIGHLIGHTER 是模块级共享对象。
+    // 原实现直接 this.sh = 预设对象，而 setCls() 会往 this.sh.cls 写值，
+    // 于是多个编辑器实例（或同一实例的多次调用）会互相覆盖 cls，
+    // 导致代码块被套上别的语言/别的高亮器的 class。
+    // 这里改为浅拷贝一份私有副本，隔离每个实例的状态。
+    this.sh = {
+      _type: preset._type,
+      _cls: preset._cls,
+      _tag: preset._tag,
+      cls: ''
+    };
   }
 
   /**

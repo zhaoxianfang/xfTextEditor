@@ -449,7 +449,18 @@
                         var dlg = this;
                         var node = dlg._xfTarget;
                         if ( !node ) return;
-                        node.setHtml( dlg.getValueOf( 'info', 'content' ) );
+                        // 安全：textarea 内容由用户直接输入（标注“支持 HTML 源码”），
+                        // 若直接 setHtml 写入 DOM 会绕过 ACF 过滤（setHtml 是底层 DOM 操作，不经过 dataProcessor）。
+                        // 这里用 editor.dataProcessor.toHtml 过一遍，与编辑器其它输入走同一过滤管线，
+                        // 防止用户在对话框里塞入 <script>/<img onerror> 等被直接落库。
+                        var rawHtml = dlg.getValueOf( 'info', 'content' );
+                        var safeHtml = rawHtml;
+                        try {
+                            if ( editor.dataProcessor && typeof editor.dataProcessor.toHtml === 'function' ) {
+                                safeHtml = editor.dataProcessor.toHtml( rawHtml );
+                            }
+                        } catch ( e ) { /* 解析失败则回退原值，由 ACF 在输出时兜底 */ }
+                        node.setHtml( safeHtml );
                         var variant = dlg.getValueOf( 'info', 'variant' );
                         if ( variant ) {
                             var cls = ( node.getAttribute( 'class' ) || '' )
@@ -501,7 +512,7 @@
             /* 双击编辑：命中效果元素时打开对应对话框（图片 / 视频 / 表格等原生双击不拦截） */
             editor.on( 'doubleclick', function( evt ) {
                 var el = evt.data.element;
-                if ( !el ) return;
+                if ( !el || el.type !== XfEditor.NODE_ELEMENT ) return;
                 if ( el.is( 'img' ) || el.getAscendant( 'img', true ) ||
                      el.getAscendant( 'table', true ) ) {
                     // 图片 / 表格等原生 widget 双击由 CKEditor 自身处理，不拦截

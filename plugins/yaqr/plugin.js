@@ -64,8 +64,15 @@ XfEditor.plugins.add("yaqr", {
         //jsScripts.push(XfEditor.getUrl(XfEditor.plugins.getPath("yaqr") + "3rdParty/qrcode.js"));
         jsScripts.push(XfEditor.getUrl(XfEditor.plugins.getPath("yaqr") + "3rdParty/qrcode-min.js"));
         XfEditor.scriptLoader.queue(jsScripts, function (completed, failed) {
-            //alert( 'Number of scripts loaded: ' + completed.length );
-            //alert( 'Number of failures: ' + failed.length );
+            // 二维码生成库（qrcode-min.js）加载完成后，刷新所有已存在的 yaqr 部件，
+            // 否则早期 upcast 的部件因 getQrImage 尚未就绪而拿不到图片 src。
+            if (typeof getQrImage === 'function') {
+                for (var id in editor.widgets.instances) {
+                    if (editor.widgets.instances[id].name === 'yaqr') {
+                        editor.widgets.instances[id].fire('data');
+                    }
+                }
+            }
         });
 //        XfEditor.dialog.add("yaqr", this.path + "dialogs/yaqr.js");
         XfEditor.dialog.add("yaqr", this.path + "dialogs/yaqr-min.js");
@@ -149,10 +156,13 @@ XfEditor.plugins.add("yaqr", {
             data: function () {
                 //console.log("DATA", this.data["QrUrl"]);
                 var el = this.element;
+                // 注意：以 data-cke-saved- 开头的属性必须用 setAttribute 写入 DOM，
+                // 不能走 el.data(...)（那是 jQuery 风格的内存缓存，不会写出 HTML 属性），
+                // 否则导出/再次加载时 href/src 会被 ACF 当作外部资源丢失。
                 el.setAttribute('href', this.data["QrUrl"]);
-                el.data('cke-saved-href', this.data["QrUrl"]);
+                el.setAttribute('data-cke-saved-href', this.data["QrUrl"]);
                 el.setAttribute('target', this.data["QrUrlTarget"]);
-                el.data('cke-saved-target', this.data["QrUrlTarget"]);
+                el.setAttribute('data-cke-saved-target', this.data["QrUrlTarget"]);
                 var qrImg = el.getFirst();
                 //var style= "border:2px solid #000000; height:100px; width:100px";
                 qrImg.setAttribute('alt', this.data["QrUrl"]);
@@ -160,17 +170,16 @@ XfEditor.plugins.add("yaqr", {
                 qrImg.setStyle('borderColor', this.data["QrBorderColor"]);
                 qrImg.setStyle('width', this.data["QRSize"]);
 //                qrImg.setStyle('height', this.data["QRSize"]);
-                qrImg.data('cke_qr_bg_color', this.data["QrColorBg"]);
-                qrImg.data('cke_qr_pt_color', this.data["QrColorPt"]);
-                qrImg.data('cke_qr_defcellsize', this.data["QrCellSize"]);
-                qrImg.data('cke_qr_borderspace', this.data["QrMargin"]);
-                qrImg.data('cke_qr_cor_level', this.data["QrCorLevel"]);
+                qrImg.setAttribute('data-cke_qr_bg_color', this.data["QrColorBg"]);
+                qrImg.setAttribute('data-cke_qr_pt_color', this.data["QrColorPt"]);
+                qrImg.setAttribute('data-cke_qr_defcellsize', this.data["QrCellSize"]);
+                qrImg.setAttribute('data-cke_qr_borderspace', this.data["QrMargin"]);
+                qrImg.setAttribute('data-cke_qr_cor_level', this.data["QrCorLevel"]);
                 if (typeof(getQrImage) == 'function') {
                     var img = getQrImage(this.data);
                     //console.log("SET SRC ", img);
                     qrImg.setAttribute('src', img);
-                    //qrImg.data('cke_qr_image', img);
-                    qrImg.data('cke-saved-src', img);
+                    qrImg.setAttribute('data-cke-saved-src', img);
                 }
             }
         });

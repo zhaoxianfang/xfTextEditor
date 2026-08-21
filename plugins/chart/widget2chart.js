@@ -68,10 +68,25 @@ if ( typeof document.addEventListener !== 'undefined' )
 
 			// Get chart information from data attributes.
 			var chartType = el.getAttribute( 'data-chart' ),
+				values = null;
+
+			// 健壮性：data-chart-value 可能被后台/CMS 转义破坏或被人工改坏。
+			// 裸 JSON.parse 抛出的异常会中断整个 forEach，使页面上后续所有图表都不再渲染。
+			try {
 				values = JSON.parse( el.getAttribute( 'data-chart-value' ) );
+			} catch ( e ) {
+				if ( typeof console !== 'undefined' ) {
+					console.log( 'ERROR: Invalid data-chart-value on chart element.', e );
+				}
+				return;
+			}
 
 			// Malformed element, exit.
 			if ( !values || !values.length || !chartType )
+				return;
+
+			// 只渲染已知类型，未知类型不再被静默当成 doughnut。
+			if ( [ 'bar', 'line', 'polar', 'pie', 'doughnut' ].indexOf( chartType ) === -1 )
 				return;
 
 			// <div> may contain some text like "chart" or &nbsp which is there just to prevent <div>s from being deleted.
@@ -79,7 +94,9 @@ if ( typeof document.addEventListener !== 'undefined' )
 
 			// Prepare some DOM elements for Chart.js.
 			var canvas = document.createElement( 'canvas' );
-			canvas.height = el.getAttribute( 'data-chart-height' );
+			// 高度缺失/非法时回退默认值，避免 canvas.height = 0 导致图表不可见。
+			var chartHeight = parseInt( el.getAttribute( 'data-chart-height' ), 10 );
+			canvas.height = chartHeight > 0 ? chartHeight : 300;
 			el.appendChild( canvas );
 
 			var legend = document.createElement( 'div' );
@@ -95,7 +112,9 @@ if ( typeof document.addEventListener !== 'undefined' )
 			// Set some extra required colors by Pie/Doughnut charts.
 			// Ugly charts will be drawn if colors are not provided for each data.
 			// http://www.chartjs.org/docs/#doughnut-pie-chart-data-structure
-			if ( chartType != 'bar' ) {
+			// 网站可能通过 chartjs_colors 只覆盖 bar/line 的颜色而漏掉 data 数组，
+			// 此时不能直接读 colors.data.length（TypeError）。
+			if ( chartType != 'bar' && chartType != 'line' && colors.data && colors.data.length ) {
 				var colorLen = colors.data.length;
 				for ( i = 0; i < values.length; i++ ) {
 					values[i].color = colors.data[ i % colorLen ];

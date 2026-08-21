@@ -123,6 +123,12 @@
             // Cache the list of cells to be resized.
             leftSideCells = leftColumnCells;
 
+            // 图片列缩放必须设置拖拽边界，否则 leftShiftBoundary/rightShiftBoundary 恒为
+            // undefined，move() 里边界判定失效，可把图片拖到 0 宽甚至负向（表格版有赋值，
+            // 图片版复制时遗漏）。以图片当前几何约束：最小 1px，最大不超当前宽度 1000 倍。
+            startOffset = parseInt( resizer.getStyle( 'left' ), 10 );
+            leftShiftBoundary = startOffset - ( getWidth( pillar.img ) - 1 );
+            rightShiftBoundary = startOffset + ( getWidth( pillar.img ) - 1 );
 
             resizer.setOpacity( 0.5 );
             currentShift = 0;
@@ -266,7 +272,7 @@
                 currentShift = resizerNewPosition - startOffset;
             }
 
-            resizer.setStyle( 'left', pxUnit( posX ) );
+            resizer.setStyle( 'left', pxUnit( resizerNewPosition ) );
 
             return 1;
         };
@@ -305,6 +311,9 @@
 
             resizer.setOpacity( 0.5 );
             startOffset = parseInt( resizer.getStyle( 'top' ), 10 );
+            // 图片行缩放边界（同列缩放：原版遗漏赋值，导致可拖到 0 高/负向）。
+            upShiftBoundary = startOffset - ( getHeight( pillar.img ) - 1 );
+            downShiftBoundary = startOffset + ( getHeight( pillar.img ) - 1 );
             currentShift = 0;
             isResizing = 1;
 
@@ -453,7 +462,7 @@
 
             }
 
-            resizer.setStyle( 'top', pxUnit( posX ) );
+            resizer.setStyle( 'top', pxUnit( resizerNewPosition ) );
 
             return 1;
         };

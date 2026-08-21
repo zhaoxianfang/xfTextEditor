@@ -70,11 +70,15 @@
 			// 2. Load the Chart.js library
 			// 3. Load a helper script that will "upcast" widgets and initiate charts.
 			editor.on( 'contentPreview', function( evt ) {
-				// 注意：直接把 JSON 当作 JS 字面量输出（JSON 本身是合法 JS 字面量），
-				// 并转义序列 "</" 以防数据中含有 </script> 提前闭合脚本造成注入；
-				// 比原先「手工把双引号转成 \" 再套字符串引号」更安全、更准确。
-				var colorsJson = JSON.stringify( colors ).replace( /<\//g, '<\\/' );
-				var configJson = JSON.stringify( config ).replace( /<\//g, '<\\/' );
+				// widget2chart.js 使用 JSON.parse( chartjs_colors_json / chartjs_config_json )，
+				// 即这两个全局变量必须是「JSON 字符串」，而非对象字面量。
+				// 因此这里做双重 JSON.stringify：外层把 JSON 变成合法的 JS 字符串字面量，
+				// 并把 "</" 转义为 "<\/" 以防数据中出现 </script> 提前闭合脚本造成注入。
+				function safeJsString( obj ) {
+					return JSON.stringify( JSON.stringify( obj ) ).replace( /<\//g, '<\\/' );
+				}
+				var colorsJson = safeJsString( colors );
+				var configJson = safeJsString( config );
 				evt.data.dataValue = evt.data.dataValue.replace( /<\/head>/,
 					'<script>var chartjs_colors_json = ' + colorsJson + ';<\/script>' +
 					'<script>var chartjs_config_json = ' + configJson + ';<\/script>' +
@@ -250,7 +254,9 @@
 				// Set some extra required colors by Pie/Doughnut charts.
 				// Ugly charts will be drawn if colors are not provided for each data.
 				// http://www.chartjs.org/docs/#doughnut-pie-chart-data-structure
-				if ( chartType != 'bar' ) {
+				// editor.config.chart_colors 是整体替换而非合并，用户只配 bar/line 颜色时
+				// colors.data 可能不存在，直接读 .length 会 TypeError。
+				if ( chartType != 'bar' && chartType != 'line' && colors.data && colors.data.length ) {
 					var colorLen = colors.data.length;
 					for ( i = 0; i < values.length; i++ ) {
 						values[i].color = colors.data[ i % colorLen ];
@@ -259,8 +265,11 @@
 				}
 
 				// Prepare data for bar/line charts.
+				// 注意：原代码在此用 var data 重新声明，遮蔽了同名形参 data（依赖 values 已在函数开头取出才侥幸正确）。
+				// 改名为 barData 消除遮蔽隐患。
+				var barData;
 				if ( chartType == 'bar' || chartType == 'line' ) {
-					var data = {
+					barData = {
 						// Chart.js supports multiple datasets.
 						// http://www.chartjs.org/docs/#bar-chart-data-structure
 						// This plugin is simple, so it supports just one.
@@ -280,8 +289,8 @@
 					// We need to pass values inside datasets[0].data.
 					for ( i = 0; i < values.length; i++ ) {
 						if ( values[i].value ) {
-							data.labels.push( values[i].label );
-							data.datasets[0].data.push( values[i].value );
+							barData.labels.push( values[i].label );
+							barData.datasets[0].data.push( values[i].value );
 						}
 					}
 					// Legend makes sense only with more than one dataset.
@@ -290,11 +299,11 @@
 
 				// Render Bar chart.
 				if ( chartType == 'bar' ) {
-					chart.Bar( data, config.Bar );
+					chart.Bar( barData, config.Bar );
 				}
 				// Render Line chart.
 				else if ( chartType == 'line' ) {
-					chart.Line( data, config.Line );
+					chart.Line( barData, config.Line );
 				}
 				// Render Line chart.
 				else if ( chartType == 'polar' ) {
@@ -323,17 +332,19 @@
 				canvas.width = w; canvas.height = h;
 				var ctx = canvas.getContext( '2d' );
 				var chart = new Chart( ctx );
-				var i, v = [], colorLen = colors.data.length;
+				// colors 来自 editor.config.chart_colors（整体替换），data 可能缺失。
+				var palette = ( colors.data && colors.data.length ) ? colors.data : null;
+				var i, v = [], colorLen = palette ? palette.length : 0;
 				for ( i = 0; i < values.length; i++ ) {
 					if ( !values[i] ) continue;
 					v.push( { value: values[i].value, label: values[i].label } );
 				}
 				if ( !v.length ) return null;
-				// 饼图 / 环形图 / 极区图需要逐条颜色（循环取色，避免越界）
-				if ( chartType !== 'bar' ) {
+				// 饼图 / 环形图 / 极区图需要逐条颜色（循环取色，避免越界）；bar/line 走 dataset 级颜色。
+				if ( chartType !== 'bar' && chartType !== 'line' && palette ) {
 					for ( i = 0; i < v.length; i++ ) {
-						v[i].color = colors.data[ i % colorLen ];
-						v[i].highlight = colors.data[ i % colorLen ];
+						v[i].color = palette[ i % colorLen ];
+						v[i].highlight = palette[ i % colorLen ];
 					}
 				}
 				var data;
@@ -382,13 +393,26 @@
 				// It is common to use the init method to populate widget data with information loaded from the DOM.
 				init: function() {
 					// When an empty widget is initialized after clicking a button in the toolbar, we do not have yet chart values.
-					if ( this.element.data( 'chart-value' ) ) {
-						this.setData( 'values', JSON.parse( this.element.data( 'chart-value' ) ) );
+					// 健壮性：data-chart-value 可能被用户在源码模式手工改坏（非法 JSON）。
+					// 裸 JSON.parse 抛出的异常会中断 widget 的 upcast 流程，导致整段内容无法进入可视化模式。
+					var rawValues = this.element.data( 'chart-value' );
+					if ( rawValues ) {
+						var parsedValues = null;
+						try {
+							parsedValues = JSON.parse( rawValues );
+						} catch ( e ) {
+							parsedValues = null;
+						}
+						if ( parsedValues && parsedValues.length ) {
+							this.setData( 'values', parsedValues );
+						}
 					}
 					// Chart is specified in a template, so it is available even in an empty widget.
 					this.setData( 'chart', this.element.data( 'chart' ) );
 					// Height is specified in a template, so it is available even in an empty widget.
-					this.setData( 'height', this.element.data( 'chart-height' ) );
+					// 高度缺失/非法时回退到默认高度，避免 canvas height=0（图表不可见）。
+					var height = parseInt( this.element.data( 'chart-height' ), 10 );
+					this.setData( 'height', height > 0 ? height : chartDefaultHeight );
 
 					// Pass the reference to this widget to the dialog. See "onOk" in the dialog definition, we needed widget there.
 					this.on( 'dialog', function( evt ) {

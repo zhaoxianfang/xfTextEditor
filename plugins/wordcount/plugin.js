@@ -243,7 +243,7 @@ XfEditor.plugins.add("wordcount",
                 var count = 0, stringLength = text.length, i;
                 text = String(text || "");
                 for (i = 0; i < stringLength; i++) {
-                    var partCount = encodeURI(text[i]).split("%").length;
+                    var partCount = encodeURI(text.charAt(i)).split("%").length;
                     count += partCount == 1 ? 1 : partCount - 1;
                 }
                 return count;

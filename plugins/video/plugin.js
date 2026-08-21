@@ -69,7 +69,11 @@ XfEditor.plugins.add('video', {
         elements: {
           'cke:video': function(element) {
             var attributes = XfEditor.tools.extend({}, element.attributes);
+            var realSrc = attributes.src || '';
             element = editor.createFakeParserElement(element, 'cke-video', 'video', false);
+            // 占位图仅用于编辑区展示，真实视频地址必须写入 data-cke-saved-src，
+            // 否则 editor.getData() 还原 fakeobject 时会丢失原视频 URL。
+            element.attributes['data-cke-saved-src'] = realSrc;
             element.attributes.src = XfEditor.tools.createImageData(attributes);
             return element;
           }

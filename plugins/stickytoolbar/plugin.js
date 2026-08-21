@@ -16,20 +16,42 @@
                 var top = container.findOne( '.cke_top' );  // 工具栏区域
                 if ( !top ) return;
 
-                // 计算顶部导航高度（示例页通常带 .xf-header 固定头）
+                // 让工具栏随页面滚动「吸附」在顶部。
+                // 关键：不能直接改写 cssText —— .cke_top 原有内联样式（如 RTL 模式的
+                // right、主题相关 padding 等）会被整体覆盖而失效。改为增量 setStyle +
+                // 追加 class，既保留原生样式，又保证 -webkit- 前缀兼容。
+                var setSticky = function() {
+                    top.setStyle( 'position', '-webkit-sticky' );
+                    top.setStyle( 'position', 'sticky' );
+                    top.setStyle( 'z-index', '9999' );
+                    top.addClass( 'cke_top--sticky-base' );
+                    // 一次性注入兜底样式：背景/阴影。不内联在 .cke_top 上，以免覆盖
+                    // 主题（如深色工具栏）自带背景；主题可通过更具体的选择器覆盖。
+                    if ( !document.getElementById( 'cke-stickytoolbar-style' ) ) {
+                        var style = document.createElement( 'style' );
+                        style.id = 'cke-stickytoolbar-style';
+                        style.appendChild( document.createTextNode(
+                            '.cke_top--sticky-base{background:#fff;' +
+                            'box-shadow:0 2px 6px rgba(0,0,0,.12);}'
+                        ) );
+                        document.head.appendChild( style );
+                    }
+                };
+                // 计算顶部导航高度（示例页通常带 .xf-header 固定头），并监听其尺寸变化
+                // 以便 header 高度在运行时改变时（如折叠菜单）实时更新吸附位置。
                 var header = document.querySelector( '.xf-header' );
                 var offset = header ? header.offsetHeight : 0;
-
-                // 让工具栏随页面滚动「吸附」在顶部。
-                // 注意：不能在同一个对象字面量里同时写 position:'-webkit-sticky' 与
-                // position:'sticky'，因为重复 key 后者会覆盖前者，导致带前缀的 WebKit
-                // （旧版 Safari）拿到不到 sticky。改为追加到 cssText，让浏览器自行选择
-                // 它能识别的最后一个合法声明。
-                var prevCss = top.getStyle( 'cssText' ) || '';
-                top.setStyle( 'cssText',
-                    prevCss +
-                    ';position:-webkit-sticky;position:sticky;' +
-                    'top:' + offset + 'px;z-index:9999;background:#fff;margin:0;' );
+                var offsetResolved = offset;
+                var ro = null;
+                if ( header && typeof ResizeObserver !== 'undefined' ) {
+                    ro = new ResizeObserver( function() {
+                        offsetResolved = header.offsetHeight;
+                        top.setStyle( 'top', offsetResolved + 'px' );
+                    } );
+                    ro.observe( header );
+                }
+                setSticky();
+                top.setStyle( 'top', offset + 'px' );
 
                 var STICKY_SHADOW = '0 6px 18px rgba(15, 23, 42, 0.12)';
                 var stuck = false;
@@ -56,6 +78,10 @@
                 editor.on( 'destroy', function() {
                     window.removeEventListener( 'scroll', onScroll );
                     window.removeEventListener( 'resize', onScroll );
+                    if ( ro ) {
+                        ro.disconnect();
+                        ro = null;
+                    }
                 } );
                 // 初始校正一次
                 onScroll();

@@ -14,7 +14,7 @@ XfEditor.plugins.add( 'html5audio', {
              *  - div-s with text-align,float,margin-left,margin-right inline style rules and required ckeditor-html5-audio class.
              *  - audio tags with src and controls attributes.
              */
-            allowedContent: 'div(!ckeditor-html5-audio){text-align,float,margin-left,margin-right}; audio[src,controls,controlslist,autoplay];',
+            allowedContent: 'div(!ckeditor-html5-audio){text-align,float,margin-left,margin-right}; audio[src,controls,controlslist,autoplay,loop];',
             requiredContent: 'div(ckeditor-html5-audio); audio[src,controls];',
             upcast: function( element ) {
                 return element.name === 'div' && element.hasClass( 'ckeditor-html5-audio' );
@@ -31,7 +31,9 @@ XfEditor.plugins.add( 'html5audio', {
                 // If there's a child (the audio element)
                 if ( audioElement ) {
                     // get it's attributes.
-                    src = audioElement.getAttribute( 'src' );
+                    // 优先读 data-cke-saved-src：编辑器在解析 HTML 时会把原始 src 备份到该属性，
+                    // 而 DOM 上的 src 可能已被浏览器解析成绝对地址（相对路径会被改写）。
+                    src = audioElement.data( 'cke-saved-src' ) || audioElement.getAttribute( 'src' );
                     autoplay = audioElement.getAttribute( 'autoplay' );
                     allowdownload = !audioElement.getAttribute( 'controlslist' );
                     advisorytitle = audioElement.getAttribute( 'title' );
@@ -72,6 +74,9 @@ XfEditor.plugins.add( 'html5audio', {
                         // Append it to the container of the plugin.
                         this.element.append( audioElement );
                     }
+                    // 先清掉解析阶段写入的 data-cke-saved-src，否则 getData() 输出时
+                    // 编辑器会用旧的备份地址还原 src，导致修改音频地址后不生效。
+                    audioElement.removeAttribute( 'data-cke-saved-src' );
                     audioElement.setAttribute( 'src', this.data.src );
                 }
 
@@ -125,12 +130,24 @@ XfEditor.plugins.add( 'html5audio', {
             });
 
             editor.contextMenu.addListener( function( element ) {
-                var audioElement = element && element.findOne( 'audio' );
-                if ( audioElement &&
-                     audioElement.hasClass &&
-                     audioElement.hasClass( 'ckeditor-html5-audio' ) ) {
+                if ( !element || element.type !== XfEditor.NODE_ELEMENT ) {
+                    return null;
+                }
+                // 原实现在 <audio> 子元素上判断容器 div 的类名 ckeditor-html5-audio，
+                // 条件恒为假，右键菜单里的“音频属性”永远不出现。
+                // 正确做法：从当前元素向上找带该类名的容器（可能就是自身）。
+                // 注意：getAscendant 的函数回调收到的是 XfEditor.dom.node 包装对象，
+                // 它没有 hasClass 方法，必须先判断节点类型再包装成 dom.element。
+                var container = element.getAscendant( function( node ) {
+                    return node.type === XfEditor.NODE_ELEMENT &&
+                        new XfEditor.dom.element( node.$ ).hasClass( 'ckeditor-html5-audio' );
+                }, true );
+
+                // getAscendant 返回 dom.node，需要重新包装成 dom.element 才能用 findOne。
+                if ( container && new XfEditor.dom.element( container.$ ).findOne( 'audio' ) ) {
                     return { html5audioPropertiesItem: XfEditor.TRISTATE_OFF };
                 }
+                return null;
             });
         }
 

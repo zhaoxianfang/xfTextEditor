@@ -11,12 +11,24 @@
  */
 function xf_upload_preflight()
 {
-    // 允许的来源可在部署时按需收紧；* 仅用于本地 / 内网演示
-    header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Methods: POST, OPTIONS');
-    header('Access-Control-Allow-Headers: Content-Type, X-Requested-With, X-CSRF-Token');
-    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-        header('HTTP/1.1 204 No Content');
+    // 跨域来源白名单：仅允许显式列出的站点调用本上传接口。
+    // 原实现使用 '*' 等于允许任意第三方网站在用户浏览器中向本接口上传文件，
+    // 存在跨站滥用 / 存储桶投毒风险。生产环境务必改为你自己的前端域名。
+    // 留空数组表示不输出跨域头（由反向代理 / 同源部署决定）。
+    $allowedOrigins = []; // 例如 ['https://www.example.com', 'https://admin.example.com']
+
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+    if ($origin !== '' && in_array($origin, $allowedOrigins, true)) {
+        header('Access-Control-Allow-Origin: ' . $origin);
+        header('Access-Control-Allow-Methods: POST, OPTIONS');
+        header('Access-Control-Allow-Headers: Content-Type, X-Requested-With, X-CSRF-Token');
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            header('HTTP/1.1 204 No Content');
+            exit;
+        }
+    } elseif ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        // 非法来源的预检直接拒绝，不返回任何 CORS 头。
+        header('HTTP/1.1 403 Forbidden');
         exit;
     }
 }
@@ -31,7 +43,12 @@ function xf_upload_preflight()
  */
 function xf_upload_response($success, $url = '', $fileName = '', $message = '', $code = 400)
 {
-    header('Access-Control-Allow-Origin: *');
+    // 仅对白名单来源回写跨域头；任意来源不输出 CORS 头，避免 '*' 泄露。
+    $allowedOrigins = []; // 与 xf_upload_preflight 保持一致
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+    if ($origin !== '' && in_array($origin, $allowedOrigins, true)) {
+        header('Access-Control-Allow-Origin: ' . $origin);
+    }
     header('Content-Type: application/json; charset=utf-8');
     if ($success) {
         http_response_code(200);

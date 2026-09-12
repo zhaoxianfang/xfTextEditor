@@ -143,7 +143,7 @@ if ( typeof document.addEventListener !== 'undefined' )
 				// Bar charts accept different data format than Pie/Doughnut.
 				// We need to pass values inside datasets[0].data.
 				for ( i = 0; i < values.length; i++ ) {
-					if ( values[i].value ) {
+					if ( values[i] && values[i].value !== undefined && values[i].value !== null && values[i].value !== '' ) {
 						data.labels.push( values[i].label );
 						data.datasets[0].data.push( values[i].value );
 					}

@@ -34,7 +34,12 @@ XfEditor.editorConfig = function( config ) {
 
     /* ===================== 字体 / 字号 / 行高 ===================== */
     // 字体集合：加入常用中文字体
-    config.font_names = '宋体/宋体;黑体/黑体;仿宋/仿宋_GB2312;楷体/楷体_GB2312;隶书/隶书;幼圆/幼圆;微软雅黑/微软雅黑;' + config.font_names;
+    // 注意：本函数由 examples/js/xf.js 的 merge() 以「全新 {}」调用（并非 CKEditor 默认的
+    // config.editorConfig 回调——那种情况下 defaults 已合并），故此时 config.font_names 尚未就绪，
+    // 直接拼接会得到字面量 "undefined"。这里显式写「中文常用字体 + 回退 CKEditor 默认拉丁字体」，
+    // 既补全中文，又避免字体下拉出现 "undefined" 选项。
+    config.font_names = '宋体/宋体;黑体/黑体;仿宋/仿宋_GB2312;楷体/楷体_GB2312;隶书/隶书;幼圆/幼圆;微软雅黑/微软雅黑;' +
+        (config.font_names || 'Arial/Arial, Helvetica, sans-serif;Comic Sans MS/Comic Sans MS, cursive;Courier New/Courier New, Courier, monospace;Georgia/Georgia, serif;Lucida Sans Unicode/Lucida Sans Unicode, Lucida Grande, sans-serif;Tahoma/Tahoma, Geneva, sans-serif;Times New Roman/Times New Roman, Times, serif;Trebuchet MS/Trebuchet MS, Geneva, sans-serif;Verdana/Verdana, Geneva, sans-serif');
     // 行高集合（倍数 → em → 百分比，常用值优先）
     // 行高候选值（按「倍数 → em → rem → 百分比」分组）：包含大量小于 1、小于 1rem、
     // 小于 100% 的取值；行高作用于块级元素后，这些小值均可真实生效（见 lineheight 插件）。

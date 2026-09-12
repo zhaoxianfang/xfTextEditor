@@ -31,8 +31,9 @@
                         var style = document.createElement( 'style' );
                         style.id = 'cke-stickytoolbar-style';
                         style.appendChild( document.createTextNode(
-                            '.cke_top--sticky-base{background:#fff;' +
-                            'box-shadow:0 2px 6px rgba(0,0,0,.12);}'
+                            '.cke_top--sticky-base{box-shadow:0 2px 6px rgba(0,0,0,.12);}' +
+                            '.cke_top--sticky{background:#fff!important;' +
+                            'box-shadow:0 6px 18px rgba(15,23,42,.12)!important;}'
                         ) );
                         document.head.appendChild( style );
                     }

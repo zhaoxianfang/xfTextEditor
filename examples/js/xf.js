@@ -150,6 +150,9 @@ var MODAL_CSS = [
             // 主源：真正的 contents.css（已改写作用域，且已包含 @keyframes 等动画关键帧），
             // 直接复用即可，避免与下方回退路径里从 xfeffects 抽取的同一关键帧重复注入。
             return css +
+                '\n.xf-standalone{max-width:960px;margin:0 auto;padding:24px;' +
+                'font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;' +
+                'line-height:1.7;color:#2b2b2b;background:#fff;}' +
                 '\n.xf-standalone video,.xf-standalone audio,.xf-standalone iframe,' +
                 '.xf-standalone embed,.xf-standalone object{max-width:100%;border:0;}';
         }
@@ -163,7 +166,10 @@ var MODAL_CSS = [
             // 把未作用域化的特效样式也改写为 .xf-standalone 作用域，避免污染宿主页面
             effectCss = transformEditorCss(effectCss);
         }
-        return BASE_CSS + '\n' + effectCss + '\n' + keyframes;
+        return BASE_CSS + '\n' + effectCss + '\n' + keyframes +
+            '\n.xf-standalone{max-width:960px;margin:0 auto;padding:24px;' +
+            'font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;' +
+            'line-height:1.7;color:#2b2b2b;background:#fff;}';
     }
 
     /**
@@ -181,20 +187,33 @@ var MODAL_CSS = [
         for (var k = 0; k < parts.length; k++) {
             var s = parts[k].trim();
             if (!s) continue;
-            if (s === 'body' || s === '.cke_editable') { out.push('.xf-standalone'); continue; }
+            // 暗色 / 亮色主题前缀：[data-theme="dark"] / [data-theme="light"]
+            // 必须保留前缀，并在其内部把 .cke_editable / .xf-rich-content 改写为 .xf-standalone。
+            // 否则会产生永远不匹配的「.xf-standalone [data-theme="dark"] .xf-standalone」，
+            // 导致暗色主题在导出 / 预览中完全失效（即「编辑器暗、导出亮」的不对称）。
+            var themePre = '';
+            var tm = s.match(/^\[data-theme="(dark|light)"\]\s*/);
+            if (tm) { themePre = tm[0]; s = s.slice(themePre.length); }
+            if (s === 'body' || s === '.cke_editable') { out.push(themePre + '.xf-standalone'); continue; }
             if (/^\.cke_contents/.test(s)) continue;            // 跳过 ltr / rtl 外壳规则
             // .cke_editable 后代选择器（如 .cke_editable video / .cke_editable iframe）
             // 须改写为 .xf-standalone video，否则会变成永远不匹配的
             // .xf-standalone .cke_editable video，导致媒体元素在预览中失去响应式约束。
             if (s.indexOf('.cke_editable ') === 0) {
-                out.push('.xf-standalone ' + s.slice('.cke_editable '.length));
+                out.push(themePre + '.xf-standalone ' + s.slice('.cke_editable '.length));
                 continue;
             }
             if (s.indexOf('.cke_editable') === 0) {            // 形如 .cke_editable.foo
-                out.push('.xf-standalone' + s.slice('.cke_editable'.length));
+                out.push(themePre + '.xf-standalone' + s.slice('.cke_editable'.length));
                 continue;
             }
-            out.push('.xf-standalone ' + s);
+            // 已是 .xf-standalone 作用域（例如 [data-theme="dark"] .xf-standalone 自身）
+            // 无需再加前缀，否则会出现 .xf-standalone .xf-standalone 双重作用域无法匹配。
+            if (s.indexOf('.xf-standalone') === 0) {
+                out.push(themePre + s);
+                continue;
+            }
+            out.push(themePre + '.xf-standalone ' + s);
         }
         return out.join(',');
     }

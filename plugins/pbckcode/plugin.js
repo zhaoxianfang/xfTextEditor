@@ -54,7 +54,7 @@ XfEditor.plugins.add('pbckcode', {
         ['Perl'         , 'perl'],
         ['pgSQL'        , 'pgsql'],
         ['PHP'          , 'php'],
-        ['Powershell'   , 'powershel1'],
+        ['Powershell'   , 'powershell'],
         ['Python'       , 'python'],
         ['R'            , 'ruby'],
         ['OpenSCAD'     , 'scad'],
@@ -67,7 +67,7 @@ XfEditor.plugins.add('pbckcode', {
         ['Text'         , 'text'],
         ['Textile'      , 'textile'],
         ['XML'          , 'xml'],
-        ['XQuery'       , 'xq'],
+        ['XQuery'       , 'xquery'],
         ['YAML'         , 'yaml']
       ],
       //默认 textmate

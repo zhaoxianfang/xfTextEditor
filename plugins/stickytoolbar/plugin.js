@@ -30,10 +30,13 @@
                     if ( !document.getElementById( 'cke-stickytoolbar-style' ) ) {
                         var style = document.createElement( 'style' );
                         style.id = 'cke-stickytoolbar-style';
+                        // 注意：不要强制白色背景。.cke_top 自身（浅色皮肤或
+                        // examples/js/xf.js 注入的 [data-theme="dark"] .cke_top 暗色规则）
+                        // 已带正确背景；强制白底会在暗色主题下把工具栏刷成刺眼白块。
+                        // 这里只补「吸附时的阴影」，背景交由元素自身样式承接。
                         style.appendChild( document.createTextNode(
                             '.cke_top--sticky-base{box-shadow:0 2px 6px rgba(0,0,0,.12);}' +
-                            '.cke_top--sticky{background:#fff!important;' +
-                            'box-shadow:0 6px 18px rgba(15,23,42,.12)!important;}'
+                            '.cke_top--sticky{box-shadow:0 6px 18px rgba(15,23,42,.12)!important;}'
                         ) );
                         document.head.appendChild( style );
                     }

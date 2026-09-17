@@ -178,6 +178,31 @@
         }, true );
     }
 
+    /**
+     * 防御性 HTML 清洗（纵深防御）：效果编辑对话框以「支持 HTML 源码」为设计，
+     * 但全局 allowedContent=true 关闭了 ACF，textarea 里的 <script>/<iframe>/on*=
+     * 等内容若原样写入编辑器，会在「预览 / 导出 / 入库后展示」时执行，构成存储型 XSS。
+     * 这里在落库前剥离高危结构与事件属性，作为 ACF 之外的第二道防线。
+     * 仅针对「提示框 / 卡片 / 时间轴」等纯展示块的内部文本，移除脚本类标签与 on* 属性
+     * 不会破坏合法排版（如进度条的 style="width:70%" 仍保留）。
+     * @param {string} html
+     * @returns {string}
+     */
+    function xfSanitizeHtml( html ) {
+        if ( !html ) return html;
+        return String( html )
+            .replace( /<\s*script[\s\S]*?<\s*\/\s*script\s*>/gi, '' )
+            .replace( /<\s*iframe[\s\S]*?<\s*\/\s*iframe\s*>/gi, '' )
+            .replace( /<\s*object[\s\S]*?<\s*\/\s*object\s*>/gi, '' )
+            .replace( /<\s*embed[\s\S]*?\/?>/gi, '' )
+            .replace( /<\s*link[\s\S]*?\/?>/gi, '' )
+            .replace( /<\s*style[\s\S]*?<\s*\/\s*style\s*>/gi, '' )
+            .replace( /\son\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi, '' )
+            // 将 javascript: 伪协议整体中和（无论出现在 href/src 还是裸文本），
+            // 避免脚本通过伪协议执行；同时不影响正常 url 与属性名。
+            .replace( /javascript:/gi, '#' );
+    }
+
     XfEditor.plugins.add( 'xfeffects', {
         init: function( editor ) {
             /* 把特效样式注入编辑器文档：兼容 iframe 与 divarea 两种模式。
@@ -208,6 +233,29 @@
                     'hr[class,style];p[class,style];details[class];summary[class];a[class]'
                 );
             } catch ( e ) { /* ACF 关闭时 allow 可能抛错，忽略 */ }
+
+            /* 输出边界纵深防御（数据层 XSS 兜底）：
+               本编辑器全局 allowedContent=true（为保住丰富的 xf 特效 class 而关闭了 ACF），
+               这意味着用户在「源代码」模式里写入的 <script>/<iframe onerror>/事件属性等危险内容
+               会原样经 editor.getData() 流出，被存储 / 渲染到其它页面时即构成存储型 XSS。
+               此处挂载 toDataFormat 钩子，在每次 getData / 导出 / 预览产出 HTML 字符串时，
+               仅剥离「脚本类标签 + on* 事件属性 + javascript: 伪协议」这些在富文本输出里
+               永远非法的构造（正常排版标签 / class / style / 图片 / 表格等一律不动），
+               既不影响编辑与排版效果，又把危险数据在出口处兜住。该钩子与 ACF 状态无关，
+               即便将来重新开启 ACF 也仍作为第二道防线存在。 */
+            try {
+                editor.on( 'toDataFormat', function( evt ) {
+                    var html = evt.data && evt.data.dataValue;
+                    if ( typeof html !== 'string' || !html ) return;
+                    evt.data.dataValue = html
+                        .replace( /<\s*script[\s\S]*?<\s*\/\s*script\s*>/gi, '' )
+                        .replace( /<\s*iframe[\s\S]*?<\s*\/\s*iframe\s*>/gi, '' )
+                        .replace( /<\s*object[\s\S]*?<\s*\/\s*object\s*>/gi, '' )
+                        .replace( /<\s*embed[\s\S]*?\/?>/gi, '' )
+                        .replace( /\son\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi, '' )
+                        .replace( /javascript:/gi, '#' );
+                } );
+            } catch ( e ) { /* 钩子挂载失败则放弃，由导出侧 sanitizer 兜底 */ }
 
             /* 让 HTML5 details / summary 被 CKEditor 数据处理器正确识别并保留，
                否则折叠内容在 getData / setData 往返时会被过滤丢失 */
@@ -454,12 +502,14 @@
                         // 这里用 editor.dataProcessor.toHtml 过一遍，与编辑器其它输入走同一过滤管线，
                         // 防止用户在对话框里塞入 <script>/<img onerror> 等被直接落库。
                         var rawHtml = dlg.getValueOf( 'info', 'content' );
-                        var safeHtml = rawHtml;
+                        // 先清洗高危结构/事件属性（纵深防御），再走 dataProcessor 统一过滤管线。
+                        var cleanHtml = xfSanitizeHtml( rawHtml );
+                        var safeHtml = cleanHtml;
                         try {
                             if ( editor.dataProcessor && typeof editor.dataProcessor.toHtml === 'function' ) {
-                                safeHtml = editor.dataProcessor.toHtml( rawHtml );
+                                safeHtml = editor.dataProcessor.toHtml( cleanHtml );
                             }
-                        } catch ( e ) { /* 解析失败则回退原值，由 ACF 在输出时兜底 */ }
+                        } catch ( e ) { /* 解析失败则回退清洗后的值，由 ACF 在输出时兜底 */ }
                         node.setHtml( safeHtml );
                         var variant = dlg.getValueOf( 'info', 'variant' );
                         if ( variant ) {

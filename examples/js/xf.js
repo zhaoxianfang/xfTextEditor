@@ -188,32 +188,36 @@ var MODAL_CSS = [
             var s = parts[k].trim();
             if (!s) continue;
             // 暗色 / 亮色主题前缀：[data-theme="dark"] / [data-theme="light"]
-            // 必须保留前缀，并在其内部把 .cke_editable / .xf-rich-content 改写为 .xf-standalone。
-            // 否则会产生永远不匹配的「.xf-standalone [data-theme="dark"] .xf-standalone」，
-            // 导致暗色主题在导出 / 预览中完全失效（即「编辑器暗、导出亮」的不对称）。
-            var themePre = '';
-            var tm = s.match(/^\[data-theme="(dark|light)"\]\s*/);
-            if (tm) { themePre = tm[0]; s = s.slice(themePre.length); }
-            if (s === 'body' || s === '.cke_editable') { out.push(themePre + '.xf-standalone'); continue; }
-            if (/^\.cke_contents/.test(s)) continue;            // 跳过 ltr / rtl 外壳规则
-            // .cke_editable 后代选择器（如 .cke_editable video / .cke_editable iframe）
-            // 须改写为 .xf-standalone video，否则会变成永远不匹配的
-            // .xf-standalone .cke_editable video，导致媒体元素在预览中失去响应式约束。
-            if (s.indexOf('.cke_editable ') === 0) {
-                out.push(themePre + '.xf-standalone ' + s.slice('.cke_editable '.length));
-                continue;
+            // 导出文档中 data-theme 在 <html>（祖先），而 getHtml(standalone) 片段中
+            // data-theme 与 .xf-standalone 同元素。为两种结构都生效，最终同时输出
+            // 「祖先形式」[data-theme="X"] .xf-standalone ... 与「同元素形式」
+            // .xf-standalone[data-theme="X"] ...，否则任一种结构下暗色主题都会完全失效。
+            var themeAttr = '';
+            var tm = s.match(/^\[data-theme="([^"]+)"\]\s*/);
+            if (tm) { themeAttr = tm[1]; s = s.slice(tm[0].length); }
+            // 计算「无主题前缀」的基础作用域选择器（必以 .xf-standalone 开头）
+            var base;
+            if (s === 'body' || s === '.cke_editable') {
+                base = '.xf-standalone';
+            } else if (/^\.cke_contents/.test(s)) {
+                continue;   // 跳过 ltr / rtl 外壳规则（内容区无需区分方向外壳）
+            } else if (s.indexOf('.cke_editable ') === 0) {
+                // .cke_editable 后代选择器（如 .cke_editable video）
+                base = '.xf-standalone ' + s.slice('.cke_editable '.length);
+            } else if (s.indexOf('.cke_editable') === 0) {
+                // 形如 .cke_editable.foo
+                base = '.xf-standalone' + s.slice('.cke_editable'.length);
+            } else if (s.indexOf('.xf-standalone') === 0) {
+                // 已是 .xf-standalone 作用域（例如 [data-theme="dark"] .xf-standalone 自身）
+                base = s;
+            } else {
+                base = '.xf-standalone ' + s;
             }
-            if (s.indexOf('.cke_editable') === 0) {            // 形如 .cke_editable.foo
-                out.push(themePre + '.xf-standalone' + s.slice('.cke_editable'.length));
-                continue;
-            }
-            // 已是 .xf-standalone 作用域（例如 [data-theme="dark"] .xf-standalone 自身）
-            // 无需再加前缀，否则会出现 .xf-standalone .xf-standalone 双重作用域无法匹配。
-            if (s.indexOf('.xf-standalone') === 0) {
-                out.push(themePre + s);
-                continue;
-            }
-            out.push(themePre + '.xf-standalone ' + s);
+            if (!themeAttr) { out.push(base); continue; }
+            // 同元素形式：.xf-standalone[data-theme="X"] ...（getHtml standalone 片段用）
+            var rest = base.slice('.xf-standalone'.length);
+            out.push('[data-theme="' + themeAttr + '"] ' + base);
+            out.push('.xf-standalone[data-theme="' + themeAttr + '"]' + rest);
         }
         return out.join(',');
     }
@@ -696,9 +700,10 @@ var MODAL_CSS = [
             var themeAttr = (opts.theme === 'dark') ? ' data-theme="dark"' : '';
             var standalone = '<style data-xf-standalone>\n' + getStandaloneCss() + '\n</style>\n' +
                    '<div class="xf-standalone"' + themeAttr + '>' + data + '</div>';
-            // 预览类片段：图表保留为 div，交由末尾注入的 Chart.js 运行时实时绘制，
-            // 与编辑器内完全一致；同时内嵌二维码、绝对化资源地址。
-            standalone = renderSelfContained(standalone, true);
+            // 独立片段需满足「粘贴到任意页面、不依赖外部 JS」的契约：把图表静态化为
+            // 内联图片（paste 后即见、离线可用），而非保留空白 canvas 并依赖运行时脚本
+            // （innerHTML 粘贴时 <script> 不会执行，图表会成空白）。与 exportDocument 一致。
+            standalone = renderSelfContained(standalone, false);
             standalone += getChartRuntime(standalone);
             return standalone;
         }

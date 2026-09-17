@@ -13,8 +13,10 @@
 /* global chartjs_colors:false, chartjs_colors_json:false, chartjs_config:false, chartjs_config_json:false, console:false, Chart:false */
 
 // For IE8 and below the code will not be executed.
-if ( typeof document.addEventListener !== 'undefined' )
-	document.addEventListener( 'DOMContentLoaded', function() {
+if ( typeof document.addEventListener !== 'undefined' ) {
+	// 把渲染逻辑抽成函数，便于在「DOMContentLoaded 已触发（脚本被动态注入到已渲染页面）」
+	// 时立即渲染，避免图表因监听永不触发而永远空白。
+	function renderCharts() {
 	// Make sure Chart.js is enabled on a page.
 	if ( typeof Chart === 'undefined' ) {
 		if ( typeof console !== 'undefined' ) {
@@ -176,4 +178,13 @@ if ( typeof document.addEventListener !== 'undefined' )
 			// ########## RENDER CHART END ##########
 		}
 	);
-} );
+	}
+
+	// 渲染时机：文档仍在解析则等待 DOMContentLoaded；已解析完成（脚本延迟注入 /
+	// 置于 body 末尾）则立即渲染，覆盖「动态注入到已渲染页面」的场景。
+	if ( document.readyState === 'loading' ) {
+		document.addEventListener( 'DOMContentLoaded', renderCharts );
+	} else {
+		renderCharts();
+	}
+}
